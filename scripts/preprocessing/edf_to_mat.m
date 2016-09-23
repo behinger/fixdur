@@ -1,29 +1,15 @@
 addpath('lib/edfread')
 
-ISGIST = true;
+ISGIST = false;
 if ISGIST
-    basepath = 'data/
-%     if isunix
-%         basepath = '/home/student/l/lkaufhol/fixdur/data_gist';
-%         if ~exist(basepath)
-%             basepath = '/home/student/b/behinger/Documents/fixdur/data_gist';
-            
-%         end
-%     end
-%     
-ba
-    
+    basepath = 'data/experiment_gist';
+    subjects = {'1','2','3','5','6','7','8','10','11','13'};
 else
-    if isunix
-        basepath = '/home/student/l/lkaufhol/fixdur/data';
-        if ~exist(basepath)
-            basepath = '/home/student/b/behinger/Documents/fixdur/data';
-        end
-        
-    end
+    basepath = 'data/experiment1';
+    subjects = {'0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40'};
 end
-subject_num = '2';
-subjects = {'1','2','3','5','6','7','8','10','11','13'}
+
+
 
 for subject_num = subjects
     subject_num = subject_num{1}
@@ -164,7 +150,7 @@ for subject_num = subjects
     sample_data(bad_trials) = [];
     
     
-    save([basepath,'/',subject_num,'/',subject_num,'_et_data.mat'],'et_data')
-    save([basepath,'/',subject_num,'/',subject_num,'_sample_data.mat'],'sample_data')
+%     save([basepath,'/',subject_num,'/',subject_num,'_et_data.mat'],'et_data')
+%     save([basepath,'/',subject_num,'/',subject_num,'_sample_data.mat'],'sample_data')
     
 end
