@@ -7,5 +7,7 @@
 *.rda
 *.pyc
 
+cache/gridoutput
+
 data/experiment1/*
 data/experiment_gist/*
