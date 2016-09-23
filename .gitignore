@@ -1,0 +1,11 @@
+# Windows default autosave extension
+*.asv
+
+# OSX / *nix default autosave extension
+*.m~
+
+*.rda
+*.pyc
+
+data/experiment1/*
+data/experiment_gist/*
