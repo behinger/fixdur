@@ -1,21 +1,17 @@
-%[data,info] = edfread('net/store/nbp/fixdur/bene10.edf');
-%[data,info] = edfread('/home/student/l/lkaufhol/fixdur/data/0/8WE8ZHS6.EDF','TRIALID');
-%[data,info] = edfread('/home/student/l/lkaufhol/fixdur/data/1/NTT0T54Z.EDF','TRIALID');
-%[data,info] = edfread('/home/student/l/lkaufhol/fixdur/data/2/D9WZWYTY.EDF','TRIALID');
-%[data,info] = edfread('/home/student/l/lkaufhol/fixdur/data/3/Q4RVW1LR.EDF','TRIALID');
-%[data2,info] = edfread('/home/student/l/lkaufhol/fixdur/data/edu1/PJU57P96.EDF','TRIALID');
-%[data,info] = edfread('/home/student/l/lkaufhol/fixdur/data/17/ZYYY2HNU.EDF','TRIALID');
+addpath('lib/edfread')
 
 ISGIST = true;
 if ISGIST
-    if isunix
-        basepath = '/home/student/l/lkaufhol/fixdur/data_gist';
-        if ~exist(basepath)
-            basepath = '/home/student/b/behinger/Documents/fixdur/data_gist';
-            addpath('/home/student/b/behinger/Documents/MATLAB/edfread/build/linux64')
-        end
-    end
-    
+    basepath = 'data/
+%     if isunix
+%         basepath = '/home/student/l/lkaufhol/fixdur/data_gist';
+%         if ~exist(basepath)
+%             basepath = '/home/student/b/behinger/Documents/fixdur/data_gist';
+            
+%         end
+%     end
+%     
+ba
     
 else
     if isunix
