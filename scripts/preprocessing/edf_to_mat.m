@@ -67,7 +67,9 @@ for subject_num = subjects
         et_data(a).saccade_sy = [];
         et_data(a).saccade_ex = [];
         et_data(a).saccade_ey = [];
+        if ISGIST
         et_data(a).GIST = str2num(data(a).GIST.msg);
+        end
         et_data(a).Image = data(a).BUBBLE_IMAGE.msg;
         %if displayed bubbles is not empty i.e. sequential trial
         if (strcmp(data(a).DISPLAYED_BUBBLES.msg,'-1') == 0)
