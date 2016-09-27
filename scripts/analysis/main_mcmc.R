@@ -1,8 +1,8 @@
 #!/usr/bin/Rscript
 
 setwd('/net/store/nbp/users/behinger/projects/fixdur/git') #path to GIT
-#cfg = list(gist=TRUE)
-cfg = list(gist=FALSE)
+cfg = list(gist=TRUE)
+#cfg = list(gist=FALSE)
 paste0('gist on? ',cfg$gist)
 source("scripts/analysis/functions/fd_paths.R") # this adds lots of paths & functions
 
