@@ -6,8 +6,9 @@
 
 *.rda
 *.pyc
-
+*.Rhistory
 cache/gridoutput
 
 data/experiment1/*
 data/experiment_gist/*
+.Rproj.user

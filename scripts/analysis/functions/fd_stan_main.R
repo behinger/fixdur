@@ -6,7 +6,7 @@ fd_stan_main <- function(mres,name,nchains=6,niter=500,rerun=F,is_on_grid=F){
   }
   name = paste0(name,'.RData')
   library(rstan)
-  dir = 'cache/data/stanfit/'
+  dir = 'cache/stanfit/'
   dir.create(file.path(dir), showWarnings = F)
   if (file.exists(file.path(dir,name)) & !rerun){
     load(file.path(dir,name))
@@ -37,7 +37,7 @@ fd_stan_main <- function(mres,name,nchains=6,niter=500,rerun=F,is_on_grid=F){
   #     numP = 20
   #     list(beta=c(200,rep(0,numP-1))+rnorm(numP,0,1))
   #   }
-    fit <- sampling(fd_model,data=stanDat,iter=niter, chains=nchains,cores = nchains,refresh=1)#,init=init.f)
+    fit <- sampling(fd_model,data=stanDat,iter=niter, chains=nchains,cores = nchains,refresh=1,init=0)#,init=init.f)
     save(modelMatrix,fit,label_dataframe,file= file.path(dir,name))
   }
   return(list(fit=fit,label_dataframe=label_dataframe,modelMatrix=modelMatrix))

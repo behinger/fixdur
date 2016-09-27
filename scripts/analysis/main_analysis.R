@@ -70,15 +70,14 @@ plot_posteriorpredictive = function(dat){
 
 
 #+ horizontalErrorbarParameterplot
-
   ggplot(hdiDataFrameNorm,aes(y=Parameter,x=Estimate,color=as.factor(group)))+
     geom_errorbarh(aes(xmax=high,xmin=low),height=0,lwd=1,position=position_dodgev(height=.5))+
     geom_point(position=position_dodgev(height=.5))+
     
     scale_color_discrete(guide=FALSE)+ # hide the unnessecary colour legend
-    geom_text(data=data.frame(group=hdiDataFrameNorm$group,
-              Parameter =hdiDataFrameNorm$Parameter,
-              transformRule=c('beta~x~180','beta~x~all~trials','beta~x~90','beta~x~90','beta~x~90','beta~x~90','beta~x~average~fixation~duration','beta~x~average~fixation~duration','beta~x~average~fixation~duration','beta~x~average~fixation~duration','alpha','beta~x~diagonal~of~image','beta~x~5~bubbles','beta~x~diagonal~of~image','beta~x~90','beta~x~90','beta~x~90','beta~x~90','difference~between~image~category')),aes(x=35,label=transformRule),color='gray',hjust='outward',parse=T)+
+   # geom_text(data=data.frame(group=hdiDataFrameNorm$group,
+  #            Parameter =hdiDataFrameNorm$Parameter,
+  #            transformRule=c('beta~x~180','beta~x~all~trials','beta~x~90','beta~x~90','beta~x~90','beta~x~90','beta~x~average~fixation~duration','beta~x~average~fixation~duration','beta~x~average~fixation~duration','beta~x~average~fixation~duration','alpha','beta~x~diagonal~of~image','beta~x~5~bubbles','beta~x~diagonal~of~image','beta~x~90','beta~x~90','beta~x~90','beta~x~90','difference~between~image~category')),aes(x=35,label=transformRule),color='gray',hjust='outward',parse=T)+
   facet_grid(group~.,scale='free_y',space='free_y')+
     coord_cartesian(xlim=c(-40,90))+
     geom_vline(xintercept=0)+tBE()+theme(strip.background = element_blank(),strip.text.x=element_blank())+ylab("")

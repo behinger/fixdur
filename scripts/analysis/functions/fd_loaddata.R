@@ -15,6 +15,12 @@ read_dat_raw = function(dataOrPath){
     }
   }
   
+  px2deg = function(px){180/pi*2*atan2(0.276, 2*800)*px} # 80cm from screen
+  dat$bubbleX= dat$bubbleX-960
+  dat$bubbleY= dat$bubbleY-540
+  dat$bubbleX = px2deg(dat$bubbleX)
+  dat$bubbleY = px2deg(dat$bubbleY)
+  
   dat$orgOrdering = 1:length(dat$choicetime)
   add_lagged_timings <- function(dat){
     
@@ -163,8 +169,23 @@ read_dat_raw = function(dataOrPath){
   }
   dat$dispX = dispX
   dat$dispY = dispY
-  #dat = ddply(dat,.(subject,trialNum),transform,c(dispX(1:(length(dispX)-1)),na))
-  #dat = ddply(dat,.(subject,trialNum),transform,c(dispY(1:(length(dispY)-1)),na))
+  dat$dispX = mapply('-',dat$dispX,960) # center it
+  dat$dispY = mapply('-',dat$dispY,540) # center it
+  
+  dat$dispX = mapply(px2deg,dat$dispX)
+  dat$dispY = mapply(px2deg,dat$dispY)
+  
+  dat$centerDistance = sqrt((dat$chosenBubbleX)^2 + (dat$chosenBubbleY)^2)
+  dat$sq_chosenBubbleX = dat$chosenBubbleX^2
+  dat$sq_chosenBubbleY = dat$chosenBubbleY^2
+  
+  dat$stimulus_type = as.numeric(as.factor(dat$stimulus_type))-1
+  if('gist' %in% colnames(data)){
+    dat$gist = as.numeric(as.factor(dat$gist))-1
+  }
+  dat$trialNum = as.numeric(dat$trialNum)
+  dat$bubbleNum = as.numeric(dat$bubbleNum)
+  
   
   idx = which(dat$bubbleNum==0)-1 #could possibly be problematic if there exist a 1-trial subject. but the ddply version is superslow!
   idx = idx[idx>0] #very first trial woukld be negative
@@ -195,7 +216,10 @@ dat = read_dat_raw(dataOrPath)
 if(!clean){
  return(dat) 
 }
- #browser() 
+
+
+
+
 #return(dat)
 data.clean = process_dat_raw(dat)
 

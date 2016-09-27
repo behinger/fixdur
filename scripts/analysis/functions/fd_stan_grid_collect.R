@@ -15,7 +15,7 @@ fd_stan_grid_collect <-function(name='2015-11-20_unstandardized',combine_again=F
    fitList = c(fitList,fit) 
   }
   fit = rstan::sflist2stanfit(fitList)
-  show('Saving Fit')
+  #show('Saving Fit')
 #  save(fit,modelMatrix,label_dataframe,file=paste0(full.path,name,'.RData'))
   #}
   return(list(fit=fit,label_dataframe=label_dataframe,modelMatrix=modelMatrix))

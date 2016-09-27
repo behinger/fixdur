@@ -1,8 +1,14 @@
 fd_factorGroupMatch = function(S){
   grouping = list(c( "(Intercept)"),
-                  c("forcedFixtime","log(forcedFixtime)","log(NumOfBubbles)","as.factor(stimulus_type)urban","log(forcedFixtime):log(as.numeric(NumOfBubbles))"),
-                  c("log(nextBubbleDist)","log(prevBubbleDist)","angleDiff","sin(nextBubbleAngle/180 * pi)","cos(nextBubbleAngle/180 * pi)","sin(2 * nextBubbleAngle/180 * pi)","cos(2 * nextBubbleAngle/180 * pi)","sin(prevBubbleAngle/180 * pi)","cos(prevBubbleAngle/180 * pi)","sin(2 * prevBubbleAngle/180 * pi)","cos(2 * prevBubbleAngle/180 * pi)"),
-                  c("lag1_choicetime","lag1_forcedFixtime","as.numeric(trialNum)"))
+                  c("forcedFixtime","log_forcedFixtime","log_NumOfBubbles","stimulus_type","log_forcedFixtime:log_NumOfBubbles"),
+                  c("log_nextBubbleDist","log_prevBubbleDist","angleDiff",
+                    "sin_nextBubbleAngle","cos_nextBubbleAngle",
+                    "sin2_nextBubbleAngle","cos2_nextBubbleAngle",
+                    "sin_prevBubbleAngle","cos_prevBubbleAngle",
+                    "sin2_prevBubbleAngle","cos2_prevBubbleAngle",
+                    "sq_chosenBubbleX","sq_chosenBubbleY","chosenBubbleX","chosenBubbleY",
+                    "centerDistance"),
+                  c("lag1_choicetime","lag1_forcedFixtime","trialNum",'bubbleNum'))
   #grouping = rev(grouping)
   
   

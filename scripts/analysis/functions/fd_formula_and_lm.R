@@ -1,6 +1,11 @@
 fd_formula_and_lm = function(data,gist=F){
-  #formulaList = list(
-  data$stimulus_type = as.factor(data$stimulus_type)
+    
+  
+  # NEW FORMULA 23.09.2016
+  # I added the factors centerDistance, chosenBubbleX, chosenBubbleY and bubbleNum
+
+  
+  
   formula.complexStandard =  choicetime~
     forcedFixtime+
     log_forcedFixtime+
@@ -8,15 +13,40 @@ fd_formula_and_lm = function(data,gist=F){
     stimulus_type+
     lag1_choicetime+
     lag1_forcedFixtime+
+    centerDistance+
+    chosenBubbleX+  sq_chosenBubbleX+
+    chosenBubbleY+  sq_chosenBubbleY+
     log_nextBubbleDist+log_prevBubbleDist+#nextHorizSacc+prevHorizSacc+
     angleDiff+
     sin_nextBubbleAngle+cos_nextBubbleAngle+
     sin2_nextBubbleAngle+cos2_nextBubbleAngle+
     sin_prevBubbleAngle+cos_prevBubbleAngle+
     sin2_prevBubbleAngle+cos2_prevBubbleAngle+
-    as.numeric(trialNum)+
+    trialNum+bubbleNum+
     log_NumOfBubbles:log_forcedFixtime+
     (1|subject)
+  
+  
+  
+  
+  
+#   data$stimulus_type = as.factor(data$stimulus_type)
+#   formula.complexStandard =  choicetime~
+#     forcedFixtime+
+#     log_forcedFixtime+
+#     log_NumOfBubbles+
+#     stimulus_type+
+#     lag1_choicetime+
+#     lag1_forcedFixtime+
+#     log_nextBubbleDist+log_prevBubbleDist+#nextHorizSacc+prevHorizSacc+
+#     angleDiff+
+#     sin_nextBubbleAngle+cos_nextBubbleAngle+
+#     sin2_nextBubbleAngle+cos2_nextBubbleAngle+
+#     sin_prevBubbleAngle+cos_prevBubbleAngle+
+#     sin2_prevBubbleAngle+cos2_prevBubbleAngle+
+#     as.numeric(trialNum)+
+#     log_NumOfBubbles:log_forcedFixtime+
+#     (1|subject)
   #(1+log_forcedFixtime+as.factor(stimulus_type)+log_NumOfBubbles|subject)
   #(1|image)
   #)

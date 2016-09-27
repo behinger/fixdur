@@ -1,7 +1,9 @@
 #!/usr/bin/Rscript
 
 setwd('/net/store/nbp/users/behinger/projects/fixdur/git') #path to GIT
-cfg = list(gist=TRUE)
+#cfg = list(gist=TRUE)
+cfg = list(gist=FALSE)
+paste0('gist on? ',cfg$gist)
 source("scripts/analysis/functions/fd_paths.R") # this adds lots of paths & functions
 
 
@@ -11,13 +13,13 @@ if(cfg$gist){
   filename = paste0(Sys.Date(),'_gist_unstandardized')
   data.3mad = fd_loaddata('./cache/data/all_res_gist.RData')
 }else{
-  filename = paste0(Sys.Date(),'_unstandardized')
+  filename = paste0(Sys.Date(),'_unstandardized_')
   data.3mad = fd_loaddata()
 }
 
 mres.complexStandard.3mad = fd_formula_and_lm(data.3mad,gist = cfg$gist)
 
-fd_stan_main(mres.complexStandard.3mad,niter = 1000,name=filename,rerun=T,is_on_grid = T)
+tmp = fd_stan_main(mres.complexStandard.3mad,niter = 1000,name=filename,rerun=T,is_on_grid = T)
 #source('fd_runModels2.R')
 if (1==0){
   cfg = list(nchains = 1,
