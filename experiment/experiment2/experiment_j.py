@@ -3,6 +3,8 @@ import sys, os, random, math, string, glob, pdb
 from psychopy import visual, core, event, monitors,logging
 import numpy as np
 import cPickle as pickle
+#import trial_psychopy as trial
+#import tools_psychopy as tools
 import trial, tools
 from collections import deque
 from pygame.locals import *
@@ -26,11 +28,11 @@ else:
 
 #subject number to determine which multiple_bubble_images are shown, first subject 0
 subject_number = raw_input("Please enter the subject NUMBER(31-45): ")
-#subject_number = random.randint(0,9)
+#subject_number = 30
 #subject = raw_input("Please enter a subject ID: ")
 subject = subject_number
 # load randomization for subject
-cont = 'n'
+cont = 'n' 
 while cont != 'y':
     if (os.path.exists(path_to_fixdur_code+'data/'+str(subject)+'/rand_'+str(subject)+'.npy')):
         a = raw_input('Randomization for subject '+str(subject)+' does already exist. Do you want to continue? (y/n)')
@@ -63,7 +65,7 @@ else:
 # set up the window
 #pygame.init()
 rectXY = (1920,1080);
-surf = visual.Window(size=rectXY,fullscr=False,winType = 'pyglet')
+surf = visual.Window(size=rectXY,fullscr=False,winType = 'pyglet', screen=1, units='pix')
 surf.setMouseVisible(False)
 
 #flags = pygame.FULLSCREEN |  pygame.RLEACCEL | pygame.HWSURFACE
@@ -74,7 +76,7 @@ surf.setMouseVisible(False)
 
 # load images
 memory_image = visual.SimpleImageStim(surf, image=path_to_fixdur_code+'images/memory.png')
-fix_cross = visual.SimpleImageStim(surf,image=path_to_fixdur_code+'images/fixationcross.png')
+
 #memory_image = pygame.image.load(path_to_fixdur_code+'images/memory.png').convert_alpha()
 
 # set up eyetracker
@@ -90,7 +92,8 @@ if EYETRACKING:
     el.setup()
 
 # show fixation cross
-fix_cross.draw(surf)
+fix_cross = visual.SimpleImageStim(surf,image=path_to_fixdur_code+'images/fixationcross.png')
+#fix_cross.draw(surf)
 #fix_cross = pygame.image.load(path_to_fixdur_code+'images/fixationcross.png').convert()
 #surf.fill((128,128,128))
 #surf.blit(fix_cross,(rectXY[0]/2-(np.array(fix_cross.get_size())/2)[0],rectXY[1]/2-(np.array(fix_cross.get_size())/2)[1]))
@@ -99,7 +102,7 @@ surf.flip()
 
 #training trials
 if START_TRIAL == 0:
-	trial.training(surf,el,memory_image.copy(),fix_cross.copy())
+	trial.training(surf,el,memory_image,fix_cross)
 #surf.fill((128,128,128))
 tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start.png')))
 
@@ -113,10 +116,10 @@ surf.flip()
 trial_num = 1
 trial_list = []
 
-# benötigt?
-surf.setRecordFrameIntervals(True)
-surf._refreshTreshold=1/120.0+0.002
-logging.console.setLevel(logging.WARNING)
+# notwendig?
+#surf.setRecordFrameIntervals(True)
+#surf._refreshTreshold=1/120.0+0.002
+#logging.console.setLevel(logging.WARNING)
 
 # run the game loop
 for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
@@ -149,14 +152,17 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
             #textpos.centery = surf.get_rect().centery
             #surf.blit(text,textpos)
         else:
-            circ = visual.Circle(surf, radius=0.01)
+            circ = visual.Circle(surf, units='pix', radius=10)
             circ.draw(surf)
             #pygame.draw.circle(surf,(50,205,50),(int(rectXY[0]/2),int(rectXY[1]/2)),10,5)    
         surf.flip()
-        #pygame.display.update() 
+        #pygame.display.update()
+        #key = event.getKeys()
         key = tools.wait_for_key()
-        if (key.key == 27):
-            pygame.quit()
+        print 'key',key
+        if ('escape' in key):
+            surf.close()
+            #pygame.quit()
             sys.exit()
         
         #drift correction
@@ -193,7 +199,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
             all_bubbles = []
             loaded_bubbles = []
             for bubble in remaining_bubbles:
-                # Position nötig?
+                # Position notwendig?
                 x,y = tools.get_bubble_pos(bubble)
                 loaded_bubbles.append(visual.SimpleImageStim(surf, image = path_to_fixdur_files+'stimuli/single_bubble_images/'+bubble_image+'/'+bubble, pos = (x,y)))
                 #loaded_bubbles.append(pygame.image.load(path_to_fixdur_files+'stimuli/single_bubble_images/'+bubble_image+'/'+bubble).convert_alpha())
@@ -254,7 +260,8 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
             subtrial_num = 1
             subtrial_list = []   
             
-            ##start = pygame.time.get_ticks()
+            # notwendig
+            #start = psychopy.core.getTime()
            
             for subtrial in current_trial:
                             
@@ -269,23 +276,29 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                     # rectMultipleLasttrial = rectMultiple
                 
                 #start displaying chosen bubble  
-                chosen_bubble_image = loaded_bubbles[all_bubbles.index(chosen_bubble[0])]   
-                ##tools.debug_time("Bubble Loaded",start)
+                chosen_bubble_image = loaded_bubbles[all_bubbles.index(chosen_bubble[0])]
+                # notwendig                
+                #tools.debug_time("Bubble Loaded",start)
     
                 #image.blit(chosen_bubble_image,(chosen_bubble[0][0],chosen_bubble[0][1]))
                 ##tools.debug_time("Bubble Blitted",start)
                 chosen_bubble_image.draw(surf)
+                #print chosen_bubble_image
+                #print loaded_bubbles
                 #surf.fill((128,128,128))
                 #surf.blit(chosen_bubble_image,(chosen_bubble[0][0]+320,chosen_bubble[0][1]+60))
     
                 #surf.blit(image,(320,60))
                 ##tools.debug_time("Forced Stim Blitted",start)
                 
-                ##start = pygame.time.get_ticks()
-                pygame.display.update(rectMultiple+rectMultipleLasttrial)
-                bubble_display_start = psychopy.core.getTime()
+                # notwendig
+                #start = psychopy.core.getTime()
+                surf.flip()
+                #pygame.display.update(rectMultiple+rectMultipleLasttrial)
+                bubble_display_start = core.getTime()
                 #bubble_display_start = pygame.time.get_ticks()
-                ##tools.debug_time("Forced_stim_onset",start)
+                # notwendig
+                #tools.debug_time("Forced_stim_onset",start)
                 if EYETRACKING == True:                
                     el.trialmetadata("forced_fix_onset", bubble_display_start)
                 #rectMultipleLasttrial = rectMultiple
@@ -302,8 +315,12 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                 num_of_bubbles = int(float(subtrial[2]))  
                 #num_of_bubbles = 5
                 #tools.debug_time("pre_stim_gen",start)
+                #notwendig
+                #start = psychopy.core.getTime()                
+                
                 #load surface for choosing next fixation location
                 used_bubble, more_bubbles = trial.get_image(surf,bubble_image,all_bubbles,loaded_bubbles,remaining_bubbles,chosen_bubble,num_of_bubbles,dist_mat)                
+                #notwendig                
                 #tools.debug_time("post_stim_gen",start)
             
                 #keep displaying choosen bubble until disp_time is over
@@ -311,26 +328,30 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                 #disp_time = 50
                 
                 bubble_display_time = 0
-                while bubble_display_time < disp_time:
-                    psychopy.core.wait(0.001)                    
+                while bubble_display_time < disp_time/1000:
+                    core.wait(0.001)                    
                     #pygame.time.delay(1)
-                    bubble_display_time = psychopy.core.getTime() - bubble_display_start
+                    bubble_display_time = core.getTime() - bubble_display_start
                     #bubble_display_time = pygame.time.get_ticks() - bubble_display_start
                     
                 #start = pygame.time.get_ticks()
                 
                 # draw choice window onto the screen until saccade is over
     
-                rects1 = [pygame.Rect(chosen_bubble[0][0]+320,chosen_bubble[0][1]+60,154,154)]
-                rectMultiple = []
-                for l in range(len(used_bubble)):
-                    rectMultiple.append(pygame.Rect(used_bubble[l][0]+320,used_bubble[l][1]+60,154,154))
+                #notwendig
+                #start = psychopy.core.getTime()
+    
+                #rects1 = [pygame.Rect(chosen_bubble[0][0]+320,chosen_bubble[0][1]+60,154,154)]
+                #rectMultiple = []
+                #for l in range(len(used_bubble)):
+                #    rectMultiple.append(pygame.Rect(used_bubble[l][0]+320,used_bubble[l][1]+60,154,154))
                 
-                ##start = pygame.time.get_
-                pygame.display.update(rects1+rectMultiple) # blit the currently fixated bubbles and all to be displayed bubbles.
-                ##tools.debug_time("Time for second update",start)
+                surf.flip()
+                #pygame.display.update(rects1+rectMultiple) # blit the currently fixated bubbles and all to be displayed bubbles.
+                
+                #tools.debug_time("Time for second update",start)
                 ##tools.debug_time("post_update",start)
-                stimulus_onset = pygame.time.get_ticks()
+                stimulus_onset = core.getTime()
                 if EYETRACKING == True:
                     el.trialmetadata("stimulus_onset", stimulus_onset)
                 #fix_x,fix_y = tools.wait_for_saccade(el)
@@ -341,7 +362,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                             
                 #start = pygame.time.get_ticks()
                 
-                saccade_offset = pygame.time.get_ticks()
+                saccade_offset = core.getTime()
                 if EYETRACKING == True:
                     el.trialmetadata("saccade_offset", saccade_offset)
                 
@@ -370,13 +391,17 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                     el.trialmetadata("CHOSEN_BUBBLE", chosen_bubble)
                     el.trialmetadata('BUBBLE_DISPLAY_TIME', disp_time)
         
-                for event in pygame.event.get():
-                    if event.type == QUIT:
-                        pygame.quit()
-                        sys.exit()
-                    elif event.type == KEYDOWN:
-                        if event.key == K_ESCAPE:
-                            pygame.event.post(pygame.event.Event(QUIT))
+                key = event.getKeys()
+                if 'escape' in key:
+                    surf.close()
+                    sys.exit()
+                #for event in pygame.event.get():
+                #    if event.type == QUIT:
+                #        pygame.quit()
+                #        sys.exit()
+                #    elif event.type == KEYDOWN:
+                #        if event.key == K_ESCAPE:
+                #            pygame.event.post(pygame.event.Event(QUIT))
         
                 #metainfos for dictionary        
                 subtrial_dict = {'trial': trial_num, 'img': bubble_image, 'disp_bubbles': used_bubble, 'first_bubble':first_bubble, 'chosen_bubble': chosen_bubble, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start}                
@@ -387,7 +412,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                 
         #memory task
         #left_bubble, right bubble, correct = tools.memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image.copy(),surf)
-        memory_res = tools.memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image.copy(),surf)    
+        memory_res = tools.memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image,surf)    
         
         #add trial meta data    
         trial_list.append(subtrial_list)
@@ -410,14 +435,19 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
             if EYETRACKING == True:
                 el.finish()
             os.system('mv '+rand_filename+'.EDF '+path_to_fixdur_code+'data/'+str(subject)+'/')
-            pygame.quit()
+            surf.close()
+            #pygame.quit()
         
 
 #final screen
-ending = pygame.image.load(path_to_fixdur_code+'images/instructions/ending.png')
-surf.fill((128,128,128))
-surf.blit(ending,(0,0))
-pygame.display.update()
+ending = visual.SimpleImageStim(surf,path_to_fixdur_code+'images/instructions/ending.png')
+ending.draw()
+surf.flip()
+core.wait(6)
+surf.close()
+#surf.fill((128,128,128))
+#surf.blit(ending,(0,0))
+#pygame.display.update()
    
 #write metadata into file
 pickle.dump(trial_list,subject_file)
