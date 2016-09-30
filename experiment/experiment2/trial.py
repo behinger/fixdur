@@ -12,13 +12,16 @@ import sys, scipy, os, tools
 from scipy import stats
 from psychopy import visual, core, event
 
+EYETRACKING = False
+
 try:
-    import fixdur_tracker as tracker
-    import pylink
+    if EYETRACKING:    
+        import fixdur_tracker as tracker
+        import pylink
 except ImportError:
     print 'pylink and fixdur_tracker cannot be imported'
 
-EYETRACKING = False
+
 
 # get size of bubble in px from generate_stimuli.py
 MAT = 154
@@ -109,6 +112,7 @@ def get_image(surf,bubble_image,all_bubbles,loaded_bubbles,remaining_bubbles,cho
                 # load an add next bubble images to image
                 next_bubble = loaded_bubbles[all_bubbles.index(next_bubble_pos)]
                 next_bubble.draw(surf)
+                #surf.flip()
                 #surf.blit(next_bubble,(next_bubble_pos[0]+320,next_bubble_pos[1]+60))
 
     return used_bubbles, more_bubbles    
@@ -117,9 +121,9 @@ def get_image(surf,bubble_image,all_bubbles,loaded_bubbles,remaining_bubbles,cho
 ''' display training trials'''    
 def training(surf,el,memory_image,fix_cross):
     #training parameter
-    rectXY = surf.get_rect()
-    rectXY = (rectXY[2],rectXY[3])
-    training_bubble_num = [1,2,3,4,5]
+    #rectXY = surf.get_rect()
+    #rectXY = (rectXY[2],rectXY[3])
+    training_bubble_num = [1,2,3,4,5,10]
 
     training_images = os.listdir(path_to_fixdur_files+'stimuli/training/single_bubbles/')   
     bubble_image = training_images[0]
@@ -133,7 +137,8 @@ def training(surf,el,memory_image,fix_cross):
         all_bubbles = []
         loaded_bubbles = []
         for bubble in remaining_bubbles:
-             loaded_bubbles.append(visual.SimpleImageStim(surf, image = path_to_fixdur_files+'stimuli/training/single_bubbles/'+bubble_image+'/'+bubble))
+             x,y = tools.get_bubble_pos(bubble)
+             loaded_bubbles.append(visual.SimpleImageStim(surf, image = path_to_fixdur_files+'stimuli/training/single_bubbles/'+bubble_image+'/'+bubble, pos=(x,y)))
              all_bubbles.append([int(bubble.split('_',1)[1].split('_')[0]),int(bubble.split('_',1)[1].split('_')[1].split('.')[0])])
              #loaded_bubbles.append(pygame.image.load(path_to_fixdur_files+'stimuli/training/single_bubbles/'+bubble_image+'/'+bubble).convert_alpha())
         remaining_bubbles = list(all_bubbles)
@@ -144,14 +149,14 @@ def training(surf,el,memory_image,fix_cross):
     
         #wait for next trial
         #surf.fill((128,128,128))
-        circ = visual.Circle(surf, radius=0.01)
+        circ = visual.Circle(surf, units='pix', radius=10)
         circ.draw(surf)
         #pygame.draw.circle(surf,(50,205,50),(int(rectXY[0]/2),int(rectXY[1]/2)),10,5)
         surf.flip()
         #pygame.display.update() 
-        key = event.getKeys(keylist='escape')
+        key = event.waitKeys()
         #key = tools.wait_for_key()
-        if (key == 'escape'):
+        if ('escape' in key):
         #if (key.key == 27):
             surf.close()
             #pygame.quit()
@@ -195,8 +200,9 @@ def training(surf,el,memory_image,fix_cross):
             
             #start displaying chosen bubble
             #surf.fill((128,128,128))
-            chosen_bubble_image = loaded_bubbles[all_bubbles.index(chosen_bubble[0])]   
-            surf.blit(chosen_bubble_image,(chosen_bubble[0][0]+320,chosen_bubble[0][1]+60))
+            chosen_bubble_image = loaded_bubbles[all_bubbles.index(chosen_bubble[0])]
+            chosen_bubble_image.draw(surf)
+            #surf.blit(chosen_bubble_image,(chosen_bubble[0][0]+320,chosen_bubble[0][1]+60))
             surf.flip()            
             #pygame.display.update(rectMultiple)
             bubble_display_start = core.getTime()
@@ -204,7 +210,8 @@ def training(surf,el,memory_image,fix_cross):
             
             # wait until first bubble is fixated before starting forced_fix_time
             if subtrial == 0:
-                tools.sacc_detection(el,chosen_bubble)
+                if EYETRACKING:
+                    tools.sacc_detection(el,chosen_bubble)
             
             #choice
             #how many bubbles should be displayed
@@ -223,7 +230,7 @@ def training(surf,el,memory_image,fix_cross):
             #keep displaying choosen bubble until disp_time is over
             disp_time = scipy.random.exponential(300,1)
             bubble_display_time = 0
-            while bubble_display_time < disp_time:
+            while bubble_display_time < (disp_time/1000):
                 core.wait(0.001)                
                 #pygame.time.delay(1)
                 bubble_display_time = core.getTime() - bubble_display_start
@@ -232,14 +239,17 @@ def training(surf,el,memory_image,fix_cross):
             #rects1 = [pygame.Rect(chosen_bubble[0][0]+320,chosen_bubble[0][1]+60,154,154)]
             #rectMultiple = []
             #for l in range(len(used_bubble)):
-                rectMultiple.append(pygame.Rect(used_bubble[l][0]+320,used_bubble[l][1]+60,154,154))
+            #    rectMultiple.append(pygame.Rect(used_bubble[l][0]+320,used_bubble[l][1]+60,154,154))
                 
                 
             # draw choice window onto the screen until saccade is over
             surf.flip()
             #pygame.display.update(rects1+rectMultiple) # blit the currently fixated bubbles and all to be displayed bubbles.
             #fix_x,fix_y = tools.wait_for_saccade(el)
-            chosen_bubble = tools.sacc_detection(el,used_bubble)
+            if EYETRACKING:
+                chosen_bubble = tools.sacc_detection(el,used_bubble)
+            else:
+                chosen_bubble = random.choice(used_bubble)
             #chosen_bubble = tools.get_fixated_bubble(used_bubble,fix_x,fix_y)            
             chosen_bubble = [chosen_bubble]
             
@@ -261,11 +271,13 @@ def training(surf,el,memory_image,fix_cross):
         
         #wait for next trial
         #surf.fill((128,128,128))
-        circ = visual.Circle(surf, radius=0.01)#, color = (128, 255, 128))
+        circ = visual.Circle(surf, units='pix', radius=10)
+        #circ = visual.Circle(surf, radius=0.01)#, color = (128, 255, 128))
         circ.draw(surf)
         surf.flip()
-        key = event.getKeys(keylist='escape')
-        if key == 'escape':
+        #key = event.getKeys(keylist='escape')
+        key = tools.wait_for_key()
+        if ('escape' in key):
             surf.close()
             sys.exit()
         #pygame.draw.circle(surf,(50,205,50),(int(rectXY[0]/2),int(rectXY[1]/2)),10,5)
@@ -296,14 +308,15 @@ def training(surf,el,memory_image,fix_cross):
         loaded_bubbles = []
         for bubble in remaining_bubbles:
             x,y = tools.get_bubble_pos(bubble)
-            loaded_bubbles.append(visual.SimpleImageStim(surf, image = path_to_fixdur_files+'stimuli/single_bubble_images/'+bubble_image+'/'+bubble, pos = (x,y)))
+            loaded_bubbles.append(visual.SimpleImageStim(surf, image = path_to_fixdur_files+'stimuli/training/single_bubbles/'+bubble_image+'/'+bubble, pos = (x,y)))
+            #loaded_bubbles.append(visual.SimpleImageStim(surf, image = path_to_fixdur_files+'stimuli/single_bubble_images/'+bubble_image+'/'+bubble, pos = (x,y)))
             #loaded_bubbles.append(pygame.image.load(path_to_fixdur_files+'stimuli/training/single_bubbles/'+bubble_image+'/'+bubble).convert_alpha())
             all_bubbles.append([int(bubble.split('_',1)[1].split('_')[0]),int(bubble.split('_',1)[1].split('_')[1].split('.')[0])])
         remaining_bubbles = list(all_bubbles)
         #load and show stimulus
         img_num = random.randrange(0,10)
-        img_num = random.randrange(31,46)
-        stim = visual.SimpleImageStim(surf, path_to_fixdur_files+'stimuli/multi_bubble_images/'+bubble_image+'/'+bubble_image+'_'+str(img_num)+'.png')        
+        #img_num = random.randrange(31,46)
+        stim = visual.SimpleImageStim(surf, image=path_to_fixdur_files+'stimuli/multi_bubble_images/'+bubble_image+'/'+bubble_image+'_'+str(img_num)+'.png')        
         #stim = pygame.image.load(path_to_fixdur_files+'stimuli/multi_bubble_images/'+bubble_image+'/'+bubble_image+'_'+str(img_num)+'.png').convert()
         
         stim.draw(surf)   

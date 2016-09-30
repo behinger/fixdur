@@ -15,7 +15,7 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 NUM_OF_TRIALS =128
 #NUM_OF_TRIALS =5 
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
-START_TRIAL = 1    #which trial to begin with   
+START_TRIAL = 0    #which trial to begin with   
 #fullscreen = True   
 fullscreen = False
 EYETRACKING = False
@@ -113,7 +113,7 @@ surf.flip()
 #surf.blit(fix_cross,(rectXY[0]/2-(np.array(fix_cross.get_size())/2)[0],rectXY[1]/2-(np.array(fix_cross.get_size())/2)[1]))
 #pygame.display.update()
 
-trial_num = 1
+trial_num = 0
 trial_list = []
 
 # notwendig?
@@ -157,8 +157,8 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
             #pygame.draw.circle(surf,(50,205,50),(int(rectXY[0]/2),int(rectXY[1]/2)),10,5)    
         surf.flip()
         #pygame.display.update()
-        #key = event.getKeys()
-        key = tools.wait_for_key()
+        key = event.waitKeys()
+        #key = tools.wait_for_key()
         print 'key',key
         if ('escape' in key):
             surf.close()
@@ -391,7 +391,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                     el.trialmetadata("CHOSEN_BUBBLE", chosen_bubble)
                     el.trialmetadata('BUBBLE_DISPLAY_TIME', disp_time)
         
-                key = event.getKeys()
+                key = tools.wait_for_key()
                 if 'escape' in key:
                     surf.close()
                     sys.exit()
@@ -418,7 +418,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         trial_list.append(subtrial_list)
         #memory_res has order correct, left, right -> wrong in dict, but corrected for in analysis
         trial_list.append({'subject_number':subject_number, 'trial_type':current_trial[0][1], 'left_bubble':memory_res[0], 'right_bubble':memory_res[1], 'correct':memory_res[2]})
-        trial_num = trial_num + 1      
+        trial_num = trial_num + 1   
         
         if EYETRACKING == True:       
             el.end_trial() 
@@ -457,7 +457,7 @@ if EYETRACKING == True:
     el.finish()
 os.system('mv '+rand_filename+'.EDF '+path_to_fixdur_code+'data/'+str(subject)+'/')
 
-pygame.quit()
+#pygame.quit()
 if os.path.exists('/home_local/tracking/experiments/fixdur/'):
     os.system('cp -r /home_local/tracking/experiments/fixdur/expcode/data/'+str(subject)+'/ /home_local/tracking/experiments/fixdur/data/'+str(subject)+'/')
 #sys.exit()

@@ -58,10 +58,13 @@ def deg_2_px(visual_degree):
 ''' generize, save and return randomization for given subject'''
 def randomization(subject, trial_time):
     # ratio of number of bubbles: 1=50, 2=25, 3 =12.5, 4=6.25, 5=3.125 -> normalization factor to get to 100%: x=100/sum(ratios)
-    x=100/96.875
+    #x=100/96.875
     # custom distribution for ratios:
-    xk = np.arange(5)+1
-    pk = (0.5*x,0.25*x,0.125*x,0.0625*x,0.03125*x)
+    xk = [1,2,3,4,5,10]
+    pk = np.empty(6)
+    pk.fill(1./6)
+    #xk = np.arange(5)+1
+    #pk = (0.5*x,0.25*x,0.125*x,0.0625*x,0.03125*x)
     custm = stats.rv_discrete(name='custm', values=(xk, pk))
     # num_of_bubbles_ratio = [[i] for i in [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,4,4,5]]
     
@@ -103,7 +106,8 @@ def randomization(subject, trial_time):
             except:
                 IndexError 
             # num of bubbles            '''
-            num_bubble = custm.rvs(size=1)
+            num_bubble = [10]
+            #num_bubble = custm.rvs(size=1)
             num_bubbles = np.append(num_bubbles,num_bubble[0])
             #bubble_sum = bubble_sum + num_bubble[0]
             # display time of bubble
@@ -172,7 +176,8 @@ def slideshow(surf, ims):
             i -= 1
 
 def wait_for_key(keylist = None):
-    return(event.waitKeys(keyList = keylist))
+    return(event.getKeys(keyList = keylist))
+    #return(event.waitKeys(keyList = keylist))
  #   while 1:
  #       for event in psychopy.event.getKeys():
  #           if event.type == pygame.KEYDOWN:
@@ -203,12 +208,17 @@ def memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image,surf):
     #other_pic_rand_bubble = pygame.image.load(path_to_fixdur_files+'stimuli/single_bubble_images/'+other_pic_rand_bubble_loc[0]+'/'+other_pic_rand_bubble_loc[1]).convert_alpha()   
     #save image and bubble position
     other_pic_rand_bubble_loc = [other_pic_rand_bubble_loc[0],[int(other_pic_rand_bubble_loc[1].split('_',1)[1].split('_')[0]),int(other_pic_rand_bubble_loc[1].split('_',1)[1].split('_')[1].split('.')[0])] ]    
-    locations = [(386,400),(740,400)]
+    locations = [(-200,0),(200,0)]    
+    #locations = [(386,400),(740,400)]
     same = random.choice(locations)   
     locations.remove(same)
     
+    
     memory_image.draw(surf)
+    same_pic_rand_bubble.pos = same
     same_pic_rand_bubble.draw(surf)
+    
+    other_pic_rand_bubble.pos = locations[0]
     other_pic_rand_bubble.draw(surf)
     
     #memory_image.blit(same_pic_rand_bubble,same)
@@ -220,18 +230,20 @@ def memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image,surf):
     #key = wait_for_key(keylist = [K_LEFT,K_RIGHT])
     #if left bubble is correct and left bubble was choosen
     
-    if (((same == (386,400)) and (key == ['left'])) or \
+    if (((same == (-200,0)) and (key == ['left'])) or \
     #if (((same == (386,400)) and (pygame.key.name(key.key) == 'left')) or \
     #if right bubble is correct and right bubble was choosen
-    ((same == (740,400)) and (key == ['right']))):    
+    ((same == (200,0)) and (key == ['right']))):    
     #((same == (740,400)) and (pygame.key.name(key.key) == 'right'))):
         correct = True
     else:
         correct = False
-    if same == (386,400):
+    if same == (-200,0):
+    #if same == (386,400):
         left_bubble = same_pic_rand_bubble_loc
         right_bubble = other_pic_rand_bubble_loc
-    if same == (740,400):
+    if same == (200,0):
+    #if same == (740,400):
         left_bubble = other_pic_rand_bubble_loc
         right_bubble = same_pic_rand_bubble_loc
         
