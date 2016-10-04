@@ -1,6 +1,6 @@
 fd_lme4_ci = function(mres.standardized,varName,continuous=F,customvar=NULL,dataRange=NULL){
   
-  source('scripts/analysis/functions/fd_convert_continuous_discrete.R')
+  source('./functions/fd_convert_continuous_discrete.R')
   dat = mres.standardized@frame
   if(!is.null(customvar)){
     # If customvar go here

@@ -6,7 +6,7 @@ fd_stan_main <- function(mres,name,nchains=6,niter=500,rerun=F,is_on_grid=F){
   }
   name = paste0(name,'.RData')
   library(rstan)
-  dir = 'cache/stanfit/'
+  dir = '../../cache/stanfit/'
   dir.create(file.path(dir), showWarnings = F)
   if (file.exists(file.path(dir,name)) & !rerun){
     load(file.path(dir,name))
@@ -32,7 +32,7 @@ fd_stan_main <- function(mres,name,nchains=6,niter=500,rerun=F,is_on_grid=F){
                       }
     )
     # 5. Fit the model.
-    fd_model = stan_model(file='scripts/analysis/stan/fd_model_1.stan')
+    fd_model = stan_model(file='./stan/fd_model_1.stan')
   #   init.f = function(chain_id){
   #     numP = 20
   #     list(beta=c(200,rep(0,numP-1))+rnorm(numP,0,1))

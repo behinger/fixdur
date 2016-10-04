@@ -1,34 +1,44 @@
----
-output: pdf_document
----
-lme4----
-title: "Fixdur Plots ECEM 03 08 2015"
-author: "Benedikt Ehinger Lilli Kaufhold"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
-----
-#+ setup, include=FALSE}
+#' ---
+#' output: pdf_document
+#' ---
+#' ----
+#' title: "Fixdur Plots ECEM 03 08 2015"
+#' author: "Benedikt Ehinger Lilli Kaufhold"
+#' date: "`r format(Sys.time(), '%d %B, %Y')`"
+#' ----
+#+ setup, include=FALSE
 knitr::opts_chunk$set(echo=FALSE, warning=FALSE, autodep=TRUE,message=FALSE,cache=T,fig.width=7.5, fig.asp=0.75) #usually fig height 8
 
 
-#+ set-options, echo=FALSE, cache=FALSE}
+#+ set-options, echo=FALSE, cache=TRUE
 #options(width = 120)
 
 
-setwd('/net/store/nbp/users/behinger/projects/fixdur/git') #path to GIT
-source("scripts/analysis/functions/fd_paths.R") # this adds lots of paths & functions
+#setwd('/net/store/nbp/users/behinger/projects/fixdur/git/scripts/analysis') #path to GIT
+source("functions/fd_paths.R") # this adds lots of paths & functions
 
 #cfg = list(nIter=100,gist=TRUE)
-cfg = list(nIter=100,gist=FALSE)
+cfg = list(nIter=100,gist=TRUE)
 
-if (cfg$gist){
-  data.3mad = fd_loaddata('./cache/data/all_res_gist.RData')
+source('fd_load_midlevel.R')
+
+if(cfg$gist){ #this is preparing for common plots.. but no common plots with gist and nogist together are needed currently.
+  data.3mad = fd_loaddata('../../cache/data/all_res_gist.RData')
+  out = fd_load_midlevel(data.3mad,list(gist=TRUE))
 }else{
   data.3mad = fd_loaddata()
+  out = fd_load_midlevel(data.3mad,list(gist=FALSE))
 }
 
 
-source('scripts/analysis/fd_load_midlevel.R')
-
+stanfit =  out$fit
+label_dataframe = out$label_dataframe
+modelMatrix = out$modelMatrix
+hdiDataFrame=out$hdiDataFrame
+hdiDataFrameNorm=out$hdiDataFrameNorm
+hdiDataFrameNormLabels=out$hdiDataFrameNormLabels
+S_custom=out$S_custom
+mres.complexStandard.3mad=out$mres.complexStandard.3mad
 
 
 #+ outlierplot, fig.asp=0.25
@@ -70,8 +80,6 @@ plot_posteriorpredictive = function(dat){
 
 
 
-#labels = hdiDataFrameNormLabels#c('beta~x~180','beta~x~all~trials','beta~x~90','beta~x~90','beta~x~90','beta~x~90','beta~x~average~fixation~duration','beta~x~average~fixation~duration','beta~x~average~fixation~duration','beta~x~average~fixation~duration','alpha','beta~x~diagonal~of~image','beta~x~5~bubbles','beta~x~diagonal~of~image','beta~x~90','beta~x~90','beta~x~90','beta~x~90','difference~between~image~category')
-
 #+ horizontalErrorbarParameterplot
 ggplot(hdiDataFrameNorm,aes(y=Parameter,x=Estimate,color=as.factor(group)))+
     geom_errorbarh(aes(xmax=high,xmin=low),height=0,lwd=1,position=position_dodgev(height=.5))+
@@ -89,10 +97,10 @@ ggplot(hdiDataFrameNorm,aes(y=Parameter,x=Estimate,color=as.factor(group)))+
 
 
 #+
-  out = arrange(hdiDataFrameNorm,hdiDataFrameNorm[,'group'])
-  out = subset(out,select=c('Parameter','low','Estimate','high','group'))
-is.num <- sapply(out, is.numeric)
-out[is.num] <- lapply(out[is.num], round, 2)
+#  out = arrange(hdiDataFrameNorm,hdiDataFrameNorm[,'group'])
+#  out = subset(out,select=c('Parameter','low','Estimate','high','group'))
+#is.num <- sapply(out, is.numeric)
+#out[is.num] <- lapply(out[is.num], round, 2)
 
 
 #+,include=F
@@ -112,38 +120,39 @@ out[is.num] <- lapply(out[is.num], round, 2)
 #   lm(data = data.3mad,formula = choicetime~log(forcedFixtime)+log(as.numeric(NumOfBubbles)))
   
   
-  ggplot(data.3mad,aes(x=forcedFixtime,y=choicetime,color=factor(NumOfBubbles)))+stat_smooth(method='gam',formula=y~s(x))+scale_x_continuous(trans='log1p',breaks=c(30,50,100,500,1000))+coord_cartesian(xlim=(c(30,1000)),ylim=c(140,200))+tBE()
+ggplot(data.3mad,aes(x=forcedFixtime,y=choicetime,color=factor(NumOfBubbles)))+stat_smooth(method='gam',formula=y~s(x))+scale_x_continuous(trans='log1p',breaks=c(30,50,100,500,1000))+coord_cartesian(xlim=(c(30,1000)),ylim=c(140,200))+tBE()
 
 
 #+ NoBPostPredData,results='hide'
 
-p.NumOfBubbles = fd_plot_postpred('log_NumOfBubbles',
-                                  mres=mres.complexStandard.3mad,
-                                  fit=stanfit,
-                                  continuous_var = F,
-                                  customvar=naRM(mres.complexStandard.3mad@frame,as.numeric(data.3mad$NumOfBubbles)),
-                                  cosineau = T,nIter=cfg$nIter)
-
+# p.NumOfBubbles = fd_plot_postpred('log_NumOfBubbles',
+#                                  mres=mres.complexStandard.3mad,
+#                                  fit=stanfit,
+#                                  continuous_var = F,
+#                                  customvar=naRM(mres.complexStandard.3mad@frame,as.numeric(data.3mad$NumOfBubbles)),
+#                                  cosineau = T,nIter=cfg$nIter)
+#
 
 
 
 #+ NoBPostPredPlot
   ## TODO: Choose one line and only one
-p.NumOfBubbles + xlab('NumOfBubbles') + ylab('choicetime [ms]')+tBE()
+#p.NumOfBubbles + xlab('NumOfBubbles') + ylab('choicetime [ms]')+tBE()
 
 
 
 #+ dataFF,results='hide'
-d.forcedFixtime = fd_plot_postpred('forcedFixtime',
+d.forcedFixtime = fd_plot_postpred('',
                                    mres=mres.complexStandard.3mad,
                                    fit=stanfit,
                                    dataRange = c(0,1500),
                                    continuous_var = T,
                                    cosineau = T,
+                                   customvar=naRM(mres.complexStandard.3mad@frame,as.numeric(data.3mad$forcedFixtime)),
                                    returnData=T,
                                    nIter=cfg$nIter)
 
-d.forcedFixtime$forcedFixtime[is.na(d.forcedFixtime$forcedFixtime)] = d.forcedFixtime[is.na(d.forcedFixtime$forcedFixtime),8]
+#d.forcedFixtime$forcedFixtime[is.na(d.forcedFixtime$forcedFixtime)] = d.forcedFixtime[is.na(d.forcedFixtime$forcedFixtime),8]
 
 
 
@@ -151,7 +160,7 @@ d.forcedFixtime$forcedFixtime[is.na(d.forcedFixtime$forcedFixtime)] = d.forcedFi
 
 #+ dataNoB, results='hide'
 
-d.NumOfBubblesC = fd_plot_postpred('log_NumOfBubbles',
+d.NumOfBubblesC = fd_plot_postpred('',
                                    mres=mres.complexStandard.3mad,
                                    fit=stanfit,continuous_var =F,
                                    customvar=naRM(mres.complexStandard.3mad@frame,as.numeric(data.3mad$NumOfBubbles)),
@@ -223,6 +232,25 @@ d.prevBubbleDist = fd_plot_postpred('',
                                     customvar=naRM(mres.complexStandard.3mad@frame,data.3mad$prevBubbleDist),
                                     nIter=cfg$nIter)
 
+d.bubbleY = fd_plot_postpred('',
+                                    mres=mres.complexStandard.3mad,
+                                    fit=stanfit,continuous_var =T,
+                                    cosineau = T,returnData=T,
+                                    customvar=naRM(mres.complexStandard.3mad@frame,data.3mad$bubbleY),
+                                    nIter=cfg$nIter)
+d.bubbleX = fd_plot_postpred('',
+                             mres=mres.complexStandard.3mad,
+                             fit=stanfit,continuous_var =T,
+                             cosineau = T,returnData=T,
+                             customvar=naRM(mres.complexStandard.3mad@frame,data.3mad$bubbleX),
+                             nIter=cfg$nIter)
+
+d.centerdistance = fd_plot_postpred('',
+                             mres=mres.complexStandard.3mad,
+                             fit=stanfit,continuous_var =T,
+                             cosineau = T,returnData=T,
+                             customvar=naRM(mres.complexStandard.3mad@frame,data.3mad$centerDistance),
+                             nIter=cfg$nIter)
  
 #+ results='hide'
 

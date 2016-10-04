@@ -1,6 +1,6 @@
 # Plot by bubble
-source("scripts/analysis/functions/fd_predict.R")
-source("scripts/analysis/functions/fd_runningAverage.R")
+source("./functions/fd_predict.R")
+source("./functions/fd_runningAverage.R")
 fd_plot.pred_data <- function(data,model,factor,range=NULL){
   
   data.meanH = fd_plot_X_choicetime(data,X=factor,returnPlot=F,dataRange=range)

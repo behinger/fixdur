@@ -1,4 +1,3 @@
-
 fd_convert_continuous_discrete = function(pred,varName,dataRange=NULL){
   #browser()
   if(is.null(dataRange)){
@@ -7,7 +6,7 @@ fd_convert_continuous_discrete = function(pred,varName,dataRange=NULL){
     xRange = seq(dataRange[1],dataRange[2],length.out = 30) 
   }
   
-  if(is.null(dim(pred))){
+  if(!class(pred)=='data.frame'){
    pred = data.frame(pred)
    colnames(pred)[1] = varName
   }

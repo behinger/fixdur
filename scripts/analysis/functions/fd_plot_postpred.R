@@ -9,9 +9,9 @@ fd_plot_postpred = function(varName,mres,
   
   
   library('magrittr')
-  source('scripts/analysis/functions/fd_stan_posteriorPredictive.R')
-  source('scripts/analysis/functions/fd_posteriorpredictive_hdi.R')
-  source('scripts/analysis/functions/fd_lme4_ci.R')
+  source('./functions/fd_stan_posteriorPredictive.R')
+  source('./functions/fd_posteriorpredictive_hdi.R')
+  source('./functions/fd_lme4_ci.R')
   
   
   if(is.null(mres.standardized)){
@@ -43,6 +43,7 @@ fd_plot_postpred = function(varName,mres,
                                                        continuous_var = continuous_var,
                                                        customvar=customvar,
                                                        cosineau=cosineau,
+                                                       nSub = length(unique(mres@frame$subject)),
                                                        dataRange =dataRange ))
   
   

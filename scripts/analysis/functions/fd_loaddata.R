@@ -1,4 +1,4 @@
-fd_loaddata <- function(dataOrPath = 'cache/data/all_res.RData',clean=TRUE,returnOutlier=FALSE){
+fd_loaddata <- function(dataOrPath = '../../cache/data/all_res.RData',clean=TRUE,returnOutlier=FALSE){
 # Load and generate the data
 #----
 #mres = glmer(formula = y ~ tl+tr +ia + ia:tl  +  ia:tr+(1|sub),data=dat.raw,family=binomial)

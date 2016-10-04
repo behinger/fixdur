@@ -3,7 +3,7 @@ model_stan_posteriorPredictive = function(fit,fullModelMatrix,subjectIndexVector
  #browser()
   
   
-  source('scripts/analysis/functions/fd_convert_continuous_discrete.R')
+  source('./functions/fd_convert_continuous_discrete.R')
   check_param_in_model = function(param,model){
     return(length(grep(param,colnames(model),fixed=T))>0)
   }
@@ -98,6 +98,7 @@ if(is.list(dataRange)){
     get_pred = function(ran,fullModelMatrix){
     
     pred = adply(ran,1,function(x){
+      #browser()
       X=fullModelMatrix[subjectIndexVector==tail(x,1),]
       return(cbind(data.frame(y=rnorm(dim(X)[1], head(x,-1)%*%t(X), sigma_e),trial=1:dim(X)[1]),
                    X))},
