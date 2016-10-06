@@ -48,7 +48,7 @@ fd_plot_postpred = function(varName,mres,
   
   
   # we calculate the confidence intervals of the quartiles  
-
+#  browser()
   predDat.ci = fd_posteriorpredictive_hdi(predDat,columns=seq(length(continuous_var)+1))
 #  browser()
   # we get the quartiles of the real data

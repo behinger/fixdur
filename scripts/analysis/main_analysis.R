@@ -14,21 +14,21 @@ knitr::opts_chunk$set(echo=FALSE, warning=FALSE, autodep=TRUE,message=FALSE,cach
 #options(width = 120)
 
 
-#setwd('/net/store/nbp/users/behinger/projects/fixdur/git/scripts/analysis') #path to GIT
+#setwd('/net/store/nbp/users/behinger/projects/fixdur/git') #path to GIT
 source("functions/fd_paths.R") # this adds lots of paths & functions
 
 #cfg = list(nIter=100,gist=TRUE)
-cfg = list(nIter=100,gist=TRUE)
+cfg = list(nIter=100,gist=FALSE)
 
 source('fd_load_midlevel.R')
 
-if(cfg$gist){ #this is preparing for common plots.. but no common plots with gist and nogist together are needed currently.
-  data.3mad = fd_loaddata('../../cache/data/all_res_gist.RData')
-  out = fd_load_midlevel(data.3mad,list(gist=TRUE))
-}else{
-  data.3mad = fd_loaddata()
-  out = fd_load_midlevel(data.3mad,list(gist=FALSE))
-}
+#if(cfg$gist){ 
+data.3madGist = fd_loaddata('../../cache/data/all_res_gist.RData')
+outGist = fd_load_midlevel(data.3madGist,list(gist=TRUE))
+#}else{
+data.3mad = fd_loaddata()
+out = fd_load_midlevel(data.3mad,list(gist=FALSE))
+#}
 
 
 stanfit =  out$fit
@@ -95,12 +95,27 @@ ggplot(hdiDataFrameNorm,aes(y=Parameter,x=Estimate,color=as.factor(group)))+
     coord_cartesian(xlim=c(-45,90))+
     geom_vline(xintercept=0)+tBE()+theme(strip.background = element_blank(),strip.text.x=element_blank())+ylab("")
 
+# Same Plot but for gist data
+
+ggplot(outGist$hdiDataFrameNorm,aes(y=Parameter,x=Estimate,color=as.factor(group)))+
+  geom_errorbarh(aes(xmax=high,xmin=low),height=0,lwd=1,position=position_dodgev(height=.5))+
+  geom_point(position=position_dodgev(height=.5))+
+  
+  scale_color_discrete(guide=FALSE)+ # hide the unnessecary colour legend
+  geom_text(data=data.frame(group=outGist$hdiDataFrameNorm$group,
+                            Parameter =outGist$hdiDataFrameNorm$Parameter,
+                            transformRule=outGist$hdiDataFrameNormLabels),#transformRule=paste0('`',hdiDataFrameNormLabels,'`')
+            aes(x=40,label=transformRule),color='gray',hjust='outward',parse=T)+
+  
+  facet_grid(group~.,scale='free_y',space='free_y')+
+  coord_cartesian(xlim=c(-45,90))+
+  geom_vline(xintercept=0)+tBE()+theme(strip.background = element_blank(),strip.text.x=element_blank())+ylab("")
 
 #+
-#  out = arrange(hdiDataFrameNorm,hdiDataFrameNorm[,'group'])
-#  out = subset(out,select=c('Parameter','low','Estimate','high','group'))
-#is.num <- sapply(out, is.numeric)
-#out[is.num] <- lapply(out[is.num], round, 2)
+  out = arrange(hdiDataFrameNorm,hdiDataFrameNorm[,'group'])
+  out = subset(out,select=c('Parameter','low','Estimate','high','group'))
+is.num <- sapply(out, is.numeric)
+out[is.num] <- lapply(out[is.num], round, 2)
 
 
 #+,include=F
@@ -125,34 +140,33 @@ ggplot(data.3mad,aes(x=forcedFixtime,y=choicetime,color=factor(NumOfBubbles)))+s
 
 #+ NoBPostPredData,results='hide'
 
-# p.NumOfBubbles = fd_plot_postpred('log_NumOfBubbles',
+#p.NumOfBubbles = fd_plot_postpred('log_NumOfBubbles',
 #                                  mres=mres.complexStandard.3mad,
 #                                  fit=stanfit,
 #                                  continuous_var = F,
 #                                  customvar=naRM(mres.complexStandard.3mad@frame,as.numeric(data.3mad$NumOfBubbles)),
 #                                  cosineau = T,nIter=cfg$nIter)
-#
+
 
 
 
 #+ NoBPostPredPlot
   ## TODO: Choose one line and only one
-#p.NumOfBubbles + xlab('NumOfBubbles') + ylab('choicetime [ms]')+tBE()
+# p.NumOfBubbles + xlab('NumOfBubbles') + ylab('choicetime [ms]')+tBE()
 
 
 
 #+ dataFF,results='hide'
-d.forcedFixtime = fd_plot_postpred('',
+d.forcedFixtime = fd_plot_postpred('forcedFixtime',
                                    mres=mres.complexStandard.3mad,
                                    fit=stanfit,
                                    dataRange = c(0,1500),
                                    continuous_var = T,
                                    cosineau = T,
-                                   customvar=naRM(mres.complexStandard.3mad@frame,as.numeric(data.3mad$forcedFixtime)),
                                    returnData=T,
                                    nIter=cfg$nIter)
 
-#d.forcedFixtime$forcedFixtime[is.na(d.forcedFixtime$forcedFixtime)] = d.forcedFixtime[is.na(d.forcedFixtime$forcedFixtime),8]
+d.forcedFixtime$forcedFixtime[is.na(d.forcedFixtime$forcedFixtime)] = d.forcedFixtime[is.na(d.forcedFixtime$forcedFixtime),8]
 
 
 
@@ -160,7 +174,7 @@ d.forcedFixtime = fd_plot_postpred('',
 
 #+ dataNoB, results='hide'
 
-d.NumOfBubblesC = fd_plot_postpred('',
+d.NumOfBubblesC = fd_plot_postpred('log_NumOfBubbles',
                                    mres=mres.complexStandard.3mad,
                                    fit=stanfit,continuous_var =F,
                                    customvar=naRM(mres.complexStandard.3mad@frame,as.numeric(data.3mad$NumOfBubbles)),
@@ -250,8 +264,16 @@ d.centerdistance = fd_plot_postpred('',
                              fit=stanfit,continuous_var =T,
                              cosineau = T,returnData=T,
                              customvar=naRM(mres.complexStandard.3mad@frame,data.3mad$centerDistance),
+                             dataRange = c(0.5,13.5), # for 0 - 0.5 only few data points exist and vice versa for 13.5 - 14
                              nIter=cfg$nIter)
  
+
+d.bubbleNum = fd_plot_postpred('',
+                                    mres=mres.complexStandard.3mad,
+                                    fit=stanfit,continuous_var =T,
+                                    cosineau = T,returnData=T,
+                                    customvar=naRM(mres.complexStandard.3mad@frame,data.3mad$bubbleNum),
+                                    nIter=cfg$nIter)
 #+ results='hide'
 
 d.ff_NoB = fd_plot_postpred('',
@@ -349,12 +371,18 @@ cowplot::plot_grid(plot_posteriorpredictive(d.nextBubbleAngle)+xlab('angle to ne
                    
                    plot_posteriorpredictive(d.angleDiff)+xlab('difference in angle between bubbles [°]')+ylab('')+coord_cartesian(ylim=c(153, 167))+scale_x_continuous(breaks=c(-180,-90,0,90,180))+scale_color_discrete(guide=F)+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
                    
-                  plot_posteriorpredictive(d.nextBubbleDist)+xlab('distance to next bubble [px]')+ylab('')+coord_cartesian(ylim=ylim_common)+scale_color_discrete(guide=F)+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
+                  plot_posteriorpredictive(d.nextBubbleDist)+xlab('distance to next bubble [°]')+ylab('')+coord_cartesian(ylim=c(135,180))+scale_color_discrete(guide=F)+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
                   
-                   plot_posteriorpredictive(d.trialNum)+xlab('trial number')+ylab('')+coord_cartesian(ylim=c(153,167))+scale_color_discrete(guide=F)+scale_x_continuous(breaks=c(0,32,64,96,128))+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
-                  labels=c("A","B","C","D")
+                  plot_posteriorpredictive(d.bubbleX)+xlab('X-Position [°]')+ylab('')+coord_cartesian(ylim=c(135,180))+scale_color_discrete(guide=F)+scale_x_continuous(breaks=c(-10,0,10))+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
+                  plot_posteriorpredictive(d.bubbleY)+xlab('Y-Position [°]')+ylab('')+coord_cartesian(ylim=c(135,180))+scale_color_discrete(guide=F)+scale_x_continuous(breaks=c(-7.5,0,7.5))+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
+                  plot_posteriorpredictive(d.centerdistance)+xlab('Center Distance [°]')+ylab('')+coord_cartesian(ylim=c(135,180))+scale_color_discrete(guide=F)+scale_x_continuous(breaks=c(0,5,10))+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
+                  labels=c("A","B","C","D",'E','F')
                    )
 
+cowplot::plot_grid(
+plot_posteriorpredictive(d.trialNum)+xlab('trial number')+ylab('')+coord_cartesian(ylim=c(153,167))+scale_color_discrete(guide=F)+scale_x_continuous(breaks=c(0,32,64,96,128))+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
+plot_posteriorpredictive(d.bubbleNum)+xlab('bubble number')+ylab('')+coord_cartesian(ylim=c(153,167),xlim=c(0,25))+scale_color_discrete(guide=F)+scale_x_continuous(breaks=c(0,32,64,96,128))+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
+labels=c("A","B"))
 #plot_posteriorpredictive(d.prevBubbleAngle)+xlab('prevbubbleangle')+coord_cartesian(ylim=ylim_common)
 
 
