@@ -26,6 +26,7 @@ MAT = 154
 
 
 
+
 def paths():
     '''return paths'''
     if os.path.exists('/home_local/thesis/fixdur/experiment/'):
@@ -57,77 +58,73 @@ def deg_2_px(visual_degree):
 
 ''' generize, save and return randomization for given subject'''
 def randomization(subject, trial_time):
-    # ratio of number of bubbles: 1=50, 2=25, 3 =12.5, 4=6.25, 5=3.125 -> normalization factor to get to 100%: x=100/sum(ratios)
-    #x=100/96.875
-    # custom distribution for ratios:
-    xk = [1,2,3,4,5,10]
-    pk = np.empty(6)
-    pk.fill(1./6)
-    #xk = np.arange(5)+1
-    #pk = (0.5*x,0.25*x,0.125*x,0.0625*x,0.03125*x)
+
+    # uniform distribution of number of bubbles
+    xk = [0,1,2,3,4,5,10]
+    pk = np.empty(len(xk))
+    pk.fill(1./len(xk))
+
     custm = stats.rv_discrete(name='custm', values=(xk, pk))
-    # num_of_bubbles_ratio = [[i] for i in [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,4,4,5]]
     
     images = os.listdir(path_to_fixdur_files+'stimuli/single_bubble_images/')
     np.random.shuffle(images)
     
-    types = []
-    for a in range(int(len(images)/4)):
-        types.append('all')
-    for a in range(int((len(images)/4)*3)):
-        types.append('seq')
-    random.shuffle(types)
+    #types = []
+    #for a in range(int(len(images)/4)):
+    #    types.append('all')
+    #for a in range(int((len(images)/4)*3)):
+    #    types.append('seq')
+    #random.shuffle(types)
 
     # dimensions of output array: 
     trials = []         # image number
-    trial_type = []     # all_bubbles or sequential
+    #trial_type = []     # all_bubbles or sequential
     num_bubbles = []    # number of bubbles
     disp_time = []      # time of bubble display
-    #bubble_sums = []
-    #fix_nums = []
+
     a = 0;
     for image in images:
+        
         # reset counter
         time = 0
-        #bubble_sum = 0
-        #fix_num = 0
+        
         while time<trial_time:
             # image
             trials = np.append(trials,image)
             # if new trial beginns
-            try:
-                if (time == 0):
-                    trial_type = np.append(trial_type,types[0])
-                    types.remove(types[0])
-                    a = a+1
+            #try:
+            #    if (time == 0):
+            #        trial_type = np.append(trial_type,types[0])
+            #        types.remove(types[0])
+            #        a = a+1
                     # if we are still in the same trial    
-                else:
-                    trial_type = np.append(trial_type,trial_type[-1])
-            except:
-                IndexError 
+            #    else:
+            #        trial_type = np.append(trial_type,trial_type[-1])
+            #except:
+            #    IndexError 
+                
             # num of bubbles            '''
-            num_bubble = [10]
+            num_bubble = [0] 
             #num_bubble = custm.rvs(size=1)
             num_bubbles = np.append(num_bubbles,num_bubble[0])
-            #bubble_sum = bubble_sum + num_bubble[0]
+
             # display time of bubble
             disp = scipy.random.exponential(295,1)
             disp_time = np.append(disp_time,int(disp))
+            
             # increase counter
             if int(disp) == 0:
                 disp = 1
             time = time + int(disp)
-            #fix_num = fix_num + 1
-        #bubble_sums.append(bubble_sum)
-        #fix_nums.append(fix_num)
+ 
 
     trials = np.reshape(trials,(len(trials),1))
-    trial_type = np.reshape(trial_type,(len(trial_type),1))
+    #trial_type = np.reshape(trial_type,(len(trial_type),1))
     num_bubbles = np.reshape(num_bubbles,(len(num_bubbles),1))
     disp_time = np.reshape(disp_time,(len(disp_time),1))
 
-    trial_mat = np.append(trials,trial_type,axis=1)
-    trial_mat = np.append(trial_mat,num_bubbles,axis=1)
+    #trial_mat = np.append(trials,trial_type,axis=1)
+    trial_mat = np.append(trials,num_bubbles,axis=1)
     trial_mat = np.append(trial_mat,disp_time,axis=1)
 
     np.save(path_to_fixdur_code+'/data/'+str(subject)+'/rand_'+str(subject),trial_mat)
@@ -208,6 +205,10 @@ def memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image,surf):
     #other_pic_rand_bubble = pygame.image.load(path_to_fixdur_files+'stimuli/single_bubble_images/'+other_pic_rand_bubble_loc[0]+'/'+other_pic_rand_bubble_loc[1]).convert_alpha()   
     #save image and bubble position
     other_pic_rand_bubble_loc = [other_pic_rand_bubble_loc[0],[int(other_pic_rand_bubble_loc[1].split('_',1)[1].split('_')[0]),int(other_pic_rand_bubble_loc[1].split('_',1)[1].split('_')[1].split('.')[0])] ]    
+    mon_res = surf.size
+    #locations = [(mon_res[1]/2,mon_res[0]/2-300),(mon_res[1]/2,mon_res[0]/2+300)] 
+    #locations = [(mon_res[0]/2-300,mon_res[1]/2),(mon_res[0]/2+300,mon_res[1]/2)]    
+    #print locations
     locations = [(-200,0),(200,0)]    
     #locations = [(386,400),(740,400)]
     same = random.choice(locations)   
