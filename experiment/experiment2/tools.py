@@ -6,6 +6,7 @@ from math import atan2, degrees,sqrt,atan,sin,cos,exp,log
 from scipy import stats
 from pygame.locals import *
 from collections import deque
+#import tools_extended as tools_ex
 
 try:
     import fixdur_tracker as tracker
@@ -104,8 +105,8 @@ def randomization(subject, trial_time):
             #    IndexError 
                 
             # num of bubbles            '''
-            num_bubble = [0] 
-            #num_bubble = custm.rvs(size=1)
+            #num_bubble = [0] 
+            num_bubble = custm.rvs(size=1)
             num_bubbles = np.append(num_bubbles,num_bubble[0])
 
             # display time of bubble
@@ -185,70 +186,7 @@ def wait_for_key(keylist = None):
  #                   return event
  #       pygame.time.delay(50)
 
-'''display memory task, return displayed bubbles and decision'''        
-def memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image,surf):
-    correct = 'No valid answer yet'
-    #bubble from shown image for task
-    same_pic_rand_bubble_loc = random.choice(all_bubbles)
-    #load bubble
-    same_pic_rand_bubble = loaded_bubbles[all_bubbles.index(same_pic_rand_bubble_loc)]
-    #save image and bubble position
-    same_pic_rand_bubble_loc = [bubble_image,same_pic_rand_bubble_loc]
-    #bubble from other image
-    bubble_mat = np.load(path_to_fixdur_code+'all_bubble_mat.npy')
-    other_pic_rand_bubble_loc = random.choice(bubble_mat)
-    #make sure it"s from another image
-    while other_pic_rand_bubble_loc[0] == bubble_image:
-        other_pic_rand_bubble_loc = random.choice(bubble_mat)
-    #load bubble 
-    other_pic_rand_bubble = visual.SimpleImageStim(surf,path_to_fixdur_files+'stimuli/single_bubble_images/'+other_pic_rand_bubble_loc[0]+'/'+other_pic_rand_bubble_loc[1])
-    #other_pic_rand_bubble = pygame.image.load(path_to_fixdur_files+'stimuli/single_bubble_images/'+other_pic_rand_bubble_loc[0]+'/'+other_pic_rand_bubble_loc[1]).convert_alpha()   
-    #save image and bubble position
-    other_pic_rand_bubble_loc = [other_pic_rand_bubble_loc[0],[int(other_pic_rand_bubble_loc[1].split('_',1)[1].split('_')[0]),int(other_pic_rand_bubble_loc[1].split('_',1)[1].split('_')[1].split('.')[0])] ]    
-    mon_res = surf.size
-    #locations = [(mon_res[1]/2,mon_res[0]/2-300),(mon_res[1]/2,mon_res[0]/2+300)] 
-    #locations = [(mon_res[0]/2-300,mon_res[1]/2),(mon_res[0]/2+300,mon_res[1]/2)]    
-    #print locations
-    locations = [(-200,0),(200,0)]    
-    #locations = [(386,400),(740,400)]
-    same = random.choice(locations)   
-    locations.remove(same)
-    
-    
-    memory_image.draw(surf)
-    same_pic_rand_bubble.pos = same
-    same_pic_rand_bubble.draw(surf)
-    
-    other_pic_rand_bubble.pos = locations[0]
-    other_pic_rand_bubble.draw(surf)
-    
-    #memory_image.blit(same_pic_rand_bubble,same)
-    #memory_image.blit(other_pic_rand_bubble,locations[0])
-    #surf.blit(memory_image,(320,60))
-    surf.flip()
-    #pygame.display.update()
-    key = event.waitKeys(keyList=['left', 'right'])    
-    #key = wait_for_key(keylist = [K_LEFT,K_RIGHT])
-    #if left bubble is correct and left bubble was choosen
-    
-    if (((same == (-200,0)) and (key == ['left'])) or \
-    #if (((same == (386,400)) and (pygame.key.name(key.key) == 'left')) or \
-    #if right bubble is correct and right bubble was choosen
-    ((same == (200,0)) and (key == ['right']))):    
-    #((same == (740,400)) and (pygame.key.name(key.key) == 'right'))):
-        correct = True
-    else:
-        correct = False
-    if same == (-200,0):
-    #if same == (386,400):
-        left_bubble = same_pic_rand_bubble_loc
-        right_bubble = other_pic_rand_bubble_loc
-    if same == (200,0):
-    #if same == (740,400):
-        left_bubble = other_pic_rand_bubble_loc
-        right_bubble = same_pic_rand_bubble_loc
-        
-    return [correct,left_bubble,right_bubble]
+
     
     
 
