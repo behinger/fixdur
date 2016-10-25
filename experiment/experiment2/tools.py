@@ -60,6 +60,8 @@ def deg_2_px(visual_degree):
 ''' generize, save and return randomization for given subject'''
 def randomization(subject, trial_time):
 
+    #total_num_trials = 128    
+    
     # uniform distribution of number of bubbles
     xk = [0,1,2,3,4,5,10]
     pk = np.empty(len(xk))
@@ -82,6 +84,8 @@ def randomization(subject, trial_time):
     #trial_type = []     # all_bubbles or sequential
     num_bubbles = []    # number of bubbles
     disp_time = []      # time of bubble display
+    control_list = []   # information if control condition is applied
+    
 
     a = 0;
     for image in images:
@@ -103,30 +107,46 @@ def randomization(subject, trial_time):
             #        trial_type = np.append(trial_type,trial_type[-1])
             #except:
             #    IndexError 
-                
-            # num of bubbles            '''
-            #num_bubble = [0] 
-            num_bubble = custm.rvs(size=1)
+            
+            if time == 0:            
+                control = np.random.randint(2)
+            control_list.append(control)            
+            
+            # num of bubbles
+            if control == 1: # no whole_image condition
+                num_bubbles = np.random.choice([1,2,3,4,5,10])
+            else: # with whole_image condition
+                num_bubble = custm.rvs(size=1)
             num_bubbles = np.append(num_bubbles,num_bubble[0])
 
             # display time of bubble
             disp = scipy.random.exponential(295,1)
             disp_time = np.append(disp_time,int(disp))
             
+            # probability that control condition is applied is 1/2
+            if time == 0:            
+                control = np.random.randint(2)
+            control_list.append(control)
+            
             # increase counter
             if int(disp) == 0:
                 disp = 1
             time = time + int(disp)
  
-
+    #control = np.random.randint(2,size=(len(trials),1))
     trials = np.reshape(trials,(len(trials),1))
     #trial_type = np.reshape(trial_type,(len(trial_type),1))
     num_bubbles = np.reshape(num_bubbles,(len(num_bubbles),1))
     disp_time = np.reshape(disp_time,(len(disp_time),1))
+    control_list = np.reshape(control_list,(len(control_list),1))
 
     #trial_mat = np.append(trials,trial_type,axis=1)
     trial_mat = np.append(trials,num_bubbles,axis=1)
     trial_mat = np.append(trial_mat,disp_time,axis=1)
+    trial_mat = np.append(trial_mat, control_list, axis=1)
+    
+    # create vector if control condition is applied in the trial or not
+    #control_mat = np.random.randint(2,size=(1,total_num_trials))
 
     np.save(path_to_fixdur_code+'/data/'+str(subject)+'/rand_'+str(subject),trial_mat)
 
@@ -286,7 +306,7 @@ def wait_for_fix(el,used_bubble):
 predict saccade end point
 return bubble if in distance of diameter(MAT) of bubble center
 '''    
-def sacc_detection(el,used_bubble):
+def sacc_detection(el,used_locations,whole_image = False):
     
     #buffer for x coordiante, y coordinate, velocity
     bufferx, buffery, bufferv = deque(maxlen=3), deque(maxlen=3), deque(maxlen=4)
@@ -306,19 +326,20 @@ def sacc_detection(el,used_bubble):
         bufferv.append(np.mean(((np.diff(np.array(bufferx))**2+np.diff(np.array(buffery))**2)**.5) * TRACKING_FREQ)/float(PPD))
 
         #saccade_onset
-        if bufferv[-1] < 30:
-            saccade = 0
-            #check if sample already in next bubble
-            for bubble in used_bubble:
-                if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-y)**2))) < MAT/2):
-                    el.trialmetadata('start_x', bufferx[-1])
-                    el.trialmetadata('start_y', buffery[-1])
-                    el.trialmetadata('start_velocity', bufferv[-1])
-                    el.trialmetadata('end_x', bufferx[-1])
-                    el.trialmetadata('end_y', buffery[-1])
-                    el.trialmetadata('end_velocity', bufferv[-1])
-                    el.trialmetadata('sacc_detection', 'start_in_bubble')
-                    return bubble   
+        if whole_image == False:
+            if bufferv[-1] < 30:
+                saccade = 0
+                #check if sample already in next bubble
+                for bubble in used_locations:
+                    if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-y)**2))) < MAT/2):
+                        el.trialmetadata('start_x', bufferx[-1])
+                        el.trialmetadata('start_y', buffery[-1])
+                        el.trialmetadata('start_velocity', bufferv[-1])
+                        el.trialmetadata('end_x', bufferx[-1])
+                        el.trialmetadata('end_y', buffery[-1])
+                        el.trialmetadata('end_velocity', bufferv[-1])
+                        el.trialmetadata('sacc_detection', 'start_in_bubble')
+                        return bubble   
         if saccade == 0 and bufferv[-1]>70:
             start_x = float(bufferx[-1])
             start_y = float(buffery[-1])
@@ -349,19 +370,31 @@ def sacc_detection(el,used_bubble):
                     print "predicted bubble found"
                     return bubble 
         '''
-        if bufferv[-1] < 50 and saccade:
-            for bubble in used_bubble:
-                if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-y)**2))) < 2*MAT/3):
-                    el.trialmetadata('end_x', bufferx[-1])
-                    el.trialmetadata('end_y', buffery[-1])
-                    el.trialmetadata('end_velocity', bufferv[-1])
-                    el.trialmetadata('sacc_detection', 'pred_in_bubble')
-                    return bubble    
+        if whole_image == False:
+            
+            if bufferv[-1] < 50 and saccade:
+                for bubble in used_locations:
+                    if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-y)**2))) < 2*MAT/3):
+                        el.trialmetadata('end_x', bufferx[-1])
+                        el.trialmetadata('end_y', buffery[-1])
+                        el.trialmetadata('end_velocity', bufferv[-1])
+                        el.trialmetadata('sacc_detection', 'pred_in_bubble')
+                        return bubble
+        else:
+            if bufferv[-1] < 40 and saccade:
+                el.trialmetadata('end_x', bufferx[-1])
+                el.trialmetadata('end_y', buffery[-1])
+                el.trialmetadata('end_velocity', bufferv[-1])
+                el.trialmetadata('sacc_detection', 'pred_in_bubble')
+                return (bufferx[-1],buffery[-1])
                             
         #check if sample near bubble (in distance of 2 * radius MAT/2)
     #print "random bubble returned" 
     el.trialmetadata('sacc_detection', 'random')
-    return random.choice(used_bubble) #if no prediction on bubble during trial_length
+    if whole_image == False:
+        return random.choice(used_locations) #if no prediction on bubble during trial_length
+    else:
+        return (bufferx[-1],buffery[-1])
     
     
 path_to_fixdur_files, path_to_fixdur_code = paths()
