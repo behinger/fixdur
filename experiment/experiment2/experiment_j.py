@@ -7,6 +7,8 @@ import trial, tools
 import tools_extended as tools_ex
 from PIL import Image
 #from scipy.random import exponential
+from pylink import openGraphicsEx
+from eyelink_psychopy import EyeLinkCoreGraphicsOpenGL
 
 
 #paths
@@ -18,8 +20,8 @@ NUM_OF_TRIALS =128
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 START_TRIAL = 1    #which trial to begin with   
 #fullscreen = True   
-fullscreen = False
-EYETRACKING = False
+fullscreen = True
+EYETRACKING = True
 
 if EYETRACKING == False:
     el = None;
@@ -66,7 +68,7 @@ else:
 
 # set up the window
 rectXY = (1920,1080);
-surf = visual.Window(size=rectXY,fullscr=False,winType = 'pyglet', screen=1, units='pix')
+surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=0, units='pix')
 surf.setMouseVisible(False)
 
 # load memory image
@@ -76,7 +78,8 @@ memory_image = visual.SimpleImageStim(surf, image=path_to_fixdur_code+'images/me
 rand_filename = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(8))
 print rand_filename
 if EYETRACKING:
-    pylink.openGraphics()
+    openGraphicsEx(EyeLinkCoreGraphicsOpenGL(surf))
+    #pylink.openGraphics()
     el = tracker.Tracker(surf,rand_filename+'.EDF')
 
 #start slide show
