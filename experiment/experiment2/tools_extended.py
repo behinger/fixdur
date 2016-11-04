@@ -123,7 +123,7 @@ def create_mask(locations, mask_size=(960,1280)):
     return mask_im
 
     
-def choose_locations(num, sample_points, prev_loc):
+def choose_locations(num, sample_points, remaining_points, prev_loc):
     # compute number of sample points
     num_points = len(sample_points)
     
@@ -141,8 +141,8 @@ def choose_locations(num, sample_points, prev_loc):
     # removed automatically
     #sample_points.remove(prev_loc[0])
     
-    # make a copy of the sample point list for changes in subtrial
-    points_copy = list(sample_points)
+    # make a copy of the remaining points list for changes in subtrial
+    points_copy = list(remaining_points)
     
     # distances of all locations to previous location
     dist_to_prev = dist_mat[prev_ind,:]    
@@ -177,6 +177,7 @@ def choose_locations(num, sample_points, prev_loc):
             if sample_points[item] in points_copy:
                 points_copy.remove(sample_points[item])
                 dist_to_prev_list.remove(dist_to_prev[item])
+                
         
     return next_loc
     
@@ -283,6 +284,72 @@ def memory_task(image,memory_image,surf):
         right_bubble = same_pic_rand_bubble_loc
         
     return [correct,left_bubble,right_bubble]
+    
+def tracker_init(surf):
+    
+    import pylink
+    from EyeLinkCoreGraphicsPsychopy import EyeLinkCoreGraphicsPsychopy
+    
+    # set up a link to the tracker
+    tk = pylink.EyeLink('100.1.1.1')
+
+    # graphics
+    genv = EyeLinkCoreGraphicsPsychopy(tk, surf)
+    pylink.openGraphicsEx(genv)    
+    
+    # set screen_pixel_coords, not sure if necessary or correct by itself
+    pylink.getEYELINK().sendCommand('screen_pixel_coords = 0 0 %d %d'%(surf.size[0],surf.size[1]));
+    # If you use Eyelink II you have to specify: (check the numbers! they don't match)
+    #eyetracker.sendCommand('marker_phys_coords = -275,165, -275,-165, 275,165, 275,-165')
+    pylink.getEYELINK().sendCommand('screen_phys_coords = -266, 149, 266, -149')
+	
+    pylink.getEYELINK().sendCommand('screen_distance = 800 800') #  distance to top and bottom of screen (I got this with a central viewing distance of 60cm, this assumes the screen is vertically centered on the eye
+	
+	
+    # set calibration to 5 Targets
+    pylink.getEYELINK().sendCommand('calibration_type = HV13')
+	
+    #% % Set custom calibration options
+    #% % layout on screen for 13 points:
+    #% % 5    1    6
+    #% %   9    10
+    #% % 3    0    4
+    #% %   11   12
+    #% % 7    2    8
+	
+    #% left, left-middle, middle, middle right right
+    scr_w = surf.size[0]
+    scr_h = surf.size[1]
+    l = scr_w/2 + (-2*scr_w/8);
+    lm = scr_w/2 + (-1*scr_w/8);
+    m = scr_w/2 + (0*scr_w/8);
+    mr = scr_w/2 + (1*scr_w/8);
+    r = scr_w/2 + (2*scr_w/8);
+    #% % top, top-center, center, center-bottom, bottom
+    t  =  scr_h/2 + (-2*scr_h/8);
+    tc = scr_h/2 + (-1*scr_h/8);
+    c  = scr_h/2 + (0*scr_h/8);
+    cb = scr_h/2 + (1*scr_h/8);
+    b  = scr_h/2 + (2*scr_h/8);
+	
+    # We use only 5 points.
+    #calibTargets = 'calibration_targets  = %d,%d %d,%d %d,%d %d,%d %d,%d'%(m,c, lm,tc, lm,cb, mr,tc, mr,cb);
+    #validTargets = 'validation_targets   = %d,%d %d,%d %d,%d %d,%d %d,%d'%(m,c, lm,tc, lm,cb, mr,tc, mr,cb);
+
+    calibTargets = 'calibration_targets  = %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d'%(m,c, m,t, m,b, l,c, r,c, l,t, r,t, l,b, r,b, lm,tc, lm,cb, mr,tc, mr,cb)
+    validTargets = 'validation_targets   = %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d'%(m,c, m,t, m,b, l,c, r,c, l,t, r,t, l,b, r,b, lm,tc, lm,cb, mr,tc, mr,cb)
+
+    pylink.getEYELINK().sendCommand(calibTargets)
+    pylink.getEYELINK().sendCommand(validTargets)
+ 
+
+    # doTrackerSetup
+    tk.doTrackerSetup()
+    
+    return tk
+    
+    
+    
 #imgplot = plt.imshow(gaussian)
 
 #mask_im = Image.new('RGB', (1280,960), 'red')

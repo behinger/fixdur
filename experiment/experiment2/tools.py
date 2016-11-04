@@ -39,6 +39,10 @@ def paths():
     elif os.path.exists('/home/jschepers/Dokumente/bachelor_thesis/fixdur/'):
         path_to_fixdur_files = '/home/jschepers/Dokumente/bachelor_thesis/'
         path_to_fixdur_code = '/home/jschepers/Dokumente/bachelor_thesis/'
+    if os.path.exists('/home/experiment/experiments/fixdur/experiment/'):
+        path_to_fixdur_files = '/home/experiment/experiments/fixdur/cache/'
+        path_to_fixdur_code = '/home/experiment/experiments/fixdur/experiment/experiment2/'
+
     
     return path_to_fixdur_files, path_to_fixdur_code
 
@@ -108,13 +112,14 @@ def randomization(subject, trial_time):
             #except:
             #    IndexError 
             
+            # probability that control condition is applied is 1/2
             if time == 0:            
                 control = np.random.randint(2)
             control_list.append(control)            
             
             # num of bubbles
             if control == 1: # no whole_image condition
-                num_bubbles = np.random.choice([1,2,3,4,5,10])
+                num_bubble = [np.random.choice([1,2,3,4,5,10])]
             else: # with whole_image condition
                 num_bubble = custm.rvs(size=1)
             num_bubbles = np.append(num_bubbles,num_bubble[0])
@@ -123,10 +128,6 @@ def randomization(subject, trial_time):
             disp = scipy.random.exponential(295,1)
             disp_time = np.append(disp_time,int(disp))
             
-            # probability that control condition is applied is 1/2
-            if time == 0:            
-                control = np.random.randint(2)
-            control_list.append(control)
             
             # increase counter
             if int(disp) == 0:
@@ -329,9 +330,13 @@ def sacc_detection(el,used_locations,whole_image = False):
         if whole_image == False:
             if bufferv[-1] < 30:
                 saccade = 0
+                #print used_locations
                 #check if sample already in next bubble
+                #print MAT,x,y
                 for bubble in used_locations:
-                    if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-y)**2))) < MAT/2):
+                    #print bubble
+                    
+                    if ((sqrt((((bubble[0]+(MAT/2.)+320)-x)**2) + (((bubble[1]+(MAT/2.)+60)-y)**2))) < (MAT/2.)):
                         el.trialmetadata('start_x', bufferx[-1])
                         el.trialmetadata('start_y', buffery[-1])
                         el.trialmetadata('start_velocity', bufferv[-1])
