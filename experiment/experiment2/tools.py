@@ -17,7 +17,7 @@ except ImportError:
 #import collections
 #from numpy.compat import long
 
-TRIAL_LENGTH = 2000    #how long do we want to wait for a saccade:
+TRIAL_LENGTH = 20000    #how long do we want to wait for a saccade:
 
 TRACKING_FREQ = 500
 PPD = 50 
@@ -336,7 +336,7 @@ def sacc_detection(el,used_locations,whole_image = False):
                 for bubble in used_locations:
                     #print bubble
                     
-                    if ((sqrt((((bubble[0]+(MAT/2.)+320)-x)**2) + (((bubble[1]+(MAT/2.)+60)-y)**2))) < (MAT/2.)):
+                    if ((sqrt((((bubble[0]+(MAT/2.)+320)-x)**2) + (((bubble[1]+(MAT/2.)+60)-(1080-y))**2))) < (MAT/2.)):
                         el.trialmetadata('start_x', bufferx[-1])
                         el.trialmetadata('start_y', buffery[-1])
                         el.trialmetadata('start_velocity', bufferv[-1])
@@ -379,7 +379,7 @@ def sacc_detection(el,used_locations,whole_image = False):
             
             if bufferv[-1] < 50 and saccade:
                 for bubble in used_locations:
-                    if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-y)**2))) < 2*MAT/3):
+                    if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-(1080-y))**2))) < 2*MAT/3):
                         el.trialmetadata('end_x', bufferx[-1])
                         el.trialmetadata('end_y', buffery[-1])
                         el.trialmetadata('end_velocity', bufferv[-1])

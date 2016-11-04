@@ -7,13 +7,10 @@ import trial, tools
 import tools_extended as tools_ex
 from PIL import Image
 #from scipy.random import exponential
-<<<<<<< HEAD
-#from pylink import openGraphicsEx
-#from eyelink_psychopy import EyeLinkCoreGraphicsOpenGL
-=======
+
 from pylink import openGraphicsEx
 from eyelink_psychopy import EyeLinkCoreGraphicsOpenGL
->>>>>>> 1d20b94ff2f6639765f223a1ca073e6ea2cebcce
+
 
 
 #paths
@@ -25,11 +22,7 @@ NUM_OF_TRIALS =128
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 START_TRIAL = 1    #which trial to begin with   
 #fullscreen = True   
-<<<<<<< HEAD
 fullscreen = False
-=======
-fullscreen = True
->>>>>>> 1d20b94ff2f6639765f223a1ca073e6ea2cebcce
 EYETRACKING = True
 
 if EYETRACKING == False:
@@ -77,7 +70,7 @@ else:
 
 # set up the window
 rectXY = (1920,1080);
-surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=0, units='pix')
+surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=1, units='pix')
 surf.setMouseVisible(False)
 
 # load memory image
@@ -87,16 +80,8 @@ memory_image = visual.SimpleImageStim(surf, image=path_to_fixdur_code+'images/me
 rand_filename = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(8))
 print rand_filename
 if EYETRACKING:
-<<<<<<< HEAD
-    #tracker = tools_ex.tracker_init(surf)
-    #openGraphicsEx(EyeLinkCoreGraphicsOpenGL(surf))
-    #pylink.openGraphics()
     tracker = fixdur_tracker.Tracker(surf,rand_filename+'.EDF')
-=======
-    openGraphicsEx(EyeLinkCoreGraphicsOpenGL(surf))
-    #pylink.openGraphics()
-    el = tracker.Tracker(surf,rand_filename+'.EDF')
->>>>>>> 1d20b94ff2f6639765f223a1ca073e6ea2cebcce
+
 
 #start slide show
 tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/intro*.png')))
@@ -227,7 +212,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                     memory = False
 
             # make a list of used locations                
-            used_locations.append(chosen_location[0])
+            #used_locations.append(chosen_location[0])
             
             print chosen_location[0]
             # delete previous location for next subtrial
