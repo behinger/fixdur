@@ -307,12 +307,12 @@ def wait_for_fix(el,used_bubble):
 predict saccade end point
 return bubble if in distance of diameter(MAT) of bubble center
 '''    
-def sacc_detection(el,used_locations,whole_image = False):
-    
+def sacc_detection(el,used_locations,whole_image,surf):
     #buffer for x coordiante, y coordinate, velocity
     bufferx, buffery, bufferv = deque(maxlen=3), deque(maxlen=3), deque(maxlen=4)
     start = pylink.currentTime()
     saccade = 0
+    #stim = visual.Circle(surf,radius=2)
     #start_time = []
     while (pylink.currentTime() - start) < TRIAL_LENGTH:
         i = el.getNextData()
@@ -320,6 +320,13 @@ def sacc_detection(el,used_locations,whole_image = False):
         if i!=200: continue
         # actuelle position direkt vom eye-tracker
         x, y = el.getNewestSample().getLeftEye().getGaze()
+        
+        # XXX
+        #stim.pos = (x-surf.size[0]/2,surf.size[1]-y-surf.size[1]/2)
+        #stim.draw()
+        #surf.flip(clearBuffer=False)
+        #XXX
+        
         bufferx.append(float(x))
         buffery.append(float(y))
         
@@ -405,4 +412,4 @@ def sacc_detection(el,used_locations,whole_image = False):
 path_to_fixdur_files, path_to_fixdur_code = paths()
 
 def debug_time(dispstr,start):
-    print "%s : %.2f"%(dispstr,pygame.time.get_ticks()-start)
+    print "%s : %.2f"%(dispstr,1000*(core.getTime()-start))

@@ -123,12 +123,16 @@ def create_mask(locations, mask_size=(960,1280)):
     return mask_im
 
     
-def choose_locations(num, sample_points, remaining_points, prev_loc):
+def choose_locations(whole_image,num, sample_points, remaining_points, prev_loc):
+
+    if whole_image:
+        sample_points.append(prev_loc[0])
+
     # compute number of sample points
     num_points = len(sample_points)
     
     # compute euclidean distance between all sample points
-    distances = np.empty((num_points,num_points))
+    #distances = np.empty((num_points,num_points))
     distances = spatial.distance.pdist(sample_points, 'euclidean')
     dist_mat = spatial.distance.squareform(distances)
     
@@ -165,8 +169,9 @@ def choose_locations(num, sample_points, remaining_points, prev_loc):
     
         index = custm.rvs(size=1)
         next_loc.append(points_copy[index[0]])
-        points_copy.remove(points_copy[index[0]])
+        #points_copy.remove(points_copy[index[0]])
         
+
         # delete locations which would yield overlappings with the newly
         # chosen location
         new_ind = sample_points.index(next_loc[i])
@@ -177,7 +182,8 @@ def choose_locations(num, sample_points, remaining_points, prev_loc):
             if sample_points[item] in points_copy:
                 points_copy.remove(sample_points[item])
                 dist_to_prev_list.remove(dist_to_prev[item])
-                
+    if whole_image:
+        sample_points.pop(prev_ind)
         
     return next_loc
     
