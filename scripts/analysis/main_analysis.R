@@ -42,9 +42,9 @@ mres.complexStandard.3mad=out$mres.complexStandard.3mad
 
 
 #+ outlierplot, fig.asp=0.25
-outlier.3mad = fd_loaddata(returnOutlier = TRUE)
-outlier.3mad = ddply(outlier.3mad,.(subject),transform,index = 1:length(bad))
-ggplot(outlier.3mad,aes(x=index,y=choicetime,color=bad))+geom_point(alpha=0.2)+facet_grid(.~subject,space = 'free_x',scales = 'free_x')+tBE(base_size = 10)+scale_x_continuous(breaks=round(seq(0,900,by=500)))
+#outlier.3mad = fd_loaddata(returnOutlier = TRUE)
+#outlier.3mad = ddply(outlier.3mad,.(subject),transform,index = 1:length(bad))
+#ggplot(outlier.3mad,aes(x=index,y=choicetime,color=bad))+geom_point(alpha=0.2)+facet_grid(.~subject,space = 'free_x',scales = 'free_x')+tBE(base_size = 10)+scale_x_continuous(breaks=round(seq(0,900,by=500)))
 
 
 
@@ -157,16 +157,16 @@ ggplot(data.3mad,aes(x=forcedFixtime,y=choicetime,color=factor(NumOfBubbles)))+s
 
 
 #+ dataFF,results='hide'
-d.forcedFixtime = fd_plot_postpred('forcedFixtime',
-                                   mres=mres.complexStandard.3mad,
+d.forcedFixtime = fd_plot_postpred(mres=mres.complexStandard.3mad,
                                    fit=stanfit,
                                    dataRange = c(0,1500),
                                    continuous_var = T,
                                    cosineau = T,
+                                   customvar = naRM(mres.complexStandard.3mad@frame,as.numeric(data.3mad$forcedFixtime)),
                                    returnData=T,
                                    nIter=cfg$nIter)
 
-d.forcedFixtime$forcedFixtime[is.na(d.forcedFixtime$forcedFixtime)] = d.forcedFixtime[is.na(d.forcedFixtime$forcedFixtime),8]
+#d.forcedFixtime$forcedFixtime[is.na(d.forcedFixtime$forcedFixtime)] = d.forcedFixtime[is.na(d.forcedFixtime$forcedFixtime),8]
 
 
 
@@ -337,19 +337,16 @@ p.ff2= ggplot(d,aes(x=forcedFixtime,y=choicetime,group=subject))+
   xlab('Forced Fixationtime [ms]')+ylab('Subjectwise Choicetime [ms]')+
   geom_line(method='gam',stat='smooth',formula=y~s(x),alpha=0.3,se=F)+coord_cartesian(xlim=c(0,1000),ylim=c(-25,20))+tBE()
 
-d.histograms = ddply(data.3mad,.(subject),function(x){y=hist(x$forcedFixtime,breaks=seq(0,3000,by=10),plot=FALSE);return(data.frame(mids=y$mids,count=y$counts))})
-p.ff3 = ggplot(d.histograms,aes(x=mids,y=count,group=subject))+
-  geom_line(alpha=0.1)+
-  xlab('Forced Fixationtime [ms]')+ylab('Trials [#]')+
-  stat_summary(aes(group=NULL),geom='line')+
-  coord_cartesian(xlim=c(1,1000))+
-  tBE()
+#d.histograms = ddply(data.3mad,.(subject),function(x){y=hist(x$forcedFixtime,breaks=seq(0,3000,by=10),plot=FALSE);return(data.frame(mids=y$mids,count=y$counts))})
+#p.ff3 = ggplot(d.histograms,aes(x=mids,y=count,group=subject))+
+#  geom_line(alpha=0.1)+
+#  xlab('Forced Fixationtime [ms]')+ylab('Trials [#]')+
+#  stat_summary(aes(group=NULL),geom='line')+
+#  coord_cartesian(xlim=c(1,1000))+
+#  tBE()
 
 library(cowplot)
-ggdraw()+
-  draw_plot(p.ff1,0,0,width=0.5,height=1)+
-  draw_plot(p.ff3,.5,0,width=0.5,height=.5)+
-  draw_plot(p.ff2,.5,0.5,width=0.5,height=.5)+draw_plot_label(c('A','B','C'), c(0, 0.5, 0.5), c(1,1,.5))
+cowplot::plot_grid(p.ff1,p.ff2,labels = c('A','B'), rel_widths=c(2,1))
 
 
 #+,fig.asp=0.5
