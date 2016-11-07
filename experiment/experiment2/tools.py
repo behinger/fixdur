@@ -6,6 +6,7 @@ from math import atan2, degrees,sqrt,atan,sin,cos,exp,log
 from scipy import stats
 from pygame.locals import *
 from collections import deque
+#import tools_extended as tools_ex
 
 try:
     import fixdur_tracker as tracker
@@ -16,12 +17,13 @@ except ImportError:
 #import collections
 #from numpy.compat import long
 
-TRIAL_LENGTH = 2000    #how long do we want to wait for a saccade:
+TRIAL_LENGTH = 20000    #how long do we want to wait for a saccade:
 
 TRACKING_FREQ = 500
 PPD = 50 
 #PPD = 76
 MAT = 154
+
 
 
 
@@ -37,6 +39,10 @@ def paths():
     elif os.path.exists('/home/jschepers/Dokumente/bachelor_thesis/fixdur/'):
         path_to_fixdur_files = '/home/jschepers/Dokumente/bachelor_thesis/'
         path_to_fixdur_code = '/home/jschepers/Dokumente/bachelor_thesis/'
+    if os.path.exists('/home/experiment/experiments/fixdur/experiment/'):
+        path_to_fixdur_files = '/home/experiment/experiments/fixdur/cache/'
+        path_to_fixdur_code = '/home/experiment/experiments/fixdur/experiment/experiment2/'
+
     
     return path_to_fixdur_files, path_to_fixdur_code
 
@@ -57,78 +63,91 @@ def deg_2_px(visual_degree):
 
 ''' generize, save and return randomization for given subject'''
 def randomization(subject, trial_time):
-    # ratio of number of bubbles: 1=50, 2=25, 3 =12.5, 4=6.25, 5=3.125 -> normalization factor to get to 100%: x=100/sum(ratios)
-    #x=100/96.875
-    # custom distribution for ratios:
-    xk = [1,2,3,4,5,10]
-    pk = np.empty(6)
-    pk.fill(1./6)
-    #xk = np.arange(5)+1
-    #pk = (0.5*x,0.25*x,0.125*x,0.0625*x,0.03125*x)
+
+    #total_num_trials = 128    
+    
+    # uniform distribution of number of bubbles
+    xk = [0,1,2,3,4,5,10]
+    pk = np.empty(len(xk))
+    pk.fill(1./len(xk))
+
     custm = stats.rv_discrete(name='custm', values=(xk, pk))
-    # num_of_bubbles_ratio = [[i] for i in [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,4,4,5]]
     
     images = os.listdir(path_to_fixdur_files+'stimuli/single_bubble_images/')
     np.random.shuffle(images)
     
-    types = []
-    for a in range(int(len(images)/4)):
-        types.append('all')
-    for a in range(int((len(images)/4)*3)):
-        types.append('seq')
-    random.shuffle(types)
+    #types = []
+    #for a in range(int(len(images)/4)):
+    #    types.append('all')
+    #for a in range(int((len(images)/4)*3)):
+    #    types.append('seq')
+    #random.shuffle(types)
 
     # dimensions of output array: 
     trials = []         # image number
-    trial_type = []     # all_bubbles or sequential
+    #trial_type = []     # all_bubbles or sequential
     num_bubbles = []    # number of bubbles
     disp_time = []      # time of bubble display
-    #bubble_sums = []
-    #fix_nums = []
+    control_list = []   # information if control condition is applied
+    
+
     a = 0;
     for image in images:
+        
         # reset counter
         time = 0
-        #bubble_sum = 0
-        #fix_num = 0
+        
         while time<trial_time:
             # image
             trials = np.append(trials,image)
             # if new trial beginns
-            try:
-                if (time == 0):
-                    trial_type = np.append(trial_type,types[0])
-                    types.remove(types[0])
-                    a = a+1
+            #try:
+            #    if (time == 0):
+            #        trial_type = np.append(trial_type,types[0])
+            #        types.remove(types[0])
+            #        a = a+1
                     # if we are still in the same trial    
-                else:
-                    trial_type = np.append(trial_type,trial_type[-1])
-            except:
-                IndexError 
-            # num of bubbles            '''
-            num_bubble = [10]
-            #num_bubble = custm.rvs(size=1)
+            #    else:
+            #        trial_type = np.append(trial_type,trial_type[-1])
+            #except:
+            #    IndexError 
+            
+            # probability that control condition is applied is 1/2
+            if time == 0:            
+                control = np.random.randint(2)
+            control_list.append(control)            
+            
+            # num of bubbles
+            if control == 1: # no whole_image condition
+                num_bubble = [np.random.choice([1,2,3,4,5,10])]
+            else: # with whole_image condition
+                num_bubble = custm.rvs(size=1)
             num_bubbles = np.append(num_bubbles,num_bubble[0])
-            #bubble_sum = bubble_sum + num_bubble[0]
+
             # display time of bubble
             disp = scipy.random.exponential(295,1)
             disp_time = np.append(disp_time,int(disp))
+            
+            
             # increase counter
             if int(disp) == 0:
                 disp = 1
             time = time + int(disp)
-            #fix_num = fix_num + 1
-        #bubble_sums.append(bubble_sum)
-        #fix_nums.append(fix_num)
-
+ 
+    #control = np.random.randint(2,size=(len(trials),1))
     trials = np.reshape(trials,(len(trials),1))
-    trial_type = np.reshape(trial_type,(len(trial_type),1))
+    #trial_type = np.reshape(trial_type,(len(trial_type),1))
     num_bubbles = np.reshape(num_bubbles,(len(num_bubbles),1))
     disp_time = np.reshape(disp_time,(len(disp_time),1))
+    control_list = np.reshape(control_list,(len(control_list),1))
 
-    trial_mat = np.append(trials,trial_type,axis=1)
-    trial_mat = np.append(trial_mat,num_bubbles,axis=1)
+    #trial_mat = np.append(trials,trial_type,axis=1)
+    trial_mat = np.append(trials,num_bubbles,axis=1)
     trial_mat = np.append(trial_mat,disp_time,axis=1)
+    trial_mat = np.append(trial_mat, control_list, axis=1)
+    
+    # create vector if control condition is applied in the trial or not
+    #control_mat = np.random.randint(2,size=(1,total_num_trials))
 
     np.save(path_to_fixdur_code+'/data/'+str(subject)+'/rand_'+str(subject),trial_mat)
 
@@ -188,66 +207,7 @@ def wait_for_key(keylist = None):
  #                   return event
  #       pygame.time.delay(50)
 
-'''display memory task, return displayed bubbles and decision'''        
-def memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image,surf):
-    correct = 'No valid answer yet'
-    #bubble from shown image for task
-    same_pic_rand_bubble_loc = random.choice(all_bubbles)
-    #load bubble
-    same_pic_rand_bubble = loaded_bubbles[all_bubbles.index(same_pic_rand_bubble_loc)]
-    #save image and bubble position
-    same_pic_rand_bubble_loc = [bubble_image,same_pic_rand_bubble_loc]
-    #bubble from other image
-    bubble_mat = np.load(path_to_fixdur_code+'all_bubble_mat.npy')
-    other_pic_rand_bubble_loc = random.choice(bubble_mat)
-    #make sure it"s from another image
-    while other_pic_rand_bubble_loc[0] == bubble_image:
-        other_pic_rand_bubble_loc = random.choice(bubble_mat)
-    #load bubble 
-    other_pic_rand_bubble = visual.SimpleImageStim(surf,path_to_fixdur_files+'stimuli/single_bubble_images/'+other_pic_rand_bubble_loc[0]+'/'+other_pic_rand_bubble_loc[1])
-    #other_pic_rand_bubble = pygame.image.load(path_to_fixdur_files+'stimuli/single_bubble_images/'+other_pic_rand_bubble_loc[0]+'/'+other_pic_rand_bubble_loc[1]).convert_alpha()   
-    #save image and bubble position
-    other_pic_rand_bubble_loc = [other_pic_rand_bubble_loc[0],[int(other_pic_rand_bubble_loc[1].split('_',1)[1].split('_')[0]),int(other_pic_rand_bubble_loc[1].split('_',1)[1].split('_')[1].split('.')[0])] ]    
-    locations = [(-200,0),(200,0)]    
-    #locations = [(386,400),(740,400)]
-    same = random.choice(locations)   
-    locations.remove(same)
-    
-    
-    memory_image.draw(surf)
-    same_pic_rand_bubble.pos = same
-    same_pic_rand_bubble.draw(surf)
-    
-    other_pic_rand_bubble.pos = locations[0]
-    other_pic_rand_bubble.draw(surf)
-    
-    #memory_image.blit(same_pic_rand_bubble,same)
-    #memory_image.blit(other_pic_rand_bubble,locations[0])
-    #surf.blit(memory_image,(320,60))
-    surf.flip()
-    #pygame.display.update()
-    key = event.waitKeys(keyList=['left', 'right'])    
-    #key = wait_for_key(keylist = [K_LEFT,K_RIGHT])
-    #if left bubble is correct and left bubble was choosen
-    
-    if (((same == (-200,0)) and (key == ['left'])) or \
-    #if (((same == (386,400)) and (pygame.key.name(key.key) == 'left')) or \
-    #if right bubble is correct and right bubble was choosen
-    ((same == (200,0)) and (key == ['right']))):    
-    #((same == (740,400)) and (pygame.key.name(key.key) == 'right'))):
-        correct = True
-    else:
-        correct = False
-    if same == (-200,0):
-    #if same == (386,400):
-        left_bubble = same_pic_rand_bubble_loc
-        right_bubble = other_pic_rand_bubble_loc
-    if same == (200,0):
-    #if same == (740,400):
-        left_bubble = other_pic_rand_bubble_loc
-        right_bubble = same_pic_rand_bubble_loc
-        
-    return [correct,left_bubble,right_bubble]
+
     
     
 
@@ -347,12 +307,12 @@ def wait_for_fix(el,used_bubble):
 predict saccade end point
 return bubble if in distance of diameter(MAT) of bubble center
 '''    
-def sacc_detection(el,used_bubble):
-    
+def sacc_detection(el,used_locations,whole_image,surf):
     #buffer for x coordiante, y coordinate, velocity
     bufferx, buffery, bufferv = deque(maxlen=3), deque(maxlen=3), deque(maxlen=4)
     start = pylink.currentTime()
     saccade = 0
+    #stim = visual.Circle(surf,radius=2)
     #start_time = []
     while (pylink.currentTime() - start) < TRIAL_LENGTH:
         i = el.getNextData()
@@ -360,6 +320,13 @@ def sacc_detection(el,used_bubble):
         if i!=200: continue
         # actuelle position direkt vom eye-tracker
         x, y = el.getNewestSample().getLeftEye().getGaze()
+        
+        # XXX
+        #stim.pos = (x-surf.size[0]/2,surf.size[1]-y-surf.size[1]/2)
+        #stim.draw()
+        #surf.flip(clearBuffer=False)
+        #XXX
+        
         bufferx.append(float(x))
         buffery.append(float(y))
         
@@ -367,19 +334,24 @@ def sacc_detection(el,used_bubble):
         bufferv.append(np.mean(((np.diff(np.array(bufferx))**2+np.diff(np.array(buffery))**2)**.5) * TRACKING_FREQ)/float(PPD))
 
         #saccade_onset
-        if bufferv[-1] < 30:
-            saccade = 0
-            #check if sample already in next bubble
-            for bubble in used_bubble:
-                if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-y)**2))) < MAT/2):
-                    el.trialmetadata('start_x', bufferx[-1])
-                    el.trialmetadata('start_y', buffery[-1])
-                    el.trialmetadata('start_velocity', bufferv[-1])
-                    el.trialmetadata('end_x', bufferx[-1])
-                    el.trialmetadata('end_y', buffery[-1])
-                    el.trialmetadata('end_velocity', bufferv[-1])
-                    el.trialmetadata('sacc_detection', 'start_in_bubble')
-                    return bubble   
+        if whole_image == False:
+            if bufferv[-1] < 30:
+                saccade = 0
+                #print used_locations
+                #check if sample already in next bubble
+                #print MAT,x,y
+                for bubble in used_locations:
+                    #print bubble
+                    
+                    if ((sqrt((((bubble[0]+(MAT/2.)+320)-x)**2) + (((bubble[1]+(MAT/2.)+60)-(1080-y))**2))) < (MAT/2.)):
+                        el.trialmetadata('start_x', bufferx[-1])
+                        el.trialmetadata('start_y', buffery[-1])
+                        el.trialmetadata('start_velocity', bufferv[-1])
+                        el.trialmetadata('end_x', bufferx[-1])
+                        el.trialmetadata('end_y', buffery[-1])
+                        el.trialmetadata('end_velocity', bufferv[-1])
+                        el.trialmetadata('sacc_detection', 'start_in_bubble')
+                        return bubble   
         if saccade == 0 and bufferv[-1]>70:
             start_x = float(bufferx[-1])
             start_y = float(buffery[-1])
@@ -410,22 +382,34 @@ def sacc_detection(el,used_bubble):
                     print "predicted bubble found"
                     return bubble 
         '''
-        if bufferv[-1] < 50 and saccade:
-            for bubble in used_bubble:
-                if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-y)**2))) < 2*MAT/3):
-                    el.trialmetadata('end_x', bufferx[-1])
-                    el.trialmetadata('end_y', buffery[-1])
-                    el.trialmetadata('end_velocity', bufferv[-1])
-                    el.trialmetadata('sacc_detection', 'pred_in_bubble')
-                    return bubble    
+        if whole_image == False:
+            
+            if bufferv[-1] < 50 and saccade:
+                for bubble in used_locations:
+                    if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-(1080-y))**2))) < 2*MAT/3):
+                        el.trialmetadata('end_x', bufferx[-1])
+                        el.trialmetadata('end_y', buffery[-1])
+                        el.trialmetadata('end_velocity', bufferv[-1])
+                        el.trialmetadata('sacc_detection', 'pred_in_bubble')
+                        return bubble
+        else:
+            if bufferv[-1] < 40 and saccade:
+                el.trialmetadata('end_x', bufferx[-1])
+                el.trialmetadata('end_y', buffery[-1])
+                el.trialmetadata('end_velocity', bufferv[-1])
+                el.trialmetadata('sacc_detection', 'pred_in_bubble')
+                return (bufferx[-1],buffery[-1])
                             
         #check if sample near bubble (in distance of 2 * radius MAT/2)
     #print "random bubble returned" 
     el.trialmetadata('sacc_detection', 'random')
-    return random.choice(used_bubble) #if no prediction on bubble during trial_length
+    if whole_image == False:
+        return random.choice(used_locations) #if no prediction on bubble during trial_length
+    else:
+        return (bufferx[-1],buffery[-1])
     
     
 path_to_fixdur_files, path_to_fixdur_code = paths()
 
 def debug_time(dispstr,start):
-    print "%s : %.2f"%(dispstr,pygame.time.get_ticks()-start)
+    print "%s : %.2f"%(dispstr,1000*(core.getTime()-start))

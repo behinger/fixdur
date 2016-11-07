@@ -8,6 +8,7 @@
 *.pyc
 *.Rhistory
 cache/gridoutput
+cache/stimuli
 
 data/experiment1/*
 data/experiment_gist/*

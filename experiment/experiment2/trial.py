@@ -50,9 +50,6 @@ def choose_next_bubble(all_bubbles,chosen_bubble,remaining_bubbles,dist_mat):
 
 '''generate individual stimuli for the trial'''
 def get_image(surf,bubble_image,all_bubbles,loaded_bubbles,remaining_bubbles,chosen_bubble,num_of_bubbles,dist_mat):
-    #empty background
-    #image = grayimage
-    #surf.fill((128,128,128))
     
     #remove previously fixated bubble from list    
     try:
@@ -64,7 +61,8 @@ def get_image(surf,bubble_image,all_bubbles,loaded_bubbles,remaining_bubbles,cho
     for item in remove_from_remaining[0][0]:
         if all_bubbles[item] in remaining_bubbles:
             remaining_bubbles.remove(all_bubbles[item])    
- 
+
+     
     #list to store bubbles used for current image
     used_bubbles = []
     if chosen_bubble == 'No bubble':
