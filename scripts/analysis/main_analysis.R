@@ -383,7 +383,15 @@ labels=c("A","B"))
 #plot_posteriorpredictive(d.prevBubbleAngle)+xlab('prevbubbleangle')+coord_cartesian(ylim=ylim_common)
 
 
+#+ 2D x-y plot
+removeNSmaller10=function(x){return(ifelse(length(x)<1,NaN,mean(x)))};
 
+ggplot(data, aes(chosenBubbleX, chosenBubbleY, z = choicetime)) + stat_summary_hex(bins=10,fun=removeNSmaller10)+coord_fixed()+scale_fill_continuous(name="SRT")
+
+
+removeNSmaller10=function(x){return(ifelse(length(x)<1,NaN,mean(x)))};
+
+ggplot(ddply(data,.(subject),transform,choicetime=choicetime-mean(choicetime)), aes(chosenBubbleX, chosenBubbleY, z = choicetime)) + stat_summary_hex(bins=4,fun=removeNSmaller10)+coord_fixed()+scale_fill_continuous(name="SRT")+facet_wrap(~subject)
 
 
 #+ misc effect sizes
