@@ -15,6 +15,8 @@ knitr::opts_chunk$set(echo=FALSE, warning=FALSE, autodep=TRUE,message=FALSE,cach
 
 
 #setwd('/net/store/nbp/users/behinger/projects/fixdur/git') #path to GIT
+#setwd('c:/users/behinger/cloud/PhD/fixdur_git/scripts/analysis/') #path to GIT
+
 source("functions/fd_paths.R") # this adds lots of paths & functions
 
 #cfg = list(nIter=100,gist=TRUE)
@@ -22,6 +24,8 @@ cfg = list(nIter=100,gist=FALSE)
 
 source('fd_load_midlevel.R')
 
+
+stanfit =  out$fit
 #if(cfg$gist){ 
 data.3madGist = fd_loaddata('../../cache/data/all_res_gist.RData')
 outGist = fd_load_midlevel(data.3madGist,list(gist=TRUE))
@@ -30,8 +34,6 @@ data.3mad = fd_loaddata()
 out = fd_load_midlevel(data.3mad,list(gist=FALSE))
 #}
 
-
-stanfit =  out$fit
 label_dataframe = out$label_dataframe
 modelMatrix = out$modelMatrix
 hdiDataFrame=out$hdiDataFrame
