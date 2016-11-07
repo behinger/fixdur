@@ -1,7 +1,7 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu Oct  6 11:37:14 2016
-
 @author: jschepers
 """
 import numpy as np
@@ -22,7 +22,7 @@ import poisson_disk
 #from enhanced_grid import *
 
 #define patterns for pattern matching
-p_noise = re.compile('noise')
+#p_noise = re.compile('noise')
 #p_urban = re.compile('image')
 
 # set parameters for gaussian
@@ -389,6 +389,4 @@ def tracker_init(surf):
 #black_white = original_im.convert('L')
 #original_im.draw()
 #surf.flip()
-
-
 

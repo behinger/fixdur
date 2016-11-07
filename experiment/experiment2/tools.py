@@ -3,7 +3,7 @@ import numpy as np
 import random, scipy, os
 from psychopy import visual, core, event, monitors
 from math import atan2, degrees,sqrt,atan,sin,cos,exp,log
-from scipy import stats
+from scipy import stats, spatial
 from pygame.locals import *
 from collections import deque
 #import tools_extended as tools_ex
@@ -73,7 +73,8 @@ def randomization(subject, trial_time):
 
     custm = stats.rv_discrete(name='custm', values=(xk, pk))
     
-    images = os.listdir(path_to_fixdur_files+'stimuli/single_bubble_images/')
+    images = os.listdir(path_to_fixdur_files+'stimuli/urban/')
+    #images = os.listdir(path_to_fixdur_files+'stimuli/single_bubble_images/')
     np.random.shuffle(images)
     
     #types = []
@@ -307,7 +308,7 @@ def wait_for_fix(el,used_bubble):
 predict saccade end point
 return bubble if in distance of diameter(MAT) of bubble center
 '''    
-def sacc_detection(el,used_locations,whole_image,surf):
+def sacc_detection(el,used_locations,whole_image,surf,prev_loc):
     #buffer for x coordiante, y coordinate, velocity
     bufferx, buffery, bufferv = deque(maxlen=3), deque(maxlen=3), deque(maxlen=4)
     start = pylink.currentTime()
@@ -334,12 +335,12 @@ def sacc_detection(el,used_locations,whole_image,surf):
         bufferv.append(np.mean(((np.diff(np.array(bufferx))**2+np.diff(np.array(buffery))**2)**.5) * TRACKING_FREQ)/float(PPD))
 
         #saccade_onset
-        if whole_image == False:
-            if bufferv[-1] < 30:
-                saccade = 0
-                #print used_locations
-                #check if sample already in next bubble
-                #print MAT,x,y
+        if bufferv[-1] < 30:
+            saccade = 0
+            #print used_locations
+            #print MAT,x,y
+            #check if sample already in next bubble
+            if whole_image == False:
                 for bubble in used_locations:
                     #print bubble
                     
@@ -351,7 +352,16 @@ def sacc_detection(el,used_locations,whole_image,surf):
                         el.trialmetadata('end_y', buffery[-1])
                         el.trialmetadata('end_velocity', bufferv[-1])
                         el.trialmetadata('sacc_detection', 'start_in_bubble')
-                        return bubble   
+                        return bubble
+                        
+            else:
+                # compute distance between centre of the previous bubble and the current fixation
+                dist = spatial.distance.pdist([prev_loc,(bufferx[-1],buffery[-1])], metric='euclidean')
+                
+                # make sure, that next fixation is at least one bubble-size away from the previous location
+                if (dist > MAT):
+                    return (bufferx[-1],buffery[-1])                  
+                        
         if saccade == 0 and bufferv[-1]>70:
             start_x = float(bufferx[-1])
             start_y = float(buffery[-1])

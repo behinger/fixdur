@@ -9,8 +9,8 @@ import tools_extended as tools_ex
 from PIL import Image
 #from scipy.random import exponential
 
-from pylink import openGraphicsEx
-from eyelink_psychopy import EyeLinkCoreGraphicsOpenGL
+#from pylink import openGraphicsEx
+#from eyelink_psychopy import EyeLinkCoreGraphicsOpenGL
 
 
 
@@ -18,13 +18,13 @@ from eyelink_psychopy import EyeLinkCoreGraphicsOpenGL
 path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 
 
-NUM_OF_TRIALS =128
-#NUM_OF_TRIALS =5 
+#NUM_OF_TRIALS =128
+NUM_OF_TRIALS = 64 
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 START_TRIAL = 1    #which trial to begin with   
 #fullscreen = True   
 fullscreen = True
-EYETRACKING = True
+EYETRACKING = False
 
 if EYETRACKING == False:
     tracker = None;
@@ -109,9 +109,21 @@ surf.flip()
 trial_num = 0
 trial_list = []
 
-# notwendig?
+# preload all images and create a stimulus list out of them
 stimList_preload = {}
-p_noise = re.compile('noise') #define pattern for pattern matching
+for new_image in all_images: 
+    # load image
+    image = Image.open(path_to_fixdur_files+'stimuli/urban/'+new_image)
+    
+    # convert image to grayscale
+    image = image.convert('L')
+    
+    # create a stimulus and save it in the stimulus list
+    stim = visual.ImageStim(surf, image=image, units='pix')
+    stimList_preload[new_image] = stim
+    
+    
+'''p_noise = re.compile('noise') #define pattern for pattern matching
 for new_image in all_images: 
     if p_noise.match(new_image) != None:
         image = Image.open(path_to_fixdur_files+'stimuli/noise/post_shine/'+new_image)
@@ -120,7 +132,7 @@ for new_image in all_images:
         # convert image to grayscale
         image = image.convert('L')
     stim = visual.ImageStim(surf, image=image, units='pix')
-    stimList_preload[new_image] = stim
+    stimList_preload[new_image] = stim '''
 
 #surf.setRecordFrameIntervals(True)
 #surf._refreshTreshold=1/120.0+0.002
@@ -295,7 +307,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
             # wait until first bubble is fixated before starting forced_fix_time
             if subtrial_num == 1:
                 if EYETRACKING:
-                    tools.sacc_detection(tracker,chosen_location,False,surf)            
+                    tools.sacc_detection(tracker,chosen_location,False,surf,chosen_location[0])            
             
             # get number of bubbles for current trial
             num_of_bubbles = int(float(subtrial[1]))
@@ -337,7 +349,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                 tracker.trialmetadata("stimulus_onset", stimulus_onset)
 
             if EYETRACKING:
-                chosen_location = [tools.sacc_detection(tracker,used_locations,whole_image,surf)]
+                chosen_location = [tools.sacc_detection(tracker,used_locations,whole_image,surf, chosen_location[0])]
             else:
                 if num_of_bubbles == 0:
                     copy_points = list(sample_points)
