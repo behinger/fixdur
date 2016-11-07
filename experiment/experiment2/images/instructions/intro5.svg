@@ -14,8 +14,11 @@
    height="1080"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="intro5.svg">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="intro5.svg"
+   inkscape:export-filename="/home/student/j/jschepers/thesis/fixdur/experiment/experiment2/images/instructions/intro5.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -26,13 +29,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.58856529"
-     inkscape:cx="1009.6806"
+     inkscape:cx="723.39121"
      inkscape:cy="495.68402"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:window-width="1680"
-     inkscape:window-height="981"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1004"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -55,7 +58,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -70,11 +73,13 @@
        width="1918"
        height="1075.5187"
        x="2"
-       y="-25.156494" />
+       y="-25.156494"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <flowRoot
        xml:space="preserve"
        id="flowRoot3755"
-       style="font-size:16px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;font-size:16px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
        transform="matrix(1.1483726,0,0,1,457.99497,163.87495)"><flowRegion
          id="flowRegion3757"><rect
            id="rect3759"
@@ -82,37 +87,49 @@
            height="877.21362"
            x="-160"
            y="-93.352104" /></flowRegion><flowPara
-         style="font-size:37.32661438px;font-weight:bold;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans Bold"
+         style="font-weight:bold;font-size:37.32661438px;-inkscape-font-specification:'Sans Bold';text-align:center;text-anchor:middle"
          id="flowPara3130">Summary:</flowPara><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3740" /><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3742" /><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
-         id="flowPara3744">1) Press any button to start the next trial when you are seeing this green cricle    in the middle of the screen.</flowPara><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
+         id="flowPara3744">1) Press any button to start the next trial when you are seeing this white circle    in the middle of the screen.</flowPara><flowPara
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3746" /><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3748">2) Whenever there is a fixation cross, please fixate on it.</flowPara><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3750" /><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3752">3) During each trial please look at the bubbles to explore the image, and indicate which bubble might be part of the image afterwards.</flowPara><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara2999" /><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3001">4) There will be breaks every 20 trials. You may also take a short break before beginning a new trial whenever you need to.</flowPara><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3754" /><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3756" /><flowPara
-         style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3760">We will now start with the calibration, followed by a few training trials, please press the right arrow key to continue.</flowPara></flowRoot>    <image
-       y="262.36218"
-       x="818"
-       id="image3060"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAWCAYAAADafVyIAAAABHNCSVQICAgIfAhkiAAAALtJREFU SIndlUEOxSAIRG3T65UzeSY9YP+KRHEYSPu76SRdGAiPQa1brfUqL+rIJrazTWvp8hxgi3oxBttZ gUyX0oU24gIUEinKWQDtbOnuVeoCwSbAWFiTdS1dpm+MjbkWAh3YzpAbFAsdIBgbVbTBEwAlZk8R amwBvKUPAaJZeor2jjqITknmQi4Ae649CIoh2GbfA3YrPY25FrIALCgrb1ThHtwtrHIdlJJ3wSD0 RWM/sr88mXcKWv0AXEh9GvzG278AAAAASUVORK5CYII= "
-       height="34.859253"
-       width="39.931885" />
+       y="262.46884"
+       x="812.10193"
+       id="image3441"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAgCAIAAAD47T2eAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA
+B3RJTUUH4AoZDhcSQZVpQgAAAgxJREFUSMftlrGqo0AUhie7ZopAGAZMYRGsUiixUbuQkEbxBbTI
+y+Q98gi2aURrUxkbUSsFK5uBwU7EYgthSZGY8d69t1ju345nPsX/nP/Mzucz+Hr9At+iH8wHxDE+
+hzGWJInneZ7nAQCEEEJInueU0n+DEQTBsixRFAEAXdc1TQMA2G63EELTNKuq8jyvrutPYUzTVBSF
+47gwDKMoenx3jLGu66qqnk6nJEl83x+55/fxeHx1Ztu2pmlFUVwul7Is27Z9PG3btizLMAzX67Wq
+qqvVKsuyyRjTNDVNC8Pwer2Of3GapvP5XNM0CGFRFBOcJgiCoihZlgVBwPKHgyDIskxRFEEQJmAs
+y+I4znVddsu6rstxnGVZrBiMsSiKcRxPbY44jkVRxBgzYSRJAgBEUTQVM5QM5e8xPM93XcfYd4+i
+lHZdN/QvE2bowQ+oaRpWzDeNTkIIQuhj1yGECCGsGAjhU8O8Ha8QQlZMnucAAF3Xp2KGkqH8PYZS
+WlWVqqpTMaqqVlX11KLPLeB5Xt/3juOwMxzH6fve87wJw6au6yRJZFk2DIOFYRiGLMtJkrwKnpd5
+4/s+Qmi322GMx4eb4ziyLKdpOhI5Y3mTZRmEcLPZHA6HxWJBKX2MHIzxfr+3bXu5XN7v9/G8mL1d
+B5+GNEIIQggAYAzpGePW+eUrx1+X3263n3XwP8T8Ad1H93RRIijgAAAAAElFTkSuQmCC
+"
+       preserveAspectRatio="none"
+       height="40"
+       width="42.5" />
   </g>
 </svg>
