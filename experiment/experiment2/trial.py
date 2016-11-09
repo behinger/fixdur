@@ -31,97 +31,12 @@ MAT = 154
 path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 
 
-'''rate next poosible bubbles for display, based on current bubble, higher likeliehood for closer bubbles
-return next bubble position'''
-def choose_next_bubble(all_bubbles,chosen_bubble,remaining_bubbles,dist_mat):
-    dist_to_current = np.empty(shape=(len(remaining_bubbles)))
-    #print remaining_bubbles
-    for bubble_pos in remaining_bubbles:
-        dist_to_current[remaining_bubbles.index(bubble_pos)] = (dist_mat[all_bubbles.index((chosen_bubble)[0]),all_bubbles.index(bubble_pos)])
-    weights = 1 - (dist_to_current-np.min(dist_to_current))/np.ptp(dist_to_current)
-    weights = weights/sum(weights)
-    custm = stats.rv_discrete(name='custm', values=(np.arange(len(remaining_bubbles)), weights))
-    next_bubble_index = custm.rvs(size=1)
-    next_bubble_pos = remaining_bubbles[next_bubble_index[0]]
-
-    return next_bubble_pos   
-       
-
-
-'''generate individual stimuli for the trial'''
-def get_image(surf,bubble_image,all_bubbles,loaded_bubbles,remaining_bubbles,chosen_bubble,num_of_bubbles,dist_mat):
-    
-    #remove previously fixated bubble from list    
-    try:
-        remaining_bubbles.remove(chosen_bubble[0])        
-    except:
-        pass
-    #delete all bubbles that have overlap with chosen bubble from prev subtrial
-    remove_from_remaining = [np.where(dist_mat[all_bubbles.index(chosen_bubble[0]),:] < MAT)]
-    for item in remove_from_remaining[0][0]:
-        if all_bubbles[item] in remaining_bubbles:
-            remaining_bubbles.remove(all_bubbles[item])    
-
-     
-    #list to store bubbles used for current image
-    used_bubbles = []
-    if chosen_bubble == 'No bubble':
-        #start with random single bubble images
-        current_bubble_pos = random.choice(remaining_bubbles)
-    else:
-        # select bubble that is more likely closer to the previously fixated bubble
-        current_bubble_pos = choose_next_bubble(all_bubbles,chosen_bubble,remaining_bubbles,dist_mat)
-        #current_bubble_pos = random.choice(remaining_bubbles)
-   
-        
-    used_bubbles.append(current_bubble_pos)
-    #load current bubble
-    current_bubble = loaded_bubbles[all_bubbles.index(current_bubble_pos)]
-    # paste current bubble on background
-    current_bubble.draw(surf)
-    #surf.blit(current_bubble,(current_bubble_pos[0]+320,current_bubble_pos[1]+60))
-    more_bubbles = True
-    if num_of_bubbles > 1:
-        #delete all bubbles that have overlap with current bubble
-        remove_from_remaining = [np.where(dist_mat[all_bubbles.index(current_bubble_pos),:] < MAT)]
-        for item in remove_from_remaining[0][0]:
-            if all_bubbles[item] in remaining_bubbles:
-                remaining_bubbles.remove(all_bubbles[item])
-        for a in range(num_of_bubbles-1):       
-            # choose next bubble to add
-            if not remaining_bubbles:
-                    more_bubbles = False
-                    print 'Warning: Ran out of bubbles!'
-                    break
-            else:
-                if chosen_bubble == 'No bubble':
-                    # select bubble that is more likely closer to the current_bubble
-                    next_bubble_pos = choose_next_bubble(all_bubbles,[current_bubble_pos],remaining_bubbles,dist_mat)
-                else:
-                    # select bubble that is more likely closer to the previously fixated bubble
-                    next_bubble_pos = choose_next_bubble(all_bubbles,chosen_bubble,remaining_bubbles,dist_mat)
-                used_bubbles.append(next_bubble_pos)
-                #delete all bubbles that have overlap with next bubble
-                if num_of_bubbles > 2:
-                    remove_from_remaining = [np.where(dist_mat[all_bubbles.index(next_bubble_pos),:] < MAT)]
-                    for item in remove_from_remaining[0][0]:
-                        if all_bubbles[item] in remaining_bubbles:
-                            remaining_bubbles.remove(all_bubbles[item])
-                # load an add next bubble images to image
-                next_bubble = loaded_bubbles[all_bubbles.index(next_bubble_pos)]
-                next_bubble.draw(surf)
-                #surf.flip()
-                #surf.blit(next_bubble,(next_bubble_pos[0]+320,next_bubble_pos[1]+60))
-
-    return used_bubbles, more_bubbles    
-
-
 ''' display training trials'''    
 def training(surf,el,memory_image,fix_cross):
     #training parameter
     #rectXY = surf.get_rect()
     #rectXY = (rectXY[2],rectXY[3])
-    training_bubble_num = [1,2,3,4,5,10]
+    training_bubble_num = [0,2,4,8,16]
 
     training_images = os.listdir(path_to_fixdur_files+'stimuli/training/single_bubbles/')   
     bubble_image = training_images[0]

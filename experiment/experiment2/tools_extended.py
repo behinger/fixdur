@@ -129,7 +129,7 @@ def choose_locations(whole_image,num, sample_points, remaining_points, prev_loc)
         sample_points.append(prev_loc[0])
 
     # compute number of sample points
-    num_points = len(sample_points)
+    #num_points = len(sample_points)
     
     # compute euclidean distance between all sample points
     #distances = np.empty((num_points,num_points))
@@ -187,55 +187,40 @@ def choose_locations(whole_image,num, sample_points, remaining_points, prev_loc)
         
     return next_loc
     
-def create_bubble_image(image, loc,surf):
+def create_bubble_image(stim, loc,surf):
     
     mask = create_mask(loc)
-    stim = visual.ImageStim(surf,image=image,mask=mask)
+    stim.mask = mask
 
     
     return stim
 
 '''display memory task, return displayed bubbles and decision'''        
-def memory_task(image,memory_image,surf):
+def memory_task(stim,memory_image,surf,stimList_preload,bubble_image):
     correct = 'No valid answer yet'
     # Sample bubble locations for current image from Poisson distribution
-    width, height = image.size
+    width, height = stim.size
     sample_points = poisson_sampling(width,height)
     #bubble from shown image for task
     same_pic_rand_bubble_loc = [random.choice(sample_points)]
     #create bubble image
     # same_pic_rand_bubble_loc  = [surf.size/2]
-    same_pic_rand_bubble = create_bubble_image(image, same_pic_rand_bubble_loc,surf)
+    same_pic_rand_bubble = create_bubble_image(stim, same_pic_rand_bubble_loc,surf)
     #save image and bubble position
     #same_pic_rand_bubble_loc = [bubble_image,same_pic_rand_bubble_loc]
     #bubble from other image
-    other_images = os.listdir(path_to_fixdur_files+'stimuli/single_bubble_images/')
+    other_images = os.listdir(path_to_fixdur_files+'stimuli/urban/')
     other_pic_rand_bubble_loc = [random.choice(sample_points)]
     other_pic = random.choice(other_images)
-    
-    # Find and load image (with regular expression)
-    p_noise = re.compile('noise') #define pattern for pattern matching
-    if p_noise.match(other_pic) != None:
-        other_pic = Image.open(path_to_fixdur_files+'stimuli/noise/post_shine/'+other_pic)
-    else:
-        other_pic = Image.open(path_to_fixdur_files+'stimuli/urban/'+other_pic)
-        # convert image to grayscale
-        other_pic = other_pic.convert('L')
         
     #make sure it is from another image
-    while other_pic == image:
+    while other_pic == bubble_image:
         other_pic = random.choice(other_images)
-        # Find and load image (with regular expression)
-        p_noise = re.compile('noise') #define pattern for pattern matching
-        if p_noise.match(other_pic) != None:
-            other_pic = Image.open(path_to_fixdur_files+'stimuli/noise/post_shine/'+other_pic)
-        else:
-            other_pic = Image.open(path_to_fixdur_files+'stimuli/urban/'+other_pic)
-            # convert image to grayscale
-            other_pic = other_pic.convert('L')
+        
+    other_stim = stimList_preload[other_pic]
         
     #other_pic_rand_bubble_loc  = [surf.size/2]
-    other_pic_rand_bubble = create_bubble_image(other_pic, other_pic_rand_bubble_loc,surf) #visual.SimpleImageStim(surf,path_to_fixdur_files+'stimuli/single_bubble_images/'+other_pic_rand_bubble_loc[0]+'/'+other_pic_rand_bubble_loc[1])
+    other_pic_rand_bubble = create_bubble_image(other_stim, other_pic_rand_bubble_loc,surf) #visual.SimpleImageStim(surf,path_to_fixdur_files+'stimuli/single_bubble_images/'+other_pic_rand_bubble_loc[0]+'/'+other_pic_rand_bubble_loc[1])
     #other_pic_rand_bubble =  
     #save image and bubble position
     #other_pic_rand_bubble_loc = [other_pic_rand_bubble_loc[0],[int(other_pic_rand_bubble_loc[1].split('_',1)[1].split('_')[0]),int(other_pic_rand_bubble_loc[1].split('_',1)[1].split('_')[1].split('.')[0])] ]    
@@ -250,16 +235,14 @@ def memory_task(image,memory_image,surf):
     locations = locations[0]
     
     memory_image.draw(surf)
-    #same_pic_rand_bubble.pos = (same[0]-same_pic_rand_bubble_loc[0][0]+surf.size[0]/2,same[1]-same_pic_rand_bubble_loc[0][1]+surf.size[1]/2)
-    #pos = (surf.size[0]/2 - same_pic_rand_bubble_loc[0][0]+same[0],-(surf.size[1]/2 - same_pic_rand_bubble_loc[0][1]-same[1]))
-    #pos = ((surf.size[0]/2 - same_pic_rand_bubble_loc[0][0]),-(surf.size[1]/2 - same_pic_rand_bubble_loc[0][1]))
-    pos = ((image.size[0]/2 - same_pic_rand_bubble_loc[0][0] + same[0]),(image.size[1]/2 - same_pic_rand_bubble_loc[0][1])+ same[1])
+    #pos = ((image.size[0]/2 - same_pic_rand_bubble_loc[0][0] + same[0]),(image.size[1]/2 - same_pic_rand_bubble_loc[0][1])+ same[1])
+    pos = ((width/2 - same_pic_rand_bubble_loc[0][0] + same[0]),(height/2 - same_pic_rand_bubble_loc[0][1])+ same[1])
     same_pic_rand_bubble.pos = pos
     same_pic_rand_bubble.draw(surf)
     
     #other_pos = (locations[0][0]-other_pic_rand_bubble_loc[0][0]+surf.size[0]/2,-(-locations[0][1]-other_pic_rand_bubble_loc[0][1]+surf.size[1]/2))
     #other_pos = ((other_pic_rand_bubble_loc[0][0]+surf.size[0]/2),-(surf.size[1]/2 - other_pic_rand_bubble_loc[0][1]))
-    other_pos = ((image.size[0]/2 - other_pic_rand_bubble_loc[0][0]+locations[0]),(image.size[1]/2 - other_pic_rand_bubble_loc[0][1])+ locations[1])
+    other_pos = ((width/2 - other_pic_rand_bubble_loc[0][0]+locations[0]),(height/2 - other_pic_rand_bubble_loc[0][1])+ locations[1])
     other_pic_rand_bubble.pos = other_pos
     other_pic_rand_bubble.draw(surf)
     

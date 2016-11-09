@@ -23,7 +23,7 @@ NUM_OF_TRIALS = 64
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 START_TRIAL = 1    #which trial to begin with   
 #fullscreen = True   
-fullscreen = True
+fullscreen = False
 EYETRACKING = False
 
 if EYETRACKING == False:
@@ -71,7 +71,7 @@ else:
 
 # set up the window
 rectXY = (1920,1080);
-surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=0, units='pix',waitBlanking=False)
+surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=1, units='pix',waitBlanking=False)
 surf.setMouseVisible(False)
 
 # load memory image
@@ -197,13 +197,6 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         
         # New Part
         
-        # Find and load image (with regular expression)
-    
-        
-        # Sample bubble locations for current image from Poisson distribution
-        width, height = image.size
-        sample_points = tools_ex.poisson_sampling(width,height)
-        
 
         
         # start trial
@@ -216,6 +209,10 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         white_image = Image.new('L',image.size,150)
         stimWhite = visual.ImageStim(surf, image=white_image, units='pix')
         stim = stimList_preload[bubble_image]
+        
+        # Sample bubble locations for current image from Poisson distribution
+        width, height = stim.size
+        sample_points = tools_ex.poisson_sampling(width,height)        
         
         memory = True     
         whole_image = False
@@ -260,8 +257,9 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                 tools.debug_time("stimWhite.mask = mask_im",start)
                 start = core.getTime()
             
-                #display time for white bubble
-                white_disp = 300 + np.random.exponential(200,1)
+                #display time for white bubble (gaussian with mean 400 ms and sd 50 ms)
+                white_disp = np.random.normal(400,50)
+                #white_disp = 300 + np.random.exponential(200,1)
                 
                 # find a different image
                 new_image = random.choice(all_images_copy)
@@ -393,7 +391,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         #memory task
         #left_bubble, right bubble, correct = tools.memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image.copy(),surf)
         if memory:
-            memory_res = tools_ex.memory_task(image,memory_image,surf)
+            memory_res = tools_ex.memory_task(stim,memory_image,surf,stimList_preload,bubble_image)
         else:
             memory_res = ['no_memory_task','no_memory_task','no_memory_task']
         
