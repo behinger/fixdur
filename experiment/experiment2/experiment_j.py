@@ -19,12 +19,12 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 
 
 #NUM_OF_TRIALS =128
-NUM_OF_TRIALS = 64 
+NUM_OF_TRIALS = 3#96
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 START_TRIAL = 1    #which trial to begin with   
 #fullscreen = True   
-fullscreen = False
-EYETRACKING = False
+fullscreen = True
+EYETRACKING = True
 
 if EYETRACKING == False:
     tracker = None;
@@ -71,7 +71,7 @@ else:
 
 # set up the window
 rectXY = (1920,1080);
-surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=1, units='pix',waitBlanking=False)
+surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=0, units='pix',waitBlanking=True)
 surf.setMouseVisible(False)
 
 # load memory image
@@ -155,7 +155,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         all_images.pop(0)
         
         #get the trial corresponding to the image
-        current_trial = trial_mat[np.where(trial_mat[:,0] == bubble_image)]
+        current_trial = trial_mat[np.where(trial_mat[:,4] == str(float(chosen_image)))]
            
         # breaks (wait for next trial)
         breaks = [28,48,68,88,108]
@@ -218,6 +218,8 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         whole_image = False
         start = core.getTime()
         for subtrial in current_trial:
+            print 'subtrial: '+str(subtrial_num)
+           # print subtrial
             # reset list for used locations            
             used_locations = []
             # copy in which already used locations can be deleted
@@ -242,20 +244,31 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
             
             # create mask image for first bubble
             #print(chosen_location)
-            tools.debug_time("before mask create",start)
-            start = core.getTime()
+            #tools.debug_time("before mask create",start)
+            #start = core.getTime()
             
             mask_im = tools_ex.create_mask(chosen_location)
-            tools.debug_time("mask created",start)
-            start = core.getTime()
+            #tools.debug_time("mask created",start)
+           # start = core.getTime()
+            stim.mask = mask_im
+            #tools.debug_time("stim.mask =mask_im updated",start)
+            #start = core.getTime()
+            stim.draw()
+
+
+            
             
             # if control condition is applied
             if control == 1 and subtrial_num != 1:
                 # create white bubble
-
-                stimWhite.mask = mask_im
-                tools.debug_time("stimWhite.mask = mask_im",start)
+                surf.flip()
+                tools.debug_time("[white] foveated displayed",start)
                 start = core.getTime()
+                
+                bubble_display_start = core.getTime()
+                stimWhite.mask = mask_im
+                #tools.debug_time("stimWhite.mask = mask_im",start)
+                #start = core.getTime()
             
                 #display time for white bubble (gaussian with mean 400 ms and sd 50 ms)
                 white_disp = np.random.normal(400,50)
@@ -266,41 +279,59 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                 while new_image == bubble_image:
                     new_image = random.choice(all_images_copy)
 
-                tools.debug_time("new image selected",start)                
-                start = core.getTime()                
+                #tools.debug_time("new image selected",start)                
+                #start = core.getTime()                
                 
                 stimWhite.draw()
-                surf.flip()
-                tools.debug_time("new image loaded and white displayed",start)
                 
-                start = core.getTime()
-                stim = stimList_preload[new_image]
-                tools.debug_time("new image set",start)
+                ###################
+                ### Wait 200ms with current foveated
+                ###################                              
+                curr_display_time = 0
+                while curr_display_time < 200/1000.:
+                    core.wait(0.001)                    
+                    curr_display_time = core.getTime() - bubble_display_start
+                start = start+200/1000.
+                
+                surf.flip() #flip to white stimulus
                 display_start = core.getTime()
+
+                tools.debug_time("[white] white displayed",start)
+                start = core.getTime()
                 
-                # display white bubble until display time is over
+                stim = stimList_preload[new_image]
+                stim.mask = mask_im
+                stim.draw()
+                
                 curr_display_time = 0
                 while curr_display_time < white_disp/1000:
                     core.wait(0.001)                    
                     curr_display_time = core.getTime() - display_start
-                start = core.getTime()
+                start = start + white_disp/1000.
+                
+                #tools.debug_time("new image set",start)
+                
+                # display white bubble until display time is over
+                #start = core.getTime()
 
-
-
-            
-            stim.mask = mask_im
-            tools.debug_time("stim.mask =mask_im updated",start)
-            start = core.getTime()
-            stim.draw()
-            tools.debug_time("stim.draw",start)
-            start = core.getTime()
+            #################################
+            ### Show A Single Foveated Bubble
+            ###############################
             surf.flip()
-            tools.debug_time("stimulus drawn, wait forced fix time",start)
-            start = core.getTime()
-
             bubble_display_start = core.getTime()
             if EYETRACKING == True:                
                 tracker.trialmetadata("forced_fix_onset", bubble_display_start)
+            tools.debug_time("stimulus drawn, wait forced fix time (white-timing corrected)",start)
+            start = core.getTime()
+            
+
+            
+          
+         
+
+
+
+
             
             # wait until first bubble is fixated before starting forced_fix_time
             if subtrial_num == 1:
@@ -320,25 +351,36 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                 mask_im = tools_ex.create_mask(bubble_locations)
                 [used_locations.append(location) for location in bubble_locations]
                 whole_image = False
-            tools.debug_time("choose new bubble locations ",start)
-            start = core.getTime()
+            #tools.debug_time("choose new bubble locations ",start)
+            #start = core.getTime()
             # prepare stimulus for alternative bubble(s)
             #stim = visual.ImageStim(surf, image=image, mask=mask_im, units='pix')
             stim.mask = mask_im
-            tools.debug_time("stim.mask",start)
-            start = core.getTime()
+            #tools.debug_time("stim.mask",start)
+            #start = core.getTime()
             
             disp_time = float(subtrial[2])
             #keep displaying choosen bubble until disp_time is over
+            
+            
+                        
+            # show alternative bubble(s)
+            stim.draw()
+            ###################
+            ## Wait FORCED FIXATION TIME
+            ###################
             bubble_display_time = 0
-            while bubble_display_time < disp_time/1000:
+            while bubble_display_time < disp_time/1000.:
                 core.wait(0.001)                    
                 bubble_display_time = core.getTime() - bubble_display_start
                 
-                
-            # show alternative bubble(s)
-            stim.draw()
+            start = start + disp_time/1000.
+            
+            ###################
+            ## Show Alternative Bubbles
+            ###################
             surf.flip()
+            tools.debug_time("choose new bubble locations (without FF)",start)
 
             start = core.getTime()
 

@@ -74,8 +74,9 @@ def randomization(subject, trial_time):
     num_bubbles = []    # number of bubbles
     disp_time = []      # time of bubble display
     control_list = []   # information if control condition is applied
-    
-    for trial_num in range(2):
+    trial_num = []
+
+    for condition in range(2):
         
         images = os.listdir(path_to_fixdur_files+'stimuli/urban/')
         # control condition in the first 32 trials
@@ -85,10 +86,10 @@ def randomization(subject, trial_time):
         #    control = 0
     
         
-        if trial_num == 0:
+        if condition == 0:
             
             # control condition is set true
-            control = True
+            control = 1
             
             # for the first part (control condition) choose 32 images from all images (32 trials) 
             images = random.sample(images,32)
@@ -103,11 +104,11 @@ def randomization(subject, trial_time):
             #  whole image condition is false
             whole_img = np.empty(len(images))
             whole_img.fill(False)
-        
-       
-        if trial_num == 1:
             
-            control = False
+       
+        if condition == 1:
+            
+            control = 0
             
             # for the second part (variation of num of bubbles) take all images
             np.random.shuffle(images)
@@ -123,26 +124,10 @@ def randomization(subject, trial_time):
             whole_img[0:(len(images)/2)] = False
             whole_img[(len(images)/2):len(images)] = True
             np.random.shuffle(whole_img)
+            
+        trial_num_list = list(range(32+64))
         
-    
-    #types = []
-    #for a in range(int(len(images)/4)):
-    #    types.append('all')
-    #for a in range(int((len(images)/4)*3)):
-    #    types.append('seq')
-    #random.shuffle(types)
-
-    # dimensions of output array: 
-    #trials = []         # image number
-    #trial_type = []     # all_bubbles or sequential
-    #num_bubbles = []    # number of bubbles
-    #disp_time = []      # time of bubble display
-    #control_list = []   # information if control condition is applied
-    
-        
-        i = 0
-        
-        for image in images:
+        for i,image in enumerate(images):
             
             
             # reset counter
@@ -159,7 +144,7 @@ def randomization(subject, trial_time):
             
                 # num of bubbles
                 if whole_img[i] == True:
-                    np.random.choice([0,1,2,4,8,16])
+                    num_bubble = [np.random.choice([0,1,2,4,8,16])]
                 else:
                     num_bubble = custm.rvs(size=1)
                 num_bubbles = np.append(num_bubbles,num_bubble[0])
@@ -168,12 +153,16 @@ def randomization(subject, trial_time):
                 disp = scipy.random.exponential(295,1)
                 disp_time = np.append(disp_time,int(disp))
             
-            
+                if control == 0:
+                    tIdx = 32+i
+                else:
+                    tIdx = i
+                trial_num = np.append(trial_num,tIdx)
                 # increase counter
                 if int(disp) == 0:
                     disp = 1
                 time = time + int(disp)
-            i = i+1
+            #i = i+1
  
     #control = np.random.randint(2,size=(len(trials),1))
     trials = np.reshape(trials,(len(trials),1))
@@ -181,12 +170,12 @@ def randomization(subject, trial_time):
     num_bubbles = np.reshape(num_bubbles,(len(num_bubbles),1))
     disp_time = np.reshape(disp_time,(len(disp_time),1))
     control_list = np.reshape(control_list,(len(control_list),1))
-
+    trial_num = np.reshape(trial_num,(len(trial_num),1))
     #trial_mat = np.append(trials,trial_type,axis=1)
     trial_mat = np.append(trials,num_bubbles,axis=1)
     trial_mat = np.append(trial_mat,disp_time,axis=1)
     trial_mat = np.append(trial_mat, control_list, axis=1)
-    
+    trial_mat = np.append(trial_mat,trial_num,axis=1)
     # create vector if control condition is applied in the trial or not
     #control_mat = np.random.randint(2,size=(1,total_num_trials))
 
