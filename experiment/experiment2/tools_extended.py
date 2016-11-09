@@ -111,17 +111,47 @@ def create_mask(locations, mask_size=(960,1280)):
     
     for i in np.arange(num):
         # swap coordinates because mask matrix has different coordinate system
-        x = locations[i][1]
-        y = locations[i][0]
+        x = int(locations[i][1])
+        y = int(locations[i][0])
     
         # embed gaussian in matrix which has the same size as the window
         # possible error: could not broadcast input array from shape (180,180) into shape (180,0)
-        mask_im[int(x-size/2):int(x+size/2),int(y-size/2):int(y+size/2)] = gaussian
+        try:
+            mask_im[int(x-size/2):int(x+size/2),int(y-size/2):int(y+size/2)] = gaussian
+        except:
+            print x,y,size
+            error
+                        
     # invert matrix to get background with bubbles
     mask_im = -mask_im
     
     return mask_im
 
+def create_mask_fast(locations,surf,gausStim=None):
+    # Useable only for a single bubble, but very fast for that one (after the first call)
+    # gausMask = tools_extended.create_mask_fast([(150,150)],surf,gausMask)
+    width_img = 1280
+    height_img = 960
+    
+    
+    if gausStim == None:
+        import psychopy.visual
+        mask = create_mask([(width_img,height_img)],mask_size=(height_img*2,width_img*2))
+        maskimage = Image.new('L',(width_img*2,height_img*2),128)
+        gausStim = psychopy.visual.ImageStim(surf,maskimage,mask=-mask)
+        
+    num = len(locations)
+    for i in np.arange(num):
+        
+        x = locations[i][0] - width_img/2
+        y = locations[i][1] - height_img/2
+        
+        gausStim.setPos((x,y))
+        gausStim.draw()
+        
+    return(gausStim)
+
+    
     
 def choose_locations(whole_image,num, sample_points, remaining_points, prev_loc):
 

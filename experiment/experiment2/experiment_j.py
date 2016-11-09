@@ -23,7 +23,7 @@ NUM_OF_TRIALS = 3#96
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 START_TRIAL = 1    #which trial to begin with   
 #fullscreen = True   
-fullscreen = True
+fullscreen = False
 EYETRACKING = True
 
 if EYETRACKING == False:
@@ -121,8 +121,12 @@ for new_image in all_images:
     # create a stimulus and save it in the stimulus list
     stim = visual.ImageStim(surf, image=image, units='pix')
     stimList_preload[new_image] = stim
-    
-    
+
+# create mask stimulus for single bubbles    
+#single_mask_stim = tools_ex.create_mask([surf.size/2],mask_size=surf.size*2)
+#maskimage = Image.new('L',surf.size*2,128)
+#gausStim = visual.ImageStim(surf,maskimage,mask=-single_mask_stim)
+gausStim = tools_ex.create_mask_fast([(0,0)],surf)
 '''p_noise = re.compile('noise') #define pattern for pattern matching
 for new_image in all_images: 
     if p_noise.match(new_image) != None:
@@ -139,7 +143,7 @@ for new_image in all_images:
 #logging.console.setLevel(logging.WARNING)
 
 # run the game loop
-for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
+for chosen_image in [35,40,41]:#range(NUM_OF_TRIALS-START_TRIAL):
     
     try:
     
@@ -218,6 +222,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         whole_image = False
         start = core.getTime()
         for subtrial in current_trial:
+            subtrial[1] = 0
             print 'subtrial: '+str(subtrial_num)
            # print subtrial
             # reset list for used locations            
@@ -250,23 +255,28 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
             mask_im = tools_ex.create_mask(chosen_location)
             #tools.debug_time("mask created",start)
            # start = core.getTime()
-            stim.mask = mask_im
+            #stim.mask = mask_im
             #tools.debug_time("stim.mask =mask_im updated",start)
-            #start = core.getTime()
+            
+            
+            start = core.getTime()
+            stim.mask = None
+            tools.debug_time("1.stim.mask=None",start)
             stim.draw()
-
-
+            tools.debug_time("2.stim.draw()",start)
+            tools_ex.create_mask_fast(chosen_location,surf,gausStim)
+            tools.debug_time("3.tools_ex.create_mask_fast",start)
             
             
             # if control condition is applied
             if control == 1 and subtrial_num != 1:
                 # create white bubble
                 surf.flip()
-                tools.debug_time("[white] foveated displayed",start)
+                tools.debug_time("4.[white] foveated displayed",start)
                 start = core.getTime()
                 
                 bubble_display_start = core.getTime()
-                stimWhite.mask = mask_im
+               # stimWhite.mask = mask_im
                 #tools.debug_time("stimWhite.mask = mask_im",start)
                 #start = core.getTime()
             
@@ -283,6 +293,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                 #start = core.getTime()                
                 
                 stimWhite.draw()
+                tools_ex.create_mask_fast(chosen_location,surf,gausStim)
                 
                 ###################
                 ### Wait 200ms with current foveated
@@ -300,8 +311,9 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
                 start = core.getTime()
                 
                 stim = stimList_preload[new_image]
-                stim.mask = mask_im
+                stim.mask = None
                 stim.draw()
+                tools_ex.create_mask_fast(chosen_location,surf,gausStim)
                 
                 curr_display_time = 0
                 while curr_display_time < white_disp/1000:

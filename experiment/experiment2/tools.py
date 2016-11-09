@@ -386,9 +386,11 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc):
             else:
                 # compute distance between centre of the previous bubble and the current fixation
                 dist = spatial.distance.pdist([prev_loc,(bufferx[-1],buffery[-1])], metric='euclidean')
-                
+                print(dist)
                 # make sure, that next fixation is at least one bubble-size away from the previous location
-                if (dist > MAT):
+                if (dist > 3*MAT):
+                    print 'ET quit because distance'
+
                     return (bufferx[-1],buffery[-1])                  
                         
         if saccade == 0 and bufferv[-1]>70:
@@ -433,11 +435,16 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc):
                         return bubble
         else:
             if bufferv[-1] < 40 and saccade:
-                el.trialmetadata('end_x', bufferx[-1])
-                el.trialmetadata('end_y', buffery[-1])
-                el.trialmetadata('end_velocity', bufferv[-1])
-                el.trialmetadata('sacc_detection', 'pred_in_bubble')
-                return (bufferx[-1],buffery[-1])
+                dist = spatial.distance.pdist([prev_loc,(bufferx[-1],buffery[-1])], metric='euclidean')
+                print(dist)
+                # make sure, that next fixation is at least one bubble-size away from the previous location
+                if (dist > 2*MAT):
+                    print 'ET quit because smaller 40'
+                    el.trialmetadata('end_x', bufferx[-1])
+                    el.trialmetadata('end_y', buffery[-1])
+                    el.trialmetadata('end_velocity', bufferv[-1])
+                    el.trialmetadata('sacc_detection', 'pred_in_bubble')
+                    return (bufferx[-1],buffery[-1])
                             
         #check if sample near bubble (in distance of 2 * radius MAT/2)
     #print "random bubble returned" 
@@ -451,4 +458,5 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc):
 path_to_fixdur_files, path_to_fixdur_code = paths()
 
 def debug_time(dispstr,start):
-    print "%s : %.2f"%(dispstr,1000*(core.getTime()-start))
+    pass
+    #print "%s : %.2f"%(dispstr,1000*(core.getTime()-start))
