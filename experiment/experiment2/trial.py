@@ -16,7 +16,7 @@ EYETRACKING = False
 
 try:
     if EYETRACKING:    
-        import fixdur_tracker as tracker
+        import fixdur_tracker
         import pylink
 except ImportError:
     print 'pylink and fixdur_tracker cannot be imported'
@@ -32,17 +32,61 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 
 
 ''' display training trials'''    
-def training(surf,el,memory_image,fix_cross):
+def training(surf,tracker,memory_image,fix_cross,stimuli):
     #training parameter
-    #rectXY = surf.get_rect()
-    #rectXY = (rectXY[2],rectXY[3])
-    training_bubble_num = [0,2,4,8,16]
-
-    training_images = os.listdir(path_to_fixdur_files+'stimuli/training/single_bubbles/')   
-    bubble_image = training_images[0]
+    training_bubble_num = [0,2,4,8,16] # number of bubbles for training
+    num_trials = 2 # number of trials for training
+    num_subtrials = 20 # number of subtrials per trial
+    
+    # choose randomly as many images as number of training trials
+    training_stimuli_keys = np.random.choice(stimuli.keys(),num_trials,replace=False)   
+    #bubble_image = training_images[0]
     trial_num = 1000
     
-    for bubble_image in training_images:   
+    for current_key in training_stimuli_keys[0:(num_trials/2)]:
+        
+        # find stimulus to current key (image)
+        current_stim = stimuli[current_key]
+        
+        # draw and show white circle
+        circ = visual.Circle(surf, units='pix', radius=10)
+        circ.draw(surf)
+        surf.flip()
+
+        # exit function via escape
+        key = event.waitKeys()
+        if ('escape' in key):
+            surf.close()
+            sys.exit()
+         
+        # show fixation cross and apply drift correction
+        fix_cross.draw(surf)
+        surf.flip()
+        if EYETRACKING == True:        
+            tracker.drift() 
+            
+        #keep displaying fixation cross after new calibration
+        fix_cross.draw(surf)
+        surf.flip()
+        
+        #start trial (eye-tracker)
+        if EYETRACKING == True:
+            tracker.start_trial()
+        
+        #normal_dist with mean 300 and spread 700
+        delay_time = np.random.uniform(300,700)
+        # wait delay time
+        core.wait(int(delay_time/1000))
+        
+        # record meta-data for tracker
+        if EYETRACKING == True:
+            tracker.trial(trial_num)
+            tracker.trialmetadata('BUBBLE_IMAGE',current_key)
+            
+        for subtrial in range(num_subtrials):
+            
+        
+    '''for bubble_image in training_images:   
         
         #start with sequential trial
         # load all bubbles for chosen image
@@ -101,7 +145,7 @@ def training(surf,el,memory_image,fix_cross):
         
         if EYETRACKING == True:
             el.trial(trial_num)
-            el.trialmetadata('BUBBLE_IMAGE',bubble_image)
+            el.trialmetadata('BUBBLE_IMAGE',bubble_image)'''
        
         for subtrial in range(20):
             

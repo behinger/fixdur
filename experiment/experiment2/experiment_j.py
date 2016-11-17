@@ -24,7 +24,7 @@ TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial
 START_TRIAL = 1    #which trial to begin with   
 #fullscreen = True   
 fullscreen = False
-EYETRACKING = True
+EYETRACKING = False
 
 if EYETRACKING == False:
     tracker = None;
@@ -77,6 +77,19 @@ surf.setMouseVisible(False)
 # load memory image
 memory_image = visual.SimpleImageStim(surf, image=path_to_fixdur_code+'images/memory.png')
 
+# preload all images and create a stimulus list out of them
+stimList_preload = {}
+for new_image in all_images: 
+    # load image
+    image = Image.open(path_to_fixdur_files+'stimuli/urban/'+new_image)
+    
+    # convert image to grayscale
+    image = image.convert('L')
+    
+    # create a stimulus and save it in the stimulus list
+    stim = visual.ImageStim(surf, image=image, units='pix')
+    stimList_preload[new_image] = stim
+
 # set up eyetracker
 rand_filename = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(8))
 print rand_filename
@@ -97,7 +110,7 @@ surf.flip()
 
 #training trials
 if START_TRIAL == 0:
-	trial.training(surf,tracker,memory_image,fix_cross)
+	trial.training(surf,tracker,memory_image,fix_cross,stimList_preload)
  
 tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start.png')))
 
@@ -109,18 +122,7 @@ surf.flip()
 trial_num = 0
 trial_list = []
 
-# preload all images and create a stimulus list out of them
-stimList_preload = {}
-for new_image in all_images: 
-    # load image
-    image = Image.open(path_to_fixdur_files+'stimuli/urban/'+new_image)
-    
-    # convert image to grayscale
-    image = image.convert('L')
-    
-    # create a stimulus and save it in the stimulus list
-    stim = visual.ImageStim(surf, image=image, units='pix')
-    stimList_preload[new_image] = stim
+
 
 # create mask stimulus for single bubbles    
 #single_mask_stim = tools_ex.create_mask([surf.size/2],mask_size=surf.size*2)
@@ -195,7 +197,7 @@ for chosen_image in [35,40,41]:#range(NUM_OF_TRIALS-START_TRIAL):
         if EYETRACKING == True:
             tracker.start_trial()
 
-        #normal_dist with mean 500 and spread 100
+        #normal_dist with mean 300 and spread 700
         delay_time = np.random.uniform(300,700)
         core.wait(int(delay_time/1000))
         
