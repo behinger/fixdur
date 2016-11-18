@@ -108,9 +108,12 @@ fix_cross = visual.SimpleImageStim(surf,image=path_to_fixdur_code+'images/fixati
 #fix_cross.draw(surf)
 surf.flip()
 
+# create gaussian mask
+gausStim = tools_ex.create_mask_fast([(0,0)],surf)
+
 #training trials
 if START_TRIAL == 0:
-	trial.training(surf,tracker,memory_image,fix_cross,stimList_preload)
+	trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim)
  
 tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start.png')))
 
@@ -128,7 +131,6 @@ trial_list = []
 #single_mask_stim = tools_ex.create_mask([surf.size/2],mask_size=surf.size*2)
 #maskimage = Image.new('L',surf.size*2,128)
 #gausStim = visual.ImageStim(surf,maskimage,mask=-single_mask_stim)
-gausStim = tools_ex.create_mask_fast([(0,0)],surf)
 '''p_noise = re.compile('noise') #define pattern for pattern matching
 for new_image in all_images: 
     if p_noise.match(new_image) != None:
@@ -254,7 +256,7 @@ for chosen_image in [35,40,41]:#range(NUM_OF_TRIALS-START_TRIAL):
             #tools.debug_time("before mask create",start)
             #start = core.getTime()
             
-            mask_im = tools_ex.create_mask(chosen_location)
+            ### mask_im = tools_ex.create_mask(chosen_location) ???
             #tools.debug_time("mask created",start)
            # start = core.getTime()
             #stim.mask = mask_im
@@ -337,14 +339,6 @@ for chosen_image in [35,40,41]:#range(NUM_OF_TRIALS-START_TRIAL):
                 tracker.trialmetadata("forced_fix_onset", bubble_display_start)
             tools.debug_time("stimulus drawn, wait forced fix time (white-timing corrected)",start)
             start = core.getTime()
-            
-
-            
-          
-         
-
-
-
 
             
             # wait until first bubble is fixated before starting forced_fix_time
@@ -487,9 +481,7 @@ ending.draw()
 surf.flip()
 core.wait(6)
 surf.close()
-#surf.fill((128,128,128))
-#surf.blit(ending,(0,0))
-#pygame.display.update()
+
    
 #write metadata into file
 pickle.dump(trial_list,subject_file)
@@ -499,7 +491,6 @@ if EYETRACKING == True:
     tracker.finish()
 os.system('mv '+rand_filename+'.EDF '+path_to_fixdur_code+'data/'+str(subject)+'/')
 
-#pygame.quit()
 if os.path.exists('/home_local/tracking/experiments/fixdur/'):
     os.system('cp -r /home_local/tracking/experiments/fixdur/expcode/data/'+str(subject)+'/ /home_local/tracking/experiments/fixdur/data/'+str(subject)+'/')
 #sys.exit()
