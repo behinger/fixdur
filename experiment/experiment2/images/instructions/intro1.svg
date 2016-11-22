@@ -14,8 +14,11 @@
    height="1080"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.2 r9819"
-   sodipodi:docname="intro1.png">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="intro1.svg"
+   inkscape:export-filename="/home/student/j/jschepers/thesis/fixdur_git/experiment/experiment2/images/instructions/intro1.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -26,13 +29,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.58856529"
-     inkscape:cx="725.47592"
+     inkscape:cx="631.38303"
      inkscape:cy="563.64589"
      inkscape:document-units="px"
-     inkscape:current-layer="g3101"
+     inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1005"
+     inkscape:window-height="1004"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -55,7 +58,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -65,7 +68,7 @@
      id="layer1"
      transform="translate(0,27.637817)">
     <rect
-       style="fill:#808080;fill-opacity:1;stroke:#808080;stroke-width:4.88622904;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#808080;fill-opacity:1;stroke:#808080;stroke-width:4.88622904;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect3766"
        width="1918"
        height="1075.5187"
@@ -75,7 +78,7 @@
        id="g3101">
       <flowRoot
          transform="matrix(1.1483726,0,0,1,605.9535,228.50066)"
-         style="font-size:16px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         style="font-style:normal;font-weight:normal;font-size:16px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot3755"
          xml:space="preserve"><flowRegion
            id="flowRegion3757"><rect
@@ -85,24 +88,24 @@
              width="971.42859"
              id="rect3759" /></flowRegion><flowPara
            id="flowPara3767"
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans">During the experiment you will be viewing various images.</flowPara><flowPara
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle">During the experiment you will be viewing various images.</flowPara><flowPara
            id="flowPara2990"
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans" /><flowPara
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
-           id="flowPara2996">You won't see the whole image at once, but you will have to explore it step by step by looking at little parts called bubbles. </flowPara><flowPara
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle" /><flowPara
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
+           id="flowPara2996">In most of the trials you won't see the whole image at once, but you will have to explore it step by step by looking at little parts called bubbles. </flowPara><flowPara
            id="flowPara2992"
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans" /><flowPara
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle" /><flowPara
            id="flowPara3861"
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans">The bubbles look like this:</flowPara><flowPara
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle">The bubbles look like this:</flowPara><flowPara
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
            id="flowPara3002" /><flowPara
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
            id="flowPara3004" /><flowPara
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
            id="flowPara3006" /><flowPara
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
            id="flowPara3008" /><flowPara
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
            id="flowPara3010" /></flowRoot>      <image
          width="154"
          height="154"
@@ -112,7 +115,7 @@
          y="505.29141" />
       <flowRoot
          transform="matrix(1.1483726,0,0,1,605.91164,741.78554)"
-         style="font-size:16px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         style="font-style:normal;font-weight:normal;font-size:16px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
          id="flowRoot3755-8"
          xml:space="preserve"><flowRegion
            id="flowRegion3757-3"><rect
@@ -121,11 +124,13 @@
              height="602.85712"
              width="971.42859"
              id="rect3759-5" /></flowRegion><flowPara
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
-           id="flowPara3010-8">It's important that you look at the bubbles, whenever they are visible.</flowPara><flowPara
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
+           id="flowPara3010-8"></flowPara><flowPara
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
+           id="flowPara3356">It is important that you look at the bubbles, whenever they are visible.</flowPara><flowPara
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
            id="flowPara3003" /><flowPara
-           style="font-size:37.32661438px;font-weight:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Sans"
-           id="flowPara3005">In some images, we will preview the whole image for a short time</flowPara></flowRoot>    </g>
+           style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
+           id="flowPara3005" /></flowRoot>    </g>
   </g>
 </svg>

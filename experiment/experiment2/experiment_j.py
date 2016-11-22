@@ -21,7 +21,7 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 #NUM_OF_TRIALS =128
 NUM_OF_TRIALS = 3#96
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
-START_TRIAL = 1    #which trial to begin with   
+START_TRIAL = 0    #which trial to begin with   
 #fullscreen = True   
 fullscreen = False
 EYETRACKING = False
@@ -71,7 +71,7 @@ else:
 
 # set up the window
 rectXY = (1920,1080);
-surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=0, units='pix',waitBlanking=True)
+surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=1, units='pix',waitBlanking=True)
 surf.setMouseVisible(False)
 
 # load memory image
