@@ -33,7 +33,8 @@ else:
     import fixdur_tracker
 
 #subject number to determine which multiple_bubble_images are shown, first subject 0
-subject_number = raw_input("Please enter the subject NUMBER(31-45): ")
+#subject_number = raw_input("Please enter the subject NUMBER(31-45): ")
+subject_number = raw_input("Please enter the subject NUMBER: ")
 #subject_number = 30
 subject = subject_number
 
@@ -147,7 +148,7 @@ for new_image in all_images:
 #logging.console.setLevel(logging.WARNING)
 
 # run the game loop
-for chosen_image in [35,40,41]:#range(NUM_OF_TRIALS-START_TRIAL):
+for chosen_image in [31,32,40,48]:#range(NUM_OF_TRIALS-START_TRIAL):
     
     try:
     
@@ -171,6 +172,10 @@ for chosen_image in [35,40,41]:#range(NUM_OF_TRIALS-START_TRIAL):
         if trial_num in breaks:
             text = visual.TextStim(surf, text=u"It's time for a break!")
             text.draw(surf)
+        # Break with instructions in between the first and the second block
+        elif trial_num == 32:
+            tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/memory*.png')))
+            tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start2.png')))
         else:
             circ = visual.Circle(surf, units='pix', radius=10)
             circ.draw(surf)
