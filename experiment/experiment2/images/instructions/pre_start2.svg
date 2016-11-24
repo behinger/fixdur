@@ -14,8 +14,8 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="pre_start.svg"
-   inkscape:export-filename="/home/student/j/jschepers/thesis/fixdur_git/experiment/experiment2/images/instructions/pre_start.png"
+   sodipodi:docname="pre_start2.svg"
+   inkscape:export-filename="/home/student/j/jschepers/thesis/fixdur_git/experiment/experiment2/images/instructions/pre_start2.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -57,7 +57,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -85,7 +85,7 @@
            x="-160"
            y="-93.352104" /></flowRegion><flowPara
          style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3760">We will now start with the first block of the experiment.</flowPara><flowPara
+         id="flowPara3760">We will now start with the second block of the experiment.</flowPara><flowPara
          style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3098" /><flowPara
          style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
