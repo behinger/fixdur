@@ -52,10 +52,10 @@ def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim):
     
     # create control_list such that in half of the cases control condition is applied
     control_list = np.ones(num_trials)
-    control_list[:len(control_list)/2] = 0
+    control_list[len(control_list)/2:] = 0
     
     # random order of trials with and without control condition
-    np.random.shuffle(control_list)
+    #np.random.shuffle(control_list)
         
     
     for trial_num,current_key in enumerate(training_stimuli_keys):

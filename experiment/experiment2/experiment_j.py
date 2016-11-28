@@ -148,8 +148,8 @@ for new_image in all_images:
 #logging.console.setLevel(logging.WARNING)
 
 # run the game loop
-for chosen_image in [31,32,40,48]:#range(NUM_OF_TRIALS-START_TRIAL):
-    
+for chosen_image in [31,32,40,47,48,48]:#range(NUM_OF_TRIALS-START_TRIAL):
+    #print chosen_image
     try:
     
         #remove all trials that should be skipped
@@ -169,13 +169,16 @@ for chosen_image in [31,32,40,48]:#range(NUM_OF_TRIALS-START_TRIAL):
         # breaks (wait for next trial)
         breaks = [28,48,68,88,108]
         breaks = [ x + START_TRIAL for x in breaks]
+        print trial_num
         if trial_num in breaks:
             text = visual.TextStim(surf, text=u"It's time for a break!")
             text.draw(surf)
         # Break with instructions in between the first and the second block
         elif trial_num == 32:
-            tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/memory*.png')))
+            tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/memory1.png')))
             tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start2.png')))
+            circ = visual.Circle(surf, units='pix', radius=10)
+            circ.draw(surf)
         else:
             circ = visual.Circle(surf, units='pix', radius=10)
             circ.draw(surf)

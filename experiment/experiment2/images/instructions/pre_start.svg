@@ -16,8 +16,8 @@
    inkscape:version="0.91 r13725"
    sodipodi:docname="pre_start.svg"
    inkscape:export-filename="/home/student/j/jschepers/thesis/fixdur_git/experiment/experiment2/images/instructions/pre_start.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-xdpi="89.864914"
+   inkscape:export-ydpi="89.864914">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -28,7 +28,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.58856529"
-     inkscape:cx="622.81255"
+     inkscape:cx="771.96229"
      inkscape:cy="563.64589"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -67,12 +67,12 @@
      id="layer1"
      transform="translate(0,27.637817)">
     <rect
-       style="fill:#808080;fill-opacity:1;stroke:#808080;stroke-width:4.88622904;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:#808080;fill-opacity:1;stroke:#808080;stroke-width:4.88622856;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect3766"
-       width="1918"
-       height="1075.5187"
+       width="1917.9999"
+       height="1077.2177"
        x="1.8385293e-13"
-       y="-25.156494" />
+       y="-25.156492" />
     <flowRoot
        xml:space="preserve"
        id="flowRoot3755"

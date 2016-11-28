@@ -30,12 +30,12 @@ MAT = 154
 
 def paths():
     '''return paths'''
-    if os.path.exists('/home_local/thesis/fixdur/experiment/'):
-        path_to_fixdur_files = '/home_local/thesis/fixdur/experiment/'
-        path_to_fixdur_code = '/home_local/thesis/fixdur/experiment/experiment2/'
+    if os.path.exists('/home_local/thesis/fixdur_git/experiment/'):
+        path_to_fixdur_files = '/home_local/thesis/fixdur_git/experiment/'
+        path_to_fixdur_code = '/home_local/thesis/fixdur_git/experiment/experiment2/'
     elif os.path.exists('/net/store/nbp/projects/fixdur/'):
         path_to_fixdur_files = '/net/store/nbp/projects/fixdur/'
-        path_to_fixdur_code = '/home/student/j/jschepers/thesis/fixdur/experiment/experiment2/'
+        path_to_fixdur_code = '/home/student/j/jschepers/thesis/fixdur_git/experiment/experiment2/'
     elif os.path.exists('/home/jschepers/Dokumente/bachelor_thesis/fixdur/'):
         path_to_fixdur_files = '/home/jschepers/Dokumente/bachelor_thesis/'
         path_to_fixdur_code = '/home/jschepers/Dokumente/bachelor_thesis/'
