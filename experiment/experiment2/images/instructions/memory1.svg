@@ -15,8 +15,8 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="intro4.svg"
-   inkscape:export-filename="/home/student/j/jschepers/thesis/fixdur_git/experiment/experiment2/images/instructions/intro4.png"
+   sodipodi:docname="memory1.svg"
+   inkscape:export-filename="/home/student/j/jschepers/thesis/fixdur_git/experiment/experiment2/images/instructions/memory1.png"
    inkscape:export-xdpi="89.864914"
    inkscape:export-ydpi="89.864914">
   <defs
@@ -29,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.58856529"
-     inkscape:cx="502.4452"
+     inkscape:cx="788.73459"
      inkscape:cy="563.64589"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -60,7 +60,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -88,7 +88,7 @@
            x="-160"
            y="-93.352104" /></flowRegion><flowPara
          style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3362">For each trial of the second block you will explore one image, afterwards we will show you two bubbles, and your task will be to indicate which bubble might have been part of the image you saw.</flowPara><flowPara
+         id="flowPara3362">For each trial of this block you will explore one image, afterwards we will show you two bubbles, and your task will be to indicate which bubble might have been part of the image you saw.</flowPara><flowPara
          style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
          id="flowPara3110" /><flowPara
          style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
