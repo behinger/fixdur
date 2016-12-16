@@ -21,7 +21,7 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 #NUM_OF_TRIALS =128
 NUM_OF_TRIALS = 3#96
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
-START_TRIAL = 0    #which trial to begin with   
+START_TRIAL = 1    #which trial to begin with   
 #fullscreen = True   
 fullscreen = False
 EYETRACKING = False
@@ -234,7 +234,7 @@ for chosen_image in [31,32,40,47,48,48]:#range(NUM_OF_TRIALS-START_TRIAL):
         whole_image = False
         start = core.getTime()
         for subtrial in current_trial:
-            subtrial[1] = 0
+            #subtrial[1] = 0
             print 'subtrial: '+str(subtrial_num)
            # print subtrial
             # reset list for used locations            

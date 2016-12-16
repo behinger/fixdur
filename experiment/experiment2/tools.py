@@ -333,6 +333,43 @@ def wait_for_fix(el,used_bubble):
                     return bubble
     return random.choice(used_bubble) #if no fixation on bubble during trial_length
 
+''' Choose new bubble location in whole image condition when timeout occured '''
+def choose_location_timeout(sample_points,current_loc,prev_loc):
+    # import package for distance computations
+    from scipy import spatial
+    
+    # create copy of sample_points to not change the original
+    points_copy = list(sample_points)
+    
+    # minimal distance between center of 2 bubbles = diameter of bubble
+    MIN_DIST = 154
+    
+    # compute distance between sample points and previous location
+    distances_prev = spatial.distance.cdist(prev_loc,points_copy,'euclidean')
+    distances_prev_list = list(distances_prev[0])
+    
+    # remove all locations which would yield overlapping with previous bubble
+    for i,dist in enumerate(distances_prev_list):
+        if dist< MIN_DIST:
+            points_copy.remove(sample_points[i])
+            #distances_prev_list.remove(distances_prev[i])   
+    
+    # compute distance between remaining sample points and current location
+    distances_curr = spatial.distance.cdist(current_loc,points_copy,'euclidean')
+    
+    # draw new location from possible locations according to probability 
+    # distribution (higher likelihood for closer bubbles) 
+    # Taking distances from current location (NOT from previous)
+    weights = 1 - (distances_curr-np.min(distances_curr))/np.ptp(distances_curr)
+    weights = weights[0]/sum(weights[0])
+    custm = stats.rv_discrete(name='custm', values=(np.arange(len(points_copy)), weights))
+    
+    index = custm.rvs(size=1)
+    next_loc = points_copy[index[0]]
+        
+    return next_loc
+
+
 '''    
 predict saccade end point
 return bubble if in distance of diameter(MAT) of bubble center
@@ -452,7 +489,9 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc):
     if whole_image == False:
         return random.choice(used_locations) #if no prediction on bubble during trial_length
     else:
-        return (bufferx[-1],buffery[-1])
+        current_loc = (bufferx[-1],buffery[-1])
+        next_loc = choose_location_timeout(sample_points,current_loc,prev_loc)
+        return next_loc
     
     
 path_to_fixdur_files, path_to_fixdur_code = paths()
