@@ -84,7 +84,6 @@ def randomization(subject, trial_time):
         #    control = 1
         #else:
         #    control = 0
-    
         
         if condition == 0:
             
@@ -129,6 +128,18 @@ def randomization(subject, trial_time):
         
         for i,image in enumerate(images):
             
+            
+            # reset counter
+            time = 0
+        
+            while time<trial_time:
+                # image
+                trials = np.append(trials,image)
+            
+                # probability that control condition is applied is 1/2
+                #if time == 0:            
+                #    control = np.random.randint(2)
+                control_list.append(control)            
             
             # reset counter
             time = 0
@@ -367,6 +378,7 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc):
         if abs(y)>10000:
             y = buffery[-1]
         
+
         bufferx.append(float(x))
         buffery.append(float(y))
         
@@ -397,6 +409,7 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc):
                         
             else:
                 # compute distance between centre of the previous bubble and the current fixation
+
                 if ((bufferx[-1]<MAT/2) or (bufferx[-1]>(1280-MAT/2)) or (buffery[-1]<MAT/2) or (buffery[-1]>(960-MAT/2))):
                     continue
                 dist = spatial.distance.pdist([prev_loc,(bufferx[-1],buffery[-1])], metric='euclidean')
@@ -407,7 +420,6 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc):
                 # make sure, that next fixation is at least one bubble-size away from the previous location
                 if (dist > 2*MAT/3.):
                     print 'ET quit because distance'
-
                     return (bufferx[-1],buffery[-1])                  
                         
         if saccade == 0 and bufferv[-1]>70:
@@ -484,4 +496,5 @@ path_to_fixdur_files, path_to_fixdur_code = paths()
 
 def debug_time(dispstr,start):
     pass
+    #print "%s : %.2f"%(dispstr,1000*(core.getTime()-start))
     #print "%s : %.2f"%(dispstr,1000*(core.getTime()-start))

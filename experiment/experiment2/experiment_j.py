@@ -23,7 +23,6 @@ NUM_OF_TRIALS = 10#96
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 START_TRIAL = 0    #which trial to begin with   
 fullscreen = True   
-#fullscreen = False
 EYETRACKING = True
 
 if EYETRACKING == False:
@@ -148,7 +147,7 @@ for new_image in all_images:
 #logging.console.setLevel(logging.WARNING)
 
 # run the game loop
-for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
+for chosen_image in [31,32,40,47,48,48]:#range(NUM_OF_TRIALS-START_TRIAL):
     #print chosen_image
     try:
     
