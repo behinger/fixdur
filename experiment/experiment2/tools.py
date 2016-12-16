@@ -128,19 +128,7 @@ def randomization(subject, trial_time):
         
         for i,image in enumerate(images):
             
-            
-            # reset counter
-            time = 0
-        
-            while time<trial_time:
-                # image
-                trials = np.append(trials,image)
-            
-                # probability that control condition is applied is 1/2
-                #if time == 0:            
-                #    control = np.random.randint(2)
-                control_list.append(control)            
-            
+
             # reset counter
             time = 0
         
@@ -385,7 +373,7 @@ def choose_location_timeout(sample_points,current_loc,prev_loc):
 predict saccade end point
 return bubble if in distance of diameter(MAT) of bubble center
 '''    
-def sacc_detection(el,used_locations,whole_image,surf,prev_loc):
+def sacc_detection(el,used_locations,whole_image,surf,prev_loc,remaining_points):
     #buffer for x coordiante, y coordinate, velocity
     bufferx, buffery, bufferv = deque(maxlen=3), deque(maxlen=3), deque(maxlen=4)
     start = pylink.currentTime()
@@ -527,7 +515,7 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc):
         return random.choice(used_locations) #if no prediction on bubble during trial_length
     else:
         current_loc = (bufferx[-1],buffery[-1])
-        next_loc = choose_location_timeout(sample_points,current_loc,prev_loc)
+        next_loc = choose_location_timeout(remaining_points,current_loc,prev_loc)
         return next_loc
     
     

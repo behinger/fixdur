@@ -111,6 +111,8 @@ def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim,EYETRACKING):
         memory = True 
         whole_image = False
         
+        # copy in which already used locations can be deleted
+        remaining_points = list(sample_points)
         for subtrial in range(num_subtrials):
             
             # for first subtrial choose location randomly from sample_points
@@ -120,8 +122,7 @@ def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim,EYETRACKING):
                 if control == 1:
                     memory = False
             
-            # copy in which already used locations can be deleted
-            remaining_points = list(sample_points)
+        
             
             # delete previous location for next subtrial
             if chosen_location[0] in remaining_points:
@@ -188,7 +189,7 @@ def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim,EYETRACKING):
             # wait until first bubble is fixated before starting forced_fix_time
             if subtrial == 0:
                 if EYETRACKING:
-                    tools.sacc_detection(tracker,chosen_location,False,surf,chosen_location[0])            
+                    tools.sacc_detection(tracker,chosen_location,False,surf,chosen_location[0],remaining_points)            
             
             # get number of bubbles for current subtrial
             if control == 1:
@@ -243,7 +244,7 @@ def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim,EYETRACKING):
             #    tracker.trialmetadata("stimulus_onset", stimulus_onset)
 
             if EYETRACKING:
-                chosen_location = [tools.sacc_detection(tracker,used_locations,whole_image,surf, chosen_location[0])]
+                chosen_location = [tools.sacc_detection(tracker,used_locations,whole_image,surf, chosen_location[0],remaining_points)]
             else:
                 if num_of_bubbles == 0:
                     copy_points = list(sample_points)

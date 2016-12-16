@@ -23,8 +23,8 @@ NUM_OF_TRIALS = 10#96
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 
 START_TRIAL = 0    #which trial to begin with   
-fullscreen = True   
-EYETRACKING = True
+fullscreen = False   
+EYETRACKING = False
 
 
 if EYETRACKING == False:
@@ -56,7 +56,7 @@ while cont != 'y':
         print 'No randomization file found, created new one'
         cont = 'y'
  
- 
+
 # own list for images (keep order of rand-file)
 all_images = []
 for image in trial_mat[:,0]:
@@ -70,10 +70,9 @@ if START_TRIAL == 0:
     subject_file = open(path_to_fixdur_code+'data/'+str(subject)+'/'+str(subject),'w')
 else:
     subject_file = open(path_to_fixdur_code+'data/'+str(subject)+'/'+str(subject)+str(START_TRIAL),'w')
-
 # set up the window
 rectXY = (1920,1080);
-surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=1, units='pix',waitBlanking=True)
+surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=0, units='pix',waitBlanking=True)
 surf.setMouseVisible(False)
 
 # load memory image
@@ -115,7 +114,8 @@ gausStim = tools_ex.create_mask_fast([(0,0)],surf)
 
 #training trials
 if START_TRIAL == 0:
-	trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim,EYETRACKING)
+    pass
+    #trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim,EYETRACKING)
  
 tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start.png')))
 
@@ -149,7 +149,7 @@ for new_image in all_images:
 #logging.console.setLevel(logging.WARNING)
 
 # run the game loop
-for chosen_image in [31,32,40,47,48,48]:#range(NUM_OF_TRIALS-START_TRIAL):
+for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
     #print chosen_image
     try:
     
@@ -159,7 +159,8 @@ for chosen_image in [31,32,40,47,48,48]:#range(NUM_OF_TRIALS-START_TRIAL):
                 all_images.pop(0)
     
         # start with first image
-        bubble_image = all_images[0]
+        bubble_image = all_images[0]    # copy in which already used locations can be deleted
+        #    remaining_points = list(sample_points)
         
         #remove chosen image from all images
         all_images.pop(0)
@@ -234,6 +235,9 @@ for chosen_image in [31,32,40,47,48,48]:#range(NUM_OF_TRIALS-START_TRIAL):
         memory = True     
         whole_image = False
         start = core.getTime()
+        # copy in which already used locations can be deleted
+        remaining_points = list(sample_points)
+        
         for subtrial in current_trial:
             #subtrial[1] = 0
 
@@ -241,8 +245,7 @@ for chosen_image in [31,32,40,47,48,48]:#range(NUM_OF_TRIALS-START_TRIAL):
             # print subtrial
             # reset list for used locations            
             used_locations = []
-            # copy in which already used locations can be deleted
-            remaining_points = list(sample_points)
+        
             control = int(float(subtrial[3]))
             
             #choose starting bubble for first trial randomly
@@ -354,7 +357,7 @@ for chosen_image in [31,32,40,47,48,48]:#range(NUM_OF_TRIALS-START_TRIAL):
             # wait until first bubble is fixated before starting forced_fix_time
             if subtrial_num == 1:
                 if EYETRACKING:
-                    tools.sacc_detection(tracker,chosen_location,False,surf,chosen_location[0])            
+                    tools.sacc_detection(tracker,chosen_location,False,surf,chosen_location[0],remaining_points)            
             
             # get number of bubbles for current trial
             num_of_bubbles = int(float(subtrial[1]))
@@ -407,7 +410,7 @@ for chosen_image in [31,32,40,47,48,48]:#range(NUM_OF_TRIALS-START_TRIAL):
                 tracker.trialmetadata("stimulus_onset", stimulus_onset)
 
             if EYETRACKING:
-                chosen_location = [tools.sacc_detection(tracker,used_locations,whole_image,surf, chosen_location[0])]
+                chosen_location = [tools.sacc_detection(tracker,used_locations,whole_image,surf, chosen_location[0],remaining_points)]
                 #print('saccade detected')
             else:
                 if num_of_bubbles == 0:
@@ -440,8 +443,9 @@ for chosen_image in [31,32,40,47,48,48]:#range(NUM_OF_TRIALS-START_TRIAL):
                 surf.close()
                 sys.exit()
         
-            #metainfos for dictionary        
-            subtrial_dict = {'trial': trial_num, 'img': bubble_image, 'disp_bubbles': used_locations, 'first_bubble':first_bubble, 'chosen_bubble': chosen_location, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start}                
+            #metainfos for dictionary
+            #subtrial_dict = {'trial': trial_num, 'img': bubble_image, 'disp_bubbles': used_locations, 'first_bubble':first_bubble, 'chosen_bubble': chosen_location, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start}
+            subtrial_dict = {'trial': trial_num, 'img': bubble_image,'num_bubbles': num_of_bubbles,'whole_image_condition': whole_image, 'control_condition': control, 'disp_bubbles': used_locations, 'first_bubble':first_bubble, 'chosen_bubble': chosen_location, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start}                
             subtrial_list.append(subtrial_dict)  
             
             subtrial_num = subtrial_num + 1
