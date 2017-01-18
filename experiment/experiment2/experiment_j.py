@@ -114,8 +114,7 @@ gausStim = tools_ex.create_mask_fast([(0,0)],surf)
 
 #training trials
 if START_TRIAL == 0:
-    pass
-    #trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim,EYETRACKING)
+    trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim,EYETRACKING)
  
 tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start.png')))
 
@@ -173,8 +172,9 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         breaks = [ x + START_TRIAL for x in breaks]
         print trial_num
         if trial_num in breaks:
-            text = visual.TextStim(surf, text=u"It's time for a break!")
+            text = visual.TextStim(surf, text="It's time for a break!") #u in front of the text??
             text.draw(surf)
+            
         # Break with instructions in between the first and the second block
         elif trial_num == 32:
             tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/memory1.png')))
@@ -201,7 +201,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
             tracker.drift()
             #tracker.doDriftCorrect(surf.size[0]/2, surf.size[1]/2, 1, 1)
             
-        #keep displying fixation cross so it is still present after new calibration
+        #keep displaying fixation cross so it is still present after new calibration
         fix_cross.draw(surf)
         surf.flip()
             

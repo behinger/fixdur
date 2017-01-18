@@ -8,8 +8,8 @@ import numpy as np
 from PIL import Image
 from psychopy import visual, event
 import tools
-import matplotlib.pyplot as plt
-import re
+#import matplotlib.pyplot as plt
+#import re
 import sys, os
 from scipy import spatial, stats
 import random
@@ -19,7 +19,6 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 # import code for poisson sampling
 sys.path.append(path_to_fixdur_code+'poisson_disk_python/src')
 import poisson_disk
-#from enhanced_grid import *
 
 #define patterns for pattern matching
 #p_noise = re.compile('noise')
@@ -43,7 +42,7 @@ def whole_image(chosen_location):
     # create gaussian kernel      
     gaussian = makeGaussian()   
     
-    # embed gaussian in matrix which has the same size as the window
+    # embed gaussian in matrix which has the same size as the image
     mask_im = np.ones((960,1280))
     mask_im[int(x-size/2):int(x+size/2),int(y-size/2):int(y+size/2)] = gaussian
     #mask_im[450:630,870:1050] = gaussian
@@ -51,7 +50,7 @@ def whole_image(chosen_location):
     return mask_im
 
 
-''' copied and modified from Lili's generate_stimuli file'''
+''' copied and modified from Lilli's generate_stimuli file'''
 
 def makeGaussian():
     """ Create a mask stimulus with square gaussian kernel.

@@ -64,8 +64,7 @@ def deg_2_px(visual_degree):
 ''' generize, save and return randomization for given subject'''
 def randomization(subject, trial_time):
 
-    # 32 trials in control condition + 64 with variation of num of bubbles = 98
-    #total_num_trials = 98 
+    # 32 trials in control condition + 64 with variation of num of bubbles = 96
     
     #images = os.listdir(path_to_fixdur_files+'stimuli/single_bubble_images/')
     
@@ -124,7 +123,7 @@ def randomization(subject, trial_time):
             whole_img[(len(images)/2):len(images)] = True
             np.random.shuffle(whole_img)
             
-        trial_num_list = list(range(32+64))
+       # trial_num_list = list(range(32+64))
         
         for i,image in enumerate(images):
             
@@ -237,101 +236,6 @@ def wait_for_key(keylist = None):
  #       pygame.time.delay(50)
 
 
-    
-    
-
-def wait_for_saccade(el):
-    start = pylink.currentTime()
-    bufferx, buffery = deque(maxlen=3), deque(maxlen=3)
-    saccade = False
-    lastFixTime = -50
-    lastSaccadeOnset = -20
-    fixbufferx = []
-    fixbuffery = []
-    while (pylink.currentTime() - start) < TRIAL_LENGTH:
-        # Anfragen, welcher Typ von daten gerade in der pipe wartet.
-        i = el.getNextData()
-        # wenn es etwas anderes ist als RAW_DATA(=200), naechster schleifendurchlauf
-        if i!=200: continue
-        lastSampleTime = pylink.currentTime()
-		# actuelle position direkt vom eye-tracker
-        x, y = el.getNewestSample().getLeftEye().getGaze()
-        if pylink.currentTime()-lastSampleTime > 15:	#falls zu lange keine neuen sample-points, beginn von vorne mit neuen decks
-            bufferx, buffery = deque(maxlen=3), deque(maxlen=3)
-            bufferx.append(x)
-            buffery.append(y)
-            continue
-        
-        bufferx.append(x)
-        buffery.append(y)
-        if len(fixbufferx)<1:
-            fixbufferx.append(x)
-            fixbuffery.append(y)
-            el.trialmetadata("FIXATION", 0.0) # Take first sample as first fix.
-            el.trialmetadata("FIXCOOX", x) # markiere fixation als tag in eye-tracking data
-            el.trialmetadata("FIXCOOY", y)
-            
-        # Compute velocity in degrees per second
-        v = np.mean(((np.diff(np.array(bufferx))**2+np.diff(np.array(buffery))**2)**.5) * TRACKING_FREQ)/float(PPD)
-        
-        ## Saccade onset
-        if v > 70 and not saccade and (pylink.currentTime() - lastFixTime) > 50:
-            lastSaccadeOnset = pylink.currentTime()
-            saccade = True
-            el.trialmetadata("SACCADE", v)
-        
-        ## Saccade offset        
-        if v < 30 and saccade and (pylink.currentTime() - lastSaccadeOnset) > 20:
-            saccade = False
-            lastFixTime = pylink.currentTime()
-            
-            el.trialmetadata("FIXATION", v)
-            # Calculate the angle of the current saccade
-            el.trialmetadata("FIXCOOX", x)
-            el.trialmetadata("FIXCOOY", y)
-            
-            fixbufferx.append(x)
-            fixbuffery.append(y)
-            
-            return fixbufferx,fixbuffery
-    return [-1,-1],[-1,-1]
-
-'''return displayed bubble closest to fixation'''
-def get_fixated_bubble(used_bubble,fix_x,fix_y):
-    distances = []
-    for bubble in used_bubble:
-        #add 77 to get center of bubble, add 320/60 for higher monitor resolution
-        distances.append(sqrt((((bubble[0]+(MAT/2)+320)-fix_x[1])**2) + (((bubble[1]+(MAT/2)+60)-fix_y[1])**2)))
-    index_chosen = distances.index(min(distances))
-    return used_bubble[index_chosen]  #
-
-'''return bubble when fixation on bubble and velocity of saccade<30'''    
-def wait_for_fix(el,used_bubble):
-    #print "-----"
-    bufferx, buffery = deque(maxlen=3), deque(maxlen=3)
-    start = pylink.currentTime()
-    while (pylink.currentTime() - start) < TRIAL_LENGTH:
-        i = el.getNextData()
-        # wenn es etwas anderes ist als RAW_DATA(=200), naechster schleifendurchlauf
-        if i!=200: continue
-        lastSampleTime = pylink.currentTime()
-        # actuelle position direkt vom eye-tracker
-        x, y = el.getNewestSample().getLeftEye().getGaze()
-        bufferx.append(x)
-        buffery.append(y)
-        
-        # Compute velocity in degrees per second
-        v = np.mean(((np.diff(np.array(bufferx))**2+np.diff(np.array(buffery))**2)**.5) * TRACKING_FREQ)/float(PPD)
-        
-        if v<30:
-            for bubble in used_bubble:
-                #add 77 to get center of bubble, add 320/60 for higher monitor resolution
-                #    if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-y)**2))) < 77):
-                #        print "Bubble Detected, current speed: %f - %f"%(v,lastSampleTime)
-                if ((sqrt((((bubble[0]+(MAT/2)+320)-x)**2) + (((bubble[1]+(MAT/2)+60)-y)**2))) < 77):
-                    return bubble
-    return random.choice(used_bubble) #if no fixation on bubble during trial_length
-
 ''' Choose new bubble location in whole image condition when timeout occured '''
 def choose_location_timeout(sample_points,current_loc,prev_loc):
     # import package for distance computations
@@ -378,14 +282,14 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc,remaining_points)
     bufferx, buffery, bufferv = deque(maxlen=3), deque(maxlen=3), deque(maxlen=4)
     start = pylink.currentTime()
     saccade = 0
-    #stim = visual.Circle(surf,radius=2)
-    #start_time = []
+
     while (pylink.currentTime() - start) < TRIAL_LENGTH:
         i = el.getNextData()
         # wenn es etwas anderes ist als RAW_DATA(=200), naechster schleifendurchlauf
         if i!=200: continue
         # actuelle position direkt vom eye-tracker
         x, y = el.getNewestSample().getLeftEye().getGaze()
+        # Eyetracker Koordinaten (Screen-Koordinaten?) in Bildkoordinaten umrechnen
         x  = x - (surf.size[0]-1280)/2
         y  = y - (surf.size[1]-960)/2
         y  = 960-y
@@ -409,9 +313,9 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc,remaining_points)
         
         # Compute velocity in degrees per second
         bufferv.append(np.mean(((np.diff(np.array(bufferx))**2+np.diff(np.array(buffery))**2)**.5) * TRACKING_FREQ)/float(PPD))
-        print 'bubble then ET'
-        print prev_loc
-        print x,y
+        #print 'bubble then ET'
+        #print prev_loc
+        #print x,y
         #saccade_onset
         if bufferv[-1] < 30:
             saccade = 0
@@ -442,7 +346,7 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc,remaining_points)
                 if abs(dist)>10000: # sometimes ET gives strange big numbers (bene thinks this has to do with missing samples)
                     continue
                 
-                # make sure, that next fixation is at least one bubble-size away from the previous location
+                # make sure, that next fixation is at least 2/3 bubble-size away from the previous location
                 if (dist > 2*MAT/3.):
                     print 'ET quit because distance'
                     return (bufferx[-1],buffery[-1])                  
