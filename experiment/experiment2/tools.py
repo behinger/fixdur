@@ -151,10 +151,11 @@ def randomization(subject, trial_time):
                 disp = scipy.random.exponential(295,1)
                 disp_time = np.append(disp_time,int(disp))
             
+                # save trial_num (start counting at 1)
                 if control == 0:
-                    tIdx = 32+i
+                    tIdx = 32+i+1
                 else:
-                    tIdx = i
+                    tIdx = i+1
                 trial_num = np.append(trial_num,tIdx)
                 # increase counter
                 if int(disp) == 0:
@@ -302,10 +303,18 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc,remaining_points)
         
         # don't add too high coordinate values (beccause of blinks) to buffer
         # add previous coordinates instead
+        # if the buffer is empty, continue and wait for new coordinates from the ET
         if abs(x)>10000:
-            x = bufferx[-1]
+            if len(bufferx) == 0:
+                continue
+            else:
+                x = bufferx[-1]
+                
         if abs(y)>10000:
-            y = buffery[-1]
+            if len(buffery) == 0:
+                continue
+            else:
+                y = buffery[-1]
         
 
         bufferx.append(float(x))
@@ -349,6 +358,14 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc,remaining_points)
                 # make sure, that next fixation is at least 2/3 bubble-size away from the previous location
                 if (dist > 2*MAT/3.):
                     print 'ET quit because distance'
+                    
+                    el.trialmetadata('start_x', prev_loc[0])
+                    el.trialmetadata('start_y', prev_loc[1])
+                    el.trialmetadata('start_velocity', bufferv[-1])
+                    el.trialmetadata('end_x', bufferx[-1])
+                    el.trialmetadata('end_y', buffery[-1])
+                    el.trialmetadata('end_velocity', bufferv[-1])
+                    el.trialmetadata('sacc_detection', 'whole_image_slow')
                     return (bufferx[-1],buffery[-1])                  
                         
         if saccade == 0 and bufferv[-1]>70:
@@ -409,7 +426,7 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc,remaining_points)
                     el.trialmetadata('end_x', bufferx[-1])
                     el.trialmetadata('end_y', buffery[-1])
                     el.trialmetadata('end_velocity', bufferv[-1])
-                    el.trialmetadata('sacc_detection', 'pred_in_bubble')
+                    el.trialmetadata('sacc_detection', 'whole_image_sacc')
                     return (bufferx[-1],buffery[-1])
                             
         #check if sample near bubble (in distance of 2 * radius MAT/2)

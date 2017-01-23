@@ -57,10 +57,10 @@ def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim,EYETRACKING):
     #np.random.shuffle(control_list)
         
     
-    for trial_num,current_key in enumerate(training_stimuli_keys):
+    for num,current_key in enumerate(training_stimuli_keys):
         
         # save in a variable if control condition is applied in this trial or not        
-        control = control_list[trial_num]        
+        control = control_list[num]        
         
         # save the name of the current image in a variable
         bubble_image = current_key

@@ -123,7 +123,7 @@ fix_cross.draw(surf)
 surf.flip()
 
 
-trial_num = 0
+trial_num = 1
 trial_list = []
 
 
@@ -168,15 +168,16 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         current_trial = trial_mat[np.where(trial_mat[:,4] == str(float(chosen_image)))]
            
         # breaks (wait for next trial)
-        breaks = [28,48,68,88,108]
-        breaks = [ x + START_TRIAL for x in breaks]
-        print trial_num
+        # 5 breaks in 96 trials; every 16 trials (32 is used for instructions, see below)
+        breaks = [16,48,64,80]
+        breaks = [ x + START_TRIAL +1 for x in breaks] # +1 because we start counting trial_num at 1
+        #print trial_num
         if trial_num in breaks:
             text = visual.TextStim(surf, text="It's time for a break!") #u in front of the text??
             text.draw(surf)
             
         # Break with instructions in between the first and the second block
-        elif trial_num == 32:
+        elif trial_num == 33:
             tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/memory1.png')))
             tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start2.png')))
             circ = visual.Circle(surf, units='pix', radius=10)
@@ -463,7 +464,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         #add trial meta data    
         trial_list.append(subtrial_list)
         #memory_res has order correct, left, right -> wrong in dict, but corrected for in analysis
-        trial_list.append({'subject_number':subject_number,'left_bubble':memory_res[0], 'right_bubble':memory_res[1], 'correct':memory_res[2]})
+        trial_list.append({'subject_number':subject_number,'left_bubble':memory_res[1], 'right_bubble':memory_res[2], 'correct':memory_res[0]})
         trial_num = trial_num + 1   
         
         if EYETRACKING == True:       
@@ -506,6 +507,6 @@ if EYETRACKING == True:
     tracker.finish()
 os.system('mv '+rand_filename+'.EDF '+path_to_fixdur_code+'data/'+str(subject)+'/')
 
-if os.path.exists('/home_local/tracking/experiments/fixdur/'):
-    os.system('cp -r /home_local/tracking/experiments/fixdur/expcode/data/'+str(subject)+'/ /home_local/tracking/experiments/fixdur/data/'+str(subject)+'/')
+#if os.path.exists('/home_local/tracking/experiments/fixdur/'):
+#    os.system('cp -r /home_local/tracking/experiments/fixdur/expcode/data/'+str(subject)+'/ /home_local/tracking/experiments/fixdur/data/'+str(subject)+'/')
 #sys.exit()
