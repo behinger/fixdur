@@ -34,13 +34,16 @@ else:
 #all_res = dict(dispX = [],dispY = [],forcedTimeDiff=[],sacc_detect=[],badLocOLD=[],image=[],logFix=[],subject=[],forced_onset=[],trialNum=[],bubbleNum=[],bubbleY=[],bubbleX=[],fixstart=[],choicetime=[],fixend=[],forcedFixtime=[],numFixPerBubble=[],badLoc=[],badLocExceptFirst=[],badSaccade=[],fixX=[],fixY=[],goodFix=[],goodFixExceptFirst=[],pred=[],NumOfBubbles=[],stimulus_type=[],memory=[],noSaccade=[],goodFix2=[],plannedForcedFix=[],prevFixY=[],prevFixX=[],nextFixY=[],nextFixX=[])
 all_res = collections.defaultdict(list)
 
-#subject 0: old updating method, subject 2: didn't look at bubbles, 7 et crashed -> no complete data set, 
-#14 no complete data set #17 et chrashed -> pickle file missing, 19 = trialsnum weird, 24 2 trials missing. 25 1 trial missing
-#8only 105 trials, 9 - 1 trial missing
 if ISFIXDURGIST:
+  # 4 & 9 ET problems, subjects moved a lot and calibrationw as really bad
+  # 12 early stop because subject was too tired
     subjects = ['1','2','3','5','6','7','8','10','11','13']
     #subjects = ['1']
 else:
+  #subject 0: old updating method, subject 2: didn't look at bubbles, 7 et crashed -> no complete data set, 
+#14 no complete data set #17 et chrashed -> pickle file missing, 19 = trialsnum weird, 24 2 trials missing. 25 1 trial missing
+#8only 105 trials, 9 - 1 trial missing
+
     subjects = ['1','3','4','5','6','10','11','12','13','15','16','20','21','22','23','24','25','26','27','28','29','30','8','9','18','31','32','33','34','35','36','37','38','39','40']
     age = [36,24,19,20,25,20,21,21,27,23,18,27,20,23,20,20,23,42,34,21,27,19,23,21,25,19,21,22,33,22,20,25,27,25,25]
     sex = ['m','f','f','f','f','m','f','m','m','m','f','f','f','m','f','f','f','f','f','f','m','f','f','f','f','f','f','f','m','f','f','f','f','f','f']
