@@ -397,9 +397,12 @@ ggplot(ddply(data,.(subject),transform,choicetime=choicetime-mean(choicetime)), 
 #+ misc effect sizes
 mcmc = rstan::extract(stanfit)
 # 11 - 14 are cos/sin nextBubble see also variable `label_dataframe`
-y = sapply(seq(-pi,pi,0.1),function(x)sin(x)*mcmc$beta[,11] + cos(x)*mcmc$beta[,12] + sin(2*x)*mcmc$beta[,13] + cos(2*x)*mcmc$beta[,14])
+lkup = function(x)which(label_dataframe$Label == x)
+
+y = sapply(seq(-pi,pi,0.1),function(x)sin(x)*mcmc$beta[,lkup('sin_prevBubbleAngle')] + cos(x)*mcmc$beta[,lkup('cos_prevBubbleAngle')] + sin(2*x)*mcmc$beta[,lkup('sin2_prevBubbleAngle')] + cos(2*x)*mcmc$beta[,lkup('cos2_prevBubbleAngle')])
 quantile(aaply(y,1,function(x)min(x)-max(x)),c(0.025,0.5,0.975))/2
 
-y = sapply(seq(-pi,pi,0.1),function(x)sin(x)*mcmc$beta[,15] + cos(x)*mcmc$beta[,16] + sin(2*x)*mcmc$beta[,17] + cos(2*x)*mcmc$beta[,18])
+y = sapply(seq(-pi,pi,0.1),function(x)sin(x)*mcmc$beta[,lkup('sin_nextBubbleAngle')] + cos(x)*mcmc$beta[,lkup('cos_nextBubbleAngle')] + sin(2*x)*mcmc$beta[,lkup('sin2_nextBubbleAngle')] + cos(2*x)*mcmc$beta[,lkup('cos2_nextBubbleAngle')])
+
 quantile(aaply(y,1,function(x)min(x)-max(x)),c(0.025,0.5,0.975))/2
 
