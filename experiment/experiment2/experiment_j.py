@@ -22,9 +22,9 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 NUM_OF_TRIALS = 10#96
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 
-START_TRIAL = 0    #which trial to begin with   
-fullscreen = False   
-EYETRACKING = False
+START_TRIAL = 1    #which trial to begin with   
+fullscreen = True  
+EYETRACKING = True
 
 
 if EYETRACKING == False:
@@ -480,12 +480,13 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
             error_file.write('ERROR')
             error_file.close()
         except:
-            pickle.dump(trial_list,subject_file)
-            subject_file.close()
-            if EYETRACKING == True:
-                tracker.finish()
-            os.system('mv '+rand_filename+'.EDF '+path_to_fixdur_code+'data/'+str(subject)+'/')
-            surf.close()
+            pass
+        pickle.dump(trial_list,subject_file)
+        subject_file.close()
+        if EYETRACKING == True:
+            tracker.finish()
+        os.system('mv '+rand_filename+'.EDF '+path_to_fixdur_code+'data/'+str(subject)+'/')
+        surf.close()
             #pygame.quit()
         import traceback
         traceback.print_exc()
