@@ -15,12 +15,15 @@ knitr::opts_chunk$set(echo=FALSE, warning=FALSE, autodep=TRUE,message=FALSE,cach
 
 
 #setwd('/net/store/nbp/users/behinger/projects/fixdur/git') #path to GIT
+#setwd('c:/users/behinger/cloud/PhD/fixdur_git/scripts/analysis/') #path to GIT
+
 source("functions/fd_paths.R") # this adds lots of paths & functions
 
 #cfg = list(nIter=100,gist=TRUE)
-cfg = list(nIter=100,gist=FALSE)
+cfg = list(nIter=1000,gist=FALSE)
 
 source('fd_load_midlevel.R')
+
 
 #if(cfg$gist){ 
 data.3madGist = fd_loaddata('../../cache/data/all_res_gist.RData')
@@ -29,7 +32,6 @@ outGist = fd_load_midlevel(data.3madGist,list(gist=TRUE))
 data.3mad = fd_loaddata()
 out = fd_load_midlevel(data.3mad,list(gist=FALSE))
 #}
-
 
 stanfit =  out$fit
 label_dataframe = out$label_dataframe
@@ -94,22 +96,29 @@ ggplot(hdiDataFrameNorm,aes(y=Parameter,x=Estimate,color=as.factor(group)))+
   facet_grid(group~.,scale='free_y',space='free_y')+
     coord_cartesian(xlim=c(-45,90))+
     geom_vline(xintercept=0)+tBE()+theme(strip.background = element_blank(),strip.text.x=element_blank())+ylab("")
-
+ggsave('../../plots/res_param_main.pdf',useDingbats=FALSE,width=7,height = 5,scale=1)
 # Same Plot but for gist data
 
-ggplot(outGist$hdiDataFrameNorm,aes(y=Parameter,x=Estimate,color=as.factor(group)))+
+tmp = rbind(cbind(hdiDataFrameNorm,type = -1),cbind(outGist$hdiDataFrameNorm,type=(regexpr('(.*)gist',outGist$hdiDataFrameNorm$Parameter) == -1) + 0))
+tmp$Parameter = gsub(':gist','',tmp$Parameter)
+
+ggplot(tmp,aes(y=Parameter,x=Estimate,color=as.factor(type),group=type))+
   geom_errorbarh(aes(xmax=high,xmin=low),height=0,lwd=1,position=position_dodgev(height=.5))+
   geom_point(position=position_dodgev(height=.5))+
   
   scale_color_discrete(guide=FALSE)+ # hide the unnessecary colour legend
-  geom_text(data=data.frame(group=outGist$hdiDataFrameNorm$group,
-                            Parameter =outGist$hdiDataFrameNorm$Parameter,
-                            transformRule=outGist$hdiDataFrameNormLabels),#transformRule=paste0('`',hdiDataFrameNormLabels,'`')
+  geom_text(data=data.frame(group=tmp$group[tmp$type==0],
+                            type= 0,
+                            Parameter =tmp$Parameter[tmp$type==0],
+                            transformRule=outGist$hdiDataFrameNormLabels[(regexpr('(.+)gist',outGist$hdiDataFrameNorm$Parameter) == -1)]),#transformRule=paste0('`',hdiDataFrameNormLabels,'`')
             aes(x=40,label=transformRule),color='gray',hjust='outward',parse=T)+
   
   facet_grid(group~.,scale='free_y',space='free_y')+
   coord_cartesian(xlim=c(-45,90))+
   geom_vline(xintercept=0)+tBE()+theme(strip.background = element_blank(),strip.text.x=element_blank())+ylab("")
+
+ggsave('../../plots/res_param_gist.pdf',useDingbats=FALSE,width=7,height = 7,scale=1.5)
+
 
 #+
   out = arrange(hdiDataFrameNorm,hdiDataFrameNorm[,'group'])
@@ -322,8 +331,10 @@ p2 = ggplot(datModified2,
   scale_x_continuous(breaks=c(0,500,1000))+coord_cartesian(ylim=c(-15,15))+
   tBE(base_size = 10)+scale_color_discrete('Number of Bubbles')
 
-cowplot::plot_grid(p1,p2,labels=c('A','B'))
-
+cowplot::plot_grid(p1,
+                   p2+theme(legend.justification=c(1,0), legend.position=c(1,0.5)),
+                   labels=c('A','B'))
+ggsave('../../plots/res_FF-NoB.pdf',useDingbats=FALSE,width=7.5,height = 3)
 
 #+,fig.asp=0.5
 # FORCED FIXATION TIME PLOTS
@@ -347,6 +358,7 @@ p.ff2= ggplot(d,aes(x=forcedFixtime,y=choicetime,group=subject))+
 
 library(cowplot)
 cowplot::plot_grid(p.ff1,p.ff2,labels = c('A','B'), rel_widths=c(2,1))
+ggsave('../../plots/res_forcedFix.pdf',useDingbats=FALSE,width=7.5,height = 3)
 
 
 #+,fig.asp=0.5
@@ -357,10 +369,11 @@ p.nob2 = ggplot(d,aes(x=NumOfBubbles,y=choicetime,group=subject))+stat_summary(g
   stat_summary(aes(group=NULL),geom='pointrange')+tBE()+xlab('Number of Bubbles')+ylab('Subjectwise Choicetime [ms]')
 cowplot::plot_grid(p.nob1,p.nob2,rel_widths=c(2,1),labels=c('A','B'))  
   
-
+ggsave('../../plots/res_NoB.pdf',useDingbats=FALSE,width=7.5,height = 3)
 
 # PLOT STIMULUS TYPE  
 plot_posteriorpredictive(d.stimulus_type)+xlab('stimulus type')+coord_cartesian(ylim=ylim_common)
+
 
 
 # PLOT ANGLE STUFF
@@ -376,10 +389,14 @@ cowplot::plot_grid(plot_posteriorpredictive(d.nextBubbleAngle)+xlab('angle to ne
                   labels=c("A","B","C","D",'E','F')
                    )
 
+ggsave('../../plots/res_misc.pdf',useDingbats=FALSE,width=7.5,height = 3)
+
 cowplot::plot_grid(
 plot_posteriorpredictive(d.trialNum)+xlab('trial number')+ylab('')+coord_cartesian(ylim=c(153,167))+scale_color_discrete(guide=F)+scale_x_continuous(breaks=c(0,32,64,96,128))+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
-plot_posteriorpredictive(d.bubbleNum)+xlab('bubble number')+ylab('')+coord_cartesian(ylim=c(153,167),xlim=c(0,25))+scale_color_discrete(guide=F)+scale_x_continuous(breaks=c(0,32,64,96,128))+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
+plot_posteriorpredictive(d.bubbleNum)+xlab('bubble number')+ylab('')+coord_cartesian(ylim=c(153,167),xlim=c(0,25))+scale_color_discrete(guide=F)+scale_x_continuous(breaks=c(0,10,20))+scale_fill_discrete(guide=F)+scale_linetype_discrete(guide=F),
 labels=c("A","B"))
+ggsave('../../plots/res_trialNumber.pdf',useDingbats=FALSE,width=7.5,height = 2)
+
 #plot_posteriorpredictive(d.prevBubbleAngle)+xlab('prevbubbleangle')+coord_cartesian(ylim=ylim_common)
 
 
@@ -406,3 +423,34 @@ y = sapply(seq(-pi,pi,0.1),function(x)sin(x)*mcmc$beta[,lkup('sin_nextBubbleAngl
 
 quantile(aaply(y,1,function(x)min(x)-max(x)),c(0.025,0.5,0.975))/2
 
+#+ fixX / fixY 2D and 1D plot
+d = data.3mad #make a copy to not inflate the original datasucture with unneccessary fields
+
+d$fixXfirst = aaply(d$fixX,1,function(x)x[1])
+d$fixYfirst = aaply(d$fixY,1,function(x)x[1])
+
+d$fixXsecond = aaply(d$fixX,1,function(x)x[2])
+d$fixYsecond = aaply(d$fixY,1,function(x)x[2])
+
+rX = rnorm(length(d$fixXfirst),sd=.5)
+rY = rnorm(length(d$fixXfirst),sd=.5)
+circleRandom = sqrt(rX^2+rY^2)
+
+d1 = ggplot(d,aes(x=fixXfirst-bubbleX,y=fixYfirst-bubbleY))+
+  stat_bin_hex()+
+  geom_density_2d(color='black')+
+  tBE()+  coord_equal()+
+  xlab('X-Fixation-Location [°]')+ylab('Y-Fixation-Location [°]')+geom_hline(yintercept=0,color='white')+geom_vline(xintercept=0,color='white')
+# Interesting finding: The typical saccade undershoot is only visible for saccades towards the left (i.e. subset(d,d$bubbleX<0). But not for saccades to the right. Thus the resulting combined map is shifted towards the right .
+
+d2 = ggplot(d)+geom_density(aes(x=sqrt((fixYsecond-bubbleY)^2+(fixXsecond-bubbleX)^2)),color='red')+
+          geom_density(aes(x=sqrt((fixYfirst-bubbleY)^2+(fixXfirst-bubbleX)^2)),color='blue')+
+          geom_density(aes(x=circleRandom),color='green')+tBE()+ 
+          xlab('Distance from bubble center [°]')+ylab('Probability density')+coord_fixed(ratio=1.3)
+
+cowplot::plot_grid(d1,d2,labels = c('A','B'))
+ggsave('../../plots/me_fixationLocation.pdf',useDingbats=FALSE,width=7.5,height = 3)
+
+
+#+ display results
+print(cbind(hdiDataFrameNorm[,1],round(hdiDataFrameNorm[,c(4,2,6)],1)))

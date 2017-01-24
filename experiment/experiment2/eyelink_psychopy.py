@@ -323,4 +323,3 @@ class EyeLinkCoreGraphicsOpenGL(pylink.EyeLinkCustomDisplay):
 			else:
 				self.pal.append((rf<<24)|(gf<<16)|(bf<<8)|0xff)
 			i = i+1
-		
