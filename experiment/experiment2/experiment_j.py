@@ -23,8 +23,8 @@ NUM_OF_TRIALS = 10#96
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 
 START_TRIAL = 1    #which trial to begin with   
-fullscreen = True  
-EYETRACKING = True
+fullscreen = False  
+EYETRACKING = False
 
 
 if EYETRACKING == False:
@@ -148,12 +148,12 @@ for new_image in all_images:
 #logging.console.setLevel(logging.WARNING)
 
 # run the game loop
-for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
+for img_num in range(NUM_OF_TRIALS-START_TRIAL):
     #print chosen_image
     try:
     
         #remove all trials that should be skipped
-        if START_TRIAL !=0 and chosen_image == 0:
+        if START_TRIAL !=0 and img_num == 0:
             for tr in range(0,START_TRIAL):
                 all_images.pop(0)
     
@@ -165,7 +165,7 @@ for chosen_image in range(NUM_OF_TRIALS-START_TRIAL):
         all_images.pop(0)
         
         #get the trial corresponding to the image
-        current_trial = trial_mat[np.where(trial_mat[:,4] == str(float(chosen_image)))]
+        current_trial = trial_mat[np.where(trial_mat[:,4] == str(float(img_num+1)))]
            
         # breaks (wait for next trial)
         # 5 breaks in 96 trials; every 16 trials (32 is used for instructions, see below)
