@@ -19,12 +19,12 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 
 
 #NUM_OF_TRIALS =128
-NUM_OF_TRIALS = 10#96
+NUM_OF_TRIALS = 10
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 
-START_TRIAL = 1    #which trial to begin with   
-fullscreen = False  
-EYETRACKING = False
+START_TRIAL = 0    #which trial to begin with   
+fullscreen = True  
+EYETRACKING = True
 
 
 if EYETRACKING == False:
@@ -149,6 +149,7 @@ for new_image in all_images:
 
 # run the game loop
 for img_num in range(NUM_OF_TRIALS-START_TRIAL):
+#for img_num in range(28,38):
     #print chosen_image
     try:
     
