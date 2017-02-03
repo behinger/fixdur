@@ -22,7 +22,7 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 NUM_OF_TRIALS = 10
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 
-START_TRIAL = 0    #which trial to begin with   
+START_TRIAL = 1    #which trial to begin with   
 fullscreen = True  
 EYETRACKING = True
 
@@ -148,8 +148,8 @@ for new_image in all_images:
 #logging.console.setLevel(logging.WARNING)
 
 # run the game loop
-for img_num in range(NUM_OF_TRIALS-START_TRIAL):
-#for img_num in range(28,38):
+#for img_num in range(NUM_OF_TRIALS-START_TRIAL):
+for img_num in range(36,38):
     #print chosen_image
     try:
     
@@ -278,7 +278,7 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
             #tools.debug_time("stim.mask =mask_im updated",start)
             
             
-            start = core.getTime()
+            #start = core.getTime()
             stim.mask = None
             tools.debug_time("1.stim.mask=None",start)
             stim.draw()
@@ -348,7 +348,9 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
             #################################
             ### Show A Single Foveated Bubble
             ###############################
+            tools.debug_time("before flip",start)
             surf.flip()
+            tools.debug_time("after flip",start)
             bubble_display_start = core.getTime()
             if EYETRACKING == True:                
                 tracker.trialmetadata("forced_fix_onset", bubble_display_start)
