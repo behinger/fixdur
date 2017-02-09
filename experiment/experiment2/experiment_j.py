@@ -365,6 +365,10 @@ for img_num in range(38,48):
                 # display white bubble until display time is over
                 #start = core.getTime()
 
+            else:
+                foveated_prev_start = 'None'
+                white_display_start = 'None'
+                
             #################################
             ### Show A Single Foveated Bubble
             ###############################
