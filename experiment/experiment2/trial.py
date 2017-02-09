@@ -32,11 +32,11 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 
 
 ''' display training trials'''    
-def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim,EYETRACKING):
+def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim,EYETRACKING,control):
     
     #training parameter
     #training_bubble_num = [0,2,4,8,16] # number of bubbles for training
-    num_trials = 4 # number of trials for training
+    num_trials = 2 # number of trials for training
     num_subtrials = 20 # number of subtrials per trial
     image_size = (1280,960)
     
@@ -50,8 +50,8 @@ def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim,EYETRACKING):
     stimWhite = visual.ImageStim(surf, image=white_image, units='pix')
     
     # create control_list such that in half of the cases control condition is applied
-    control_list = np.ones(num_trials)
-    control_list[len(control_list)/2:] = 0
+    #control_list = np.ones(num_trials)
+    #control_list[len(control_list)/2:] = 0
     
     # random order of trials with and without control condition
     #np.random.shuffle(control_list)
@@ -60,7 +60,7 @@ def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim,EYETRACKING):
     for num,current_key in enumerate(training_stimuli_keys):
         
         # save in a variable if control condition is applied in this trial or not        
-        control = control_list[num]        
+        #control = control_list[num]        
         
         # save the name of the current image in a variable
         bubble_image = current_key

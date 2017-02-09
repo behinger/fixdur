@@ -22,9 +22,9 @@ path_to_fixdur_files, path_to_fixdur_code = tools.paths()
 NUM_OF_TRIALS = 5
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 
-START_TRIAL = 0    #which trial to begin with   
-fullscreen = True  
-EYETRACKING = True
+START_TRIAL = 1    #which trial to begin with   
+fullscreen = False 
+EYETRACKING = False
 
 
 if EYETRACKING == False:
@@ -114,7 +114,8 @@ gausStim = tools_ex.create_mask_fast([(0,0)],surf)
 
 #training trials
 if START_TRIAL == 0:
-    trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim,EYETRACKING)
+    tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/training_block1.png')))
+    trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim,EYETRACKING,control=1)
  
 tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start.png')))
 
@@ -123,7 +124,7 @@ fix_cross.draw(surf)
 surf.flip()
 
 
-trial_num = 1
+trial_num = 31
 trial_list = []
 
 
@@ -148,8 +149,8 @@ for new_image in all_images:
 #logging.console.setLevel(logging.WARNING)
 
 # run the game loop
-for img_num in range(NUM_OF_TRIALS-START_TRIAL):
-#for img_num in range(28,38):
+#for img_num in range(NUM_OF_TRIALS-START_TRIAL):
+for img_num in range(38,48):
     #print chosen_image
     try:
     
@@ -179,8 +180,17 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
             
         # Break with instructions in between the first and the second block
         elif trial_num == 33:
+            
+            # instructions for second block
+            tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/finish_block1.png')))
             tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/memory1.png')))
+            tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/training_block2.png')))
+            
+            # training trials for second block            
+            trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim,EYETRACKING,control=0)
             tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start2.png')))
+            
+            # show circle
             circ = visual.Circle(surf, units='pix', radius=10)
             circ.draw(surf)
         else:
@@ -289,8 +299,13 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
             
             # if control condition is applied
             if control == 1 and subtrial_num != 1:
-                # create white bubble
+                # flip to foveated "old" bubble
                 surf.flip()
+                
+                foveated_prev_start = core.getTime()
+                if EYETRACKING == True:                
+                    tracker.trialmetadata("foveated_prev_onset", foveated_prev_start)
+                
                 tools.debug_time("4.[white] foveated displayed",start)
                 start = core.getTime()
                 
@@ -323,8 +338,13 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
                     curr_display_time = core.getTime() - bubble_display_start
                 start = start+200/1000.
                 
+
                 surf.flip() #flip to white stimulus
-                display_start = core.getTime()
+                white_display_start = core.getTime()
+                if EYETRACKING == True:                
+                    tracker.trialmetadata("white_onset", white_display_start)
+                    
+                #display_start = core.getTime()
 
                 tools.debug_time("[white] white displayed",start)
                 start = core.getTime()
@@ -337,7 +357,7 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
                 curr_display_time = 0
                 while curr_display_time < white_disp/1000:
                     core.wait(0.001)                    
-                    curr_display_time = core.getTime() - display_start
+                    curr_display_time = core.getTime() - white_display_start
                 start = start + white_disp/1000.
                 
                 #tools.debug_time("new image set",start)
@@ -449,7 +469,7 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
         
             #metainfos for dictionary
             #subtrial_dict = {'trial': trial_num, 'img': bubble_image, 'disp_bubbles': used_locations, 'first_bubble':first_bubble, 'chosen_bubble': chosen_location, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start}
-            subtrial_dict = {'trial': trial_num, 'img': bubble_image,'num_bubbles': num_of_bubbles,'whole_image_condition': whole_image, 'control_condition': control, 'disp_bubbles': used_locations, 'first_bubble':first_bubble, 'chosen_bubble': chosen_location, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start}                
+            subtrial_dict = {'trial': trial_num, 'img': bubble_image,'num_bubbles': num_of_bubbles,'whole_image_condition': whole_image, 'control_condition': control, 'disp_bubbles': used_locations, 'first_bubble':first_bubble, 'chosen_bubble': chosen_location, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start,'white_onset': white_display_start, 'foveated_prev_onset': foveated_prev_start}                
             subtrial_list.append(subtrial_dict)  
             
             subtrial_num = subtrial_num + 1
