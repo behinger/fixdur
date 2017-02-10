@@ -390,7 +390,7 @@ for img_num in range(38,48):
             
             # get number of bubbles for current trial
             #num_of_bubbles = int(float(subtrial[1]))
-            num_of_bubbles = 8            
+            num_of_bubbles = 1            
             
             if num_of_bubbles == 0:
                 mask_im = tools_ex.whole_image(chosen_location)

@@ -100,6 +100,8 @@ def poisson_sampling(width, height):
  
    
 def create_mask(locations, mask_size=(960,1280)):
+    
+    mask_size=(2048,2048)
     #mon_res = surf.size
     # number of bubbles needed
     num = len(locations)
@@ -135,8 +137,10 @@ def create_mask_fast(locations,surf,gausStim=None):
     
     if gausStim == None:
         import psychopy.visual
-        mask = create_mask([(width_img,height_img)],mask_size=(height_img*2,width_img*2))
-        maskimage = Image.new('L',(width_img*2,height_img*2),128)
+        mask = create_mask([(width_img,height_img)],mask_size=(2048,2048))
+        #mask = create_mask([(width_img,height_img)],mask_size=(height_img*2,width_img*2))
+        maskimage = Image.new('L',(2048,2048),128)
+        #maskimage = Image.new('L',(width_img*2,height_img*2),128)
         gausStim = psychopy.visual.ImageStim(surf,maskimage,mask=-mask)
         
     num = len(locations)
@@ -145,7 +149,10 @@ def create_mask_fast(locations,surf,gausStim=None):
         x = locations[i][0] - width_img/2
         y = locations[i][1] - height_img/2
         
-        print(x,y)
+        #print(x,y)
+        if (x>640 or x<-640 or y>480 or y<-480):
+            print("Too far apart")
+            print(x,y)
         gausStim.setPos((x,y))
         gausStim.draw()
         
