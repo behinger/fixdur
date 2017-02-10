@@ -443,6 +443,6 @@ def sacc_detection(el,used_locations,whole_image,surf,prev_loc,remaining_points)
 path_to_fixdur_files, path_to_fixdur_code = paths()
 
 def debug_time(dispstr,start):
-    #pass
-    print "%s : %.2f"%(dispstr,1000*(core.getTime()-start))
+    pass
+    #print "%s : %.2f"%(dispstr,1000*(core.getTime()-start))
     #print "%s : %.2f"%(dispstr,1000*(core.getTime()-start))

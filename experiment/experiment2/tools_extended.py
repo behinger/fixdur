@@ -145,6 +145,7 @@ def create_mask_fast(locations,surf,gausStim=None):
         x = locations[i][0] - width_img/2
         y = locations[i][1] - height_img/2
         
+        print(x,y)
         gausStim.setPos((x,y))
         gausStim.draw()
         

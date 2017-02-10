@@ -124,7 +124,7 @@ fix_cross.draw(surf)
 surf.flip()
 
 
-trial_num = 31
+trial_num = 1
 trial_list = []
 
 
@@ -366,6 +366,7 @@ for img_num in range(38,48):
                 #start = core.getTime()
 
             else:
+                #if the control condition is not applied set both triggers to "None" because they are not applicable
                 foveated_prev_start = 'None'
                 white_display_start = 'None'
                 
@@ -388,7 +389,8 @@ for img_num in range(38,48):
                     tools.sacc_detection(tracker,chosen_location,False,surf,chosen_location[0],remaining_points)            
             
             # get number of bubbles for current trial
-            num_of_bubbles = int(float(subtrial[1]))
+            #num_of_bubbles = int(float(subtrial[1]))
+            num_of_bubbles = 8            
             
             if num_of_bubbles == 0:
                 mask_im = tools_ex.whole_image(chosen_location)
