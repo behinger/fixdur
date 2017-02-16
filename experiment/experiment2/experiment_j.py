@@ -72,11 +72,16 @@ else:
     subject_file = open(path_to_fixdur_code+'data/'+str(subject)+'/'+str(subject)+str(START_TRIAL),'w')
 # set up the window
 rectXY = (1920,1080);
+
 surf = visual.Window(size=rectXY,fullscr=fullscreen,winType = 'pyglet', screen=0, units='pix',waitBlanking=True)
 surf.setMouseVisible(False)
 
 # load memory image
 memory_image = visual.SimpleImageStim(surf, image=path_to_fixdur_code+'images/memory.png')
+
+# create grey mask image
+grey_im = Image.new('L',(2048,2048),128)
+greyStim = visual.ImageStim(surf,grey_im)
 
 # preload all images and create a stimulus list out of them
 stimList_preload = {}
@@ -374,6 +379,7 @@ for img_num in range(38,48):
             ### Show A Single Foveated Bubble
             ###############################
             tools.debug_time("before flip",start)
+            #print(stim.pos)
             surf.flip()
             tools.debug_time("after flip",start)
             bubble_display_start = core.getTime()
@@ -389,24 +395,34 @@ for img_num in range(38,48):
                     tools.sacc_detection(tracker,chosen_location,False,surf,chosen_location[0],remaining_points)            
             
             # get number of bubbles for current trial
-            #num_of_bubbles = int(float(subtrial[1]))
-            num_of_bubbles = 1            
+            num_of_bubbles = int(float(subtrial[1]))
+            #num_of_bubbles = 1            
             
             if num_of_bubbles == 0:
                 mask_im = tools_ex.whole_image(chosen_location)
                 whole_image = True
+                #stim.mask = mask_im
             
             # choose bubble locations according to num of bubbles
             else:
                 bubble_locations = tools_ex.choose_locations(whole_image,num_of_bubbles, sample_points, remaining_points, chosen_location)          
-                mask_im = tools_ex.create_mask(bubble_locations)
+                #mask_im = tools_ex.create_mask(bubble_locations)
+                mask_im = tools_ex.create_mask(bubble_locations,(2048,2048),MULTIPLE=True)
                 [used_locations.append(location) for location in bubble_locations]
                 whole_image = False
+                
+            greyStim.mask = -mask_im
+            if np.any(np.where(mask_im>0.999)[1]<(100+(2048-1280)/2)) | np.any(np.where(mask_im>0.999)[0]<(100+(2048-960)/2)):
+                if whole_image:
+                    pass
+                else:
+                    print('1')
             #tools.debug_time("choose new bubble locations ",start)
             #start = core.getTime()
             # prepare stimulus for alternative bubble(s)
             #stim = visual.ImageStim(surf, image=image, mask=mask_im, units='pix')
-            stim.mask = mask_im
+            
+            
             #tools.debug_time("stim.mask",start)
             #start = core.getTime()
             
@@ -417,6 +433,7 @@ for img_num in range(38,48):
                         
             # show alternative bubble(s)
             stim.draw()
+            greyStim.draw()
             ###################
             ## Wait FORCED FIXATION TIME
             ###################
@@ -430,6 +447,7 @@ for img_num in range(38,48):
             ###################
             ## Show Alternative Bubbles
             ###################
+            #print(stim.pos)
             surf.flip()
             tools.debug_time("choose new bubble locations (without FF)",start)
 
@@ -446,8 +464,10 @@ for img_num in range(38,48):
                 if num_of_bubbles == 0:
                     copy_points = list(sample_points)
                     copy_points.remove(chosen_location[0])
+                    core.wait(0.1) ### remove
                     chosen_location = [random.choice(copy_points)]
                 else:
+                    core.wait(0.1) ### remove
                     chosen_location = [random.choice(bubble_locations)]
                             
             tools.debug_time("et saccade detected",start)
