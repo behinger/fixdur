@@ -44,11 +44,12 @@ def whole_image(chosen_location):
     gaussian = makeGaussian()   
     
     # embed gaussian in matrix which has the same size_ex as the image
-    mask_im = np.ones((2048,2048))
+    #mask_im = np.ones((2048,2048))
+    mask_im = np.ones((960,1280))
     
     
-    x = x + (2048-1280)/2.
-    y = y + (2048-960)/2.
+    #x = x + (2048-1280)/2.
+    #y = y + (2048-960)/2.
     mask_im[int(y-size_ex/2):int(y+size_ex/2),int(x-size_ex/2):int(x+size_ex/2)] = gaussian
     #mask_im[450:630,870:1050] = gaussian
     

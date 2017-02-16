@@ -23,7 +23,7 @@ NUM_OF_TRIALS = 5
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 
 START_TRIAL = 1    #which trial to begin with   
-fullscreen = False 
+fullscreen = True
 EYETRACKING = False
 
 
@@ -406,17 +406,16 @@ for img_num in range(38,48):
             # choose bubble locations according to num of bubbles
             else:
                 bubble_locations = tools_ex.choose_locations(whole_image,num_of_bubbles, sample_points, remaining_points, chosen_location)          
-                #mask_im = tools_ex.create_mask(bubble_locations)
-                mask_im = tools_ex.create_mask(bubble_locations,(2048,2048),MULTIPLE=True)
+                mask_im = tools_ex.create_mask(bubble_locations)
+                #mask_im = tools_ex.create_mask(bubble_locations,(2048,2048),MULTIPLE=True)
                 [used_locations.append(location) for location in bubble_locations]
                 whole_image = False
-                
-            greyStim.mask = -mask_im
-            if np.any(np.where(mask_im>0.999)[1]<(100+(2048-1280)/2)) | np.any(np.where(mask_im>0.999)[0]<(100+(2048-960)/2)):
-                if whole_image:
-                    pass
-                else:
-                    print('1')
+            tools.debug_time("Before Mask Adding",start)    
+            #greyStim.mask = -mask_im
+            stim.mask = mask_im
+            
+            print('NoB:%i'%(num_of_bubbles))
+            print('FullImage:%i'%(whole_image))
             #tools.debug_time("choose new bubble locations ",start)
             #start = core.getTime()
             # prepare stimulus for alternative bubble(s)
@@ -430,10 +429,11 @@ for img_num in range(38,48):
             #keep displaying choosen bubble until disp_time is over
             
             
-                        
+            tools.debug_time("Before Stim Draw",start)
+
             # show alternative bubble(s)
             stim.draw()
-            greyStim.draw()
+            #greyStim.draw()
             ###################
             ## Wait FORCED FIXATION TIME
             ###################
