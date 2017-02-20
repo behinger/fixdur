@@ -26,25 +26,31 @@ import poisson_disk
 
 # set parameters for gaussian
 bubble_size = 1.1774
-size = round(tools.deg_2_px(bubble_size))*3
+size_ex = round(tools.deg_2_px(bubble_size))*3
+size =size_ex
 fwhm = round(tools.deg_2_px(bubble_size))
 
 #rectXY = (1920,1080)
-#surf = visual.Window(size=rectXY,fullscr=False,winType = 'pyglet', screen=1, units='pix')
+#surf = visual.Window(size_ex=rectXY,fullscr=False,winType = 'pyglet', screen=1, units='pix')
 
 
 def whole_image(chosen_location):
  
     # swap coordinates because mask matrix has different coordinate system
-    x = chosen_location[0][1]
-    y = chosen_location[0][0] 
+    y = chosen_location[0][1]
+    x = chosen_location[0][0] 
 
     # create gaussian kernel      
     gaussian = makeGaussian()   
     
-    # embed gaussian in matrix which has the same size as the image
+    # embed gaussian in matrix which has the same size_ex as the image
+    #mask_im = np.ones((2048,2048))
     mask_im = np.ones((960,1280))
-    mask_im[int(x-size/2):int(x+size/2),int(y-size/2):int(y+size/2)] = gaussian
+    
+    
+    #x = x + (2048-1280)/2.
+    #y = y + (2048-960)/2.
+    mask_im[int(y-size_ex/2):int(y+size_ex/2),int(x-size_ex/2):int(x+size_ex/2)] = gaussian
     #mask_im[450:630,870:1050] = gaussian
     
     return mask_im
@@ -60,11 +66,11 @@ def makeGaussian():
     can be thought of as an effective radius.
     """
 
-    x = np.arange(0, size, 1, float)
+    x = np.arange(0, size_ex, 1, float)
     y = x[:,np.newaxis]
     
     #if center is None:
-    x0 = y0 = size // 2
+    x0 = y0 = size_ex // 2
     #else:
     #    x0 = center[0]
     #    y0 = center[1]
@@ -80,8 +86,8 @@ def makeGaussian():
 def poisson_sampling(width, height):
     
     # substract margin to make sure there is enough space for bubbles    
-    width = width - size
-    height = height - size
+    width = width - size_ex
+    height = height - size_ex
     
     p = poisson_disk.sample_poisson_uniform(width, height, 77, 30)
 
@@ -91,18 +97,22 @@ def poisson_sampling(width, height):
         diff_x = 0#(1920-1280)/2
         diff_y = 0#(1080-960)/2
         # adjust coordinates ((0,0) is upper left corner)
-        x = int(p[i][0]) + diff_x + size/2
-        y = int(p[i][1]) + diff_y + size/2
+        x = int(p[i][0]) + diff_x + size_ex/2
+        y = int(p[i][1]) + diff_y + size_ex/2
         sample_points.append((x,y))
         #sample_points[i][0] = int(p[i][0])
         #sample_points[i][1] = int(p[i][1])
     return sample_points
  
    
-def create_mask(locations, mask_size=(960,1280)):
+def create_mask(locations, mask_size=(960,1280), MULTIPLE=False):
+    
+   # mask_size=
     #mon_res = surf.size
     # number of bubbles needed
     num = len(locations)
+    if size != size_ex:
+        raise('size changed')
     
     # create gaussian kernel which is the same for all bubbles
     gaussian = makeGaussian()
@@ -110,16 +120,20 @@ def create_mask(locations, mask_size=(960,1280)):
     
     for i in np.arange(num):
         # swap coordinates because mask matrix has different coordinate system
-        x = int(locations[i][1])
-        y = int(locations[i][0])
-    
+        y = int(locations[i][1])
+        x = int(locations[i][0])
+        
+        if MULTIPLE:
+            x = x + (2048-1280)/2.
+            y = y + (2048-960)/2.
+                
         # embed gaussian in matrix which has the same size as the window
         # possible error: could not broadcast input array from shape (180,180) into shape (180,0)
         try:
-            mask_im[int(x-size/2):int(x+size/2),int(y-size/2):int(y+size/2)] = gaussian
+            mask_im[int(y-size_ex/2):int(y+size_ex/2),int(x-size_ex/2):int(x+size_ex/2)] = gaussian
         except:
-            print x,y,size
-            error
+            print x,y,size_ex
+            raise
                         
     # invert matrix to get background with bubbles
     mask_im = -mask_im
@@ -129,24 +143,36 @@ def create_mask(locations, mask_size=(960,1280)):
 def create_mask_fast(locations,surf,gausStim=None):
     # Useable only for a single bubble, but very fast for that one (after the first call)
     # gausMask = tools_extended.create_mask_fast([(150,150)],surf,gausMask)
-    width_img = 1280
-    height_img = 960
+    #width_img = 1280
+    #height_img = 960
+    width_img = 2048
+    height_img = 2048
     
     
     if gausStim == None:
         import psychopy.visual
+        #mask = create_mask([(width_img,height_img)],mask_size=(2048,2048))
         mask = create_mask([(width_img,height_img)],mask_size=(height_img*2,width_img*2))
+        #maskimage = Image.new('L',(2048,2048),128)
         maskimage = Image.new('L',(width_img*2,height_img*2),128)
         gausStim = psychopy.visual.ImageStim(surf,maskimage,mask=-mask)
         
     num = len(locations)
-    for i in np.arange(num):
+    if num != 1:
+        raise('locations too long')
+    #for i in np.arange(num):
         
-        x = locations[i][0] - width_img/2
-        y = locations[i][1] - height_img/2
-        
-        gausStim.setPos((x,y))
-        gausStim.draw()
+    y = locations[0][1]# - width_img/2
+    x = locations[0][0]# - height_img/2
+    
+    x = x + (2048-1280)/2. - 2048/2
+    y = y + (2048-960)/2.  - 2048/2
+    #print(x,y)
+    #if (x>640 or x<-640 or y>480 or y<-480):
+    #    print("Too far apart")
+    #    print(x,y)
+    gausStim.setPos((x,y))
+    gausStim.draw()
         
     return(gausStim)
 
@@ -268,13 +294,13 @@ def memory_task(stim,memory_image,surf,stimList_preload,bubble_image):
     pos = ((width/2 - same_pic_rand_bubble_loc[0][0] + same[0]),(height/2 - same_pic_rand_bubble_loc[0][1])+ same[1])
     same_pic_rand_bubble.pos = pos
     same_pic_rand_bubble.draw(surf)
-    
+    same_pic_rand_bubble.pos = (0,0)
     #other_pos = (locations[0][0]-other_pic_rand_bubble_loc[0][0]+surf.size[0]/2,-(-locations[0][1]-other_pic_rand_bubble_loc[0][1]+surf.size[1]/2))
     #other_pos = ((other_pic_rand_bubble_loc[0][0]+surf.size[0]/2),-(surf.size[1]/2 - other_pic_rand_bubble_loc[0][1]))
     other_pos = ((width/2 - other_pic_rand_bubble_loc[0][0]+locations[0]),(height/2 - other_pic_rand_bubble_loc[0][1])+ locations[1])
     other_pic_rand_bubble.pos = other_pos
     other_pic_rand_bubble.draw(surf)
-    
+    other_pic_rand_bubble.pos = (0,0)
     #memory_image.blit(same_pic_rand_bubble,same)
     #memory_image.blit(other_pic_rand_bubble,locations[0])
     #surf.blit(memory_image,(320,60))

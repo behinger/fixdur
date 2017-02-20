@@ -14,8 +14,8 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="intro3.svg"
-   inkscape:export-filename="/home/student/j/jschepers/thesis/fixdur_git/experiment/experiment2/images/instructions/intro3.png"
+   sodipodi:docname="training_block2.svg"
+   inkscape:export-filename="/home/student/j/jschepers/thesis/fixdur_git/experiment/experiment2/images/instructions/training_block2.png"
    inkscape:export-xdpi="89.864914"
    inkscape:export-ydpi="89.864914">
   <defs
@@ -28,7 +28,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.58856529"
-     inkscape:cx="493.9853"
+     inkscape:cx="199.38351"
      inkscape:cy="563.64589"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -67,9 +67,9 @@
      id="layer1"
      transform="translate(0,27.637817)">
     <rect
-       style="fill:#808080;fill-opacity:1;stroke:#808080;stroke-width:4.88622904;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#808080;fill-opacity:1;stroke:#808080;stroke-width:4.88622856;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect3766"
-       width="1918"
+       width="1917.9999"
        height="1077.2177"
        x="1.8385293e-13"
        y="-25.156492" />
@@ -77,7 +77,7 @@
        xml:space="preserve"
        id="flowRoot3755"
        style="font-style:normal;font-weight:normal;font-size:16px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       transform="matrix(1.1483726,0,0,1,578.87486,438.82349)"><flowRegion
+       transform="matrix(1.1483726,0,0,1,576.70859,485.48175)"><flowRegion
          id="flowRegion3757"><rect
            id="rect3759"
            width="983.86865"
@@ -85,23 +85,11 @@
            x="-160"
            y="-93.352104" /></flowRegion><flowPara
          style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3029">The experiment consists of two blocks.</flowPara><flowPara
+         id="flowPara3760">We will now start with the training trials for the second block.</flowPara><flowPara
          style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3414" /><flowPara
+         id="flowPara3098" /><flowPara
          style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3416">In the second block there will be an additional task, which will be explained in the break inbetween the two blocks.</flowPara><flowPara
+         id="flowPara3100" /><flowPara
          style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3347"> </flowPara><flowPara
-         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3110" /><flowPara
-         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3112" /><flowPara
-         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3038" /><flowPara
-         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3040" /><flowPara
-         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3116" /><flowPara
-         style="font-weight:normal;font-size:37.32661438px;-inkscape-font-specification:Sans;text-align:center;text-anchor:middle"
-         id="flowPara3130" /></flowRoot>  </g>
+         id="flowPara3102">If there are no more questions, please press the right arrow button to beginn.</flowPara></flowRoot>  </g>
 </svg>
