@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo=FALSE, warning=FALSE, autodep=TRUE,message=FALSE,cach
 #options(width = 120)
 
 
-#setwd('/net/store/nbp/users/behinger/projects/fixdur/git') #path to GIT
+#setwd('/net/store/nbp/users/behinger/projects/fixdur/git/scripts/analysis') #path to GIT
 #setwd('c:/users/behinger/cloud/PhD/fixdur_git/scripts/analysis/') #path to GIT
 
 source("functions/fd_paths.R") # this adds lots of paths & functions
