@@ -17,7 +17,7 @@ NUM_OF_TRIALS = 96
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 
 START_TRIAL = 0    #which trial to begin with   
-fullscreen = True
+fullscreen = False
 EYETRACKING = False
 
 
@@ -334,7 +334,7 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
             tools.debug_time("before flip",start)
             #print(stim.pos)
             surf.flip()
-            tools.debug_time("after flip",start)
+            #tools.debug_time("after flip",start)
             bubble_display_start = core.getTime()
             if EYETRACKING == True:                
                 tracker.trialmetadata("forced_fix_onset", bubble_display_start)
@@ -399,13 +399,14 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
             ###################
 
             surf.flip()
-            tools.debug_time("choose new bubble locations (without FF)",start)
-
-            start = core.getTime()
-
+            
             stimulus_onset = core.getTime()
             if EYETRACKING == True:
                 tracker.trialmetadata("stimulus_onset", stimulus_onset)
+                
+            #tools.debug_time("choose new bubble locations (without FF)",start)
+
+            start = core.getTime()
 
             if EYETRACKING:
                 chosen_location = [tools.sacc_detection(tracker,used_locations,whole_image,surf, chosen_location[0],remaining_points)]

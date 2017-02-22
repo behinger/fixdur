@@ -27,6 +27,7 @@ import poisson_disk
 # set parameters for gaussian
 bubble_size = 1.1774
 size_ex = round(tools.deg_2_px(bubble_size))*3
+size_ex = 154 # Hard Code, this is the point where there is no difference between 0 and 1 (on a scale of 255)
 size =size_ex
 fwhm = round(tools.deg_2_px(bubble_size))
 
@@ -111,8 +112,7 @@ def create_mask(locations, mask_size=(960,1280), MULTIPLE=False):
     #mon_res = surf.size
     # number of bubbles needed
     num = len(locations)
-    if size != size_ex:
-        raise('size changed')
+
     
     # create gaussian kernel which is the same for all bubbles
     gaussian = makeGaussian()
@@ -318,14 +318,18 @@ def memory_task(stim,memory_image,surf,stimList_preload,bubble_image):
         correct = True
     else:
         correct = False
+        
+    same_bubble = [same_pic_rand_bubble_loc,bubble_image]
+    other_bubble = [other_pic_rand_bubble_loc,other_pic]
+
     if same == (-200,0):
     #if same == (386,400):
-        left_bubble = same_pic_rand_bubble_loc
-        right_bubble = other_pic_rand_bubble_loc
+        left_bubble = same_bubble
+        right_bubble = other_bubble
     if same == (200,0):
     #if same == (740,400):
-        left_bubble = other_pic_rand_bubble_loc
-        right_bubble = same_pic_rand_bubble_loc
+        left_bubble = other_bubble
+        right_bubble = same_bubble
         
     return [correct,left_bubble,right_bubble]
     

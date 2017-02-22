@@ -52,7 +52,8 @@ class Tracker(EyeLink):
         self.sendCommand("screen_pixel_coords =  0 0 %d %d" % (self._surfs[0], self._surfs[1]))
         self.sendMessage("DISPLAY_COORDS  0 0 %d %d" % (self._surfs[0], self._surfs[1]))
         self.sendCommand('screen_phys_coords = -266, 149, 266, -149')
-        
+        self.sendCommand('marker_phys_coords =  -275,165, -275,-165, 275,165, 275,-165')
+        self.sendCommand('simulation_screen_distance = 800')
 
         #self.sendMessage("heuristic_filter" % (self._surfs[2], self._surfs[3]))
         #assert self.getTrackerVersion() == 2
