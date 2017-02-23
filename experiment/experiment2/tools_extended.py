@@ -319,8 +319,8 @@ def memory_task(stim,memory_image,surf,stimList_preload,bubble_image):
     else:
         correct = False
         
-    same_bubble = [same_pic_rand_bubble_loc,bubble_image]
-    other_bubble = [other_pic_rand_bubble_loc,other_pic]
+    same_bubble = [bubble_image,same_pic_rand_bubble_loc]
+    other_bubble = [other_pic,other_pic_rand_bubble_loc]
 
     if same == (-200,0):
     #if same == (386,400):

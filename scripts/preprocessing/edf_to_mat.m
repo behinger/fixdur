@@ -1,9 +1,13 @@
 addpath('lib/edfread')
 
 ISGIST = false;
+ISEXP2 = true;
 if ISGIST
     basepath = 'data/experiment_gist';
     subjects = {'1','2','3','5','6','7','8','10','11','13'};
+elseif ISEXP2
+    basepath = 'data/experiment2';
+    subjects = {'0'};
 else
     basepath = 'data/experiment1';
     subjects = {'0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40'};
@@ -20,14 +24,8 @@ for subject_num = subjects
     % Read EDF
     [data,info] = edfread(datapath,'TRIALID');
     
-    training = 0;
-    if strcmp(data(1).TRIALID.msg,'TRIALID 1000')
-        training = 1;
-        start = 3;
-    else
-        training = 0;
-        start = 1;
-    end
+
+    
     
     bad_trials = [];
     if ~ISGIST
@@ -53,10 +51,18 @@ for subject_num = subjects
     %% data from eyetracker based on fixation/saccade classification
     et_data = struct('Image',{},'Displayed_Bubbles',{},'Selected_Bubble',{},'Display_Time',{},'Forced_Fix_Onset',{},'Stimulus_Onset',{},'Saccade_offset_subtrial',{},'fix_start',{},'fix_end',{},'fix_x',{},'fix_y',{},'saccade_start',{},'saccade_end',{},'saccade_sx',{},'saccade_sy',{},'saccade_ex',{},'saccade_ey',{},'sacc_detection',{});
     
-    
-    for a = start:length(data)
+    training_trials = [];
+    %for a = trialSequence
+    for a = 1:length(data)
+        trial_id = regexp(data(a).TRIALID.msg,'[0-9]+','match');
+        trial_id = str2num(trial_id{1,1});
+        if trial_id >= 1000
+        %if ~isempty(str2num(deblank(data(a).TRIALID.msg(end-3:end))))
+            training_trials = [training_trials;a];
+            continue
+        end
         %if isfield(data(a).DISPLAYED_BUBBLES)
-        et_data(a).trial = a-2;
+        et_data(a).trial = a;
         et_data(a).fix_start = [];
         et_data(a).fix_end = [];
         et_data(a).fix_x = [];
@@ -73,6 +79,7 @@ for subject_num = subjects
         et_data(a).Image = data(a).BUBBLE_IMAGE.msg;
         %if displayed bubbles is not empty i.e. sequential trial
         if (strcmp(data(a).DISPLAYED_BUBBLES.msg,'-1') == 0)
+            
             %how many subtrials per trial
             num_of_subtrials = size(data(a).DISPLAYED_BUBBLES.msg);
             num_of_subtrials = num_of_subtrials(1);
@@ -83,6 +90,7 @@ for subject_num = subjects
             et_data(a).Forced_Fix_Onset = [];
             et_data(a).Saccade_offset_subtrial = [];
             et_data(a).Stimulus_Onset = [];
+            et_data(a).foveated_prev_onset = [];
             %metadata for saccade detection
             %et_data(a).start_x = [];
             %et_data(a).start_y = [];
@@ -102,6 +110,15 @@ for subject_num = subjects
                 et_data(a).Forced_Fix_Onset = [et_data(a).Forced_Fix_Onset;data(a).forced_fix_onset.time(b)];
                 et_data(a).Saccade_offset_subtrial = [et_data(a).Saccade_offset_subtrial;data(a).saccade_offset.time(b)];
                 et_data(a).Stimulus_Onset = [et_data(a).Stimulus_Onset;data(a).stimulus_onset.time(b)];
+                if ~isempty(data(a).foveated_prev_onset)
+                    if b == 1
+                        et_data(a).foveated_prev_onset = [et_data(a).foveated_prev_onset; -996];
+                    else
+                        et_data(a).foveated_prev_onset = [et_data(a).foveated_prev_onset;data(a).foveated_prev_onset.time(b-1)];
+                    end
+                else
+                    et_data(a).foveated_prev_onset = [et_data(a).foveated_prev_onset;-997];
+                end
                 %et_data(a).start_x = [et_data(a).start_x;data(a).start_x.msg(b,:)];
                 %et_data(a).start_y = [et_data(a).start_y;data(a).start_y.msg(b,:)];
                 %et_data(a).end_x = [et_data(a).end_x;data(a).end_x.msg(b,:)];
@@ -127,16 +144,25 @@ for subject_num = subjects
             et_data(a).saccade_ey = [et_data(a).saccade_ey;data(a).left.saccade.ey(b)];
         end
     end
-    if training
-        et_data = et_data(3:length(et_data));
-    end
-    et_data(bad_trials) = [];
+        % loop over et_data
+        % if et_data(X).fix_start is empty
+        % remove it
+        % This should only happen in training trials. Check that!
+        %et_data = et_data(3:length(et_data));
+    et_data([training_trials bad_trials]) = [];
     
     
     %data from eyetracker on a sample level
     sample_data = struct('trial',{}, 'time', {}, 'x', {}, 'y', {});
-    for a = start:length(data)
-        sample_data(a).trial = a-2;
+    for a = 1:length(data)
+        
+        trial_id = regexp(data(a).TRIALID.msg,'[0-9]+','match');
+        trial_id = str2num(trial_id{1,1});
+        if trial_id >= 1000
+        %if ~isempty(str2num(deblank(data(a).TRIALID.msg(end-3:end))))
+            continue
+        end
+        sample_data(a).trial = a; 
         sample_data(a).time = [];
         sample_data(a).x = [];
         sample_data(a).y = [];
@@ -146,13 +172,11 @@ for subject_num = subjects
             sample_data(a).y = [sample_data(a).y;data(a).left.samples.y(b)];
         end
     end
-    if training
-        sample_data = sample_data(3:length(sample_data));
-    end
-    sample_data(bad_trials) = [];
+        %sample_data = sample_data(3:length(sample_data));
+    sample_data([training_trials bad_trials]) = [];
     
     
-%     save([basepath,'/',subject_num,'/',subject_num,'_et_data.mat'],'et_data')
-%     save([basepath,'/',subject_num,'/',subject_num,'_sample_data.mat'],'sample_data')
+     save([basepath,'/',subject_num,'/',subject_num,'_et_data.mat'],'et_data')
+    save([basepath,'/',subject_num,'/',subject_num,'_sample_data.mat'],'sample_data')
     
 end

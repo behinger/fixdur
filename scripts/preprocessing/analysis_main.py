@@ -10,7 +10,8 @@ Created on Wed Feb 11 11:34:01 2015
 import numpy as np
 import cPickle as pickle
 import scipy.io
-import resmat, tools
+import resmat
+#import tools, only needed for plots
 import os
 import collections
 
@@ -18,6 +19,7 @@ MAT = 154
 PPD = 50
 
 ISFIXDURGIST = False
+ISEXPERIMENT2 = True
 #paths
 
 if ISFIXDURGIST:
@@ -25,6 +27,8 @@ if ISFIXDURGIST:
     #if not os.path.isdir(path_to_fixdur_files):
     path_to_fixdur_files = '/home/student/b/behinger/Documents/fixdur/data_gist/'    
     
+elif ISEXPERIMENT2:
+    path_to_fixdur_files = '/home/student/j/jschepers/thesis/fixdur_git/data/experiment2/'    
 else:
     path_to_fixdur_files = '/net/store/nbp/projects/fixdur/data/'
     if not os.path.isdir(path_to_fixdur_files):
@@ -39,6 +43,8 @@ if ISFIXDURGIST:
   # 12 early stop because subject was too tired
     subjects = ['1','2','3','5','6','7','8','10','11','13']
     #subjects = ['1']
+elif ISEXPERIMENT2:
+    subjects = ['0']
 else:
   #subject 0: old updating method, subject 2: didn't look at bubbles, 7 et crashed -> no complete data set, 
 #14 no complete data set #17 et chrashed -> pickle file missing, 19 = trialsnum weird, 24 2 trials missing. 25 1 trial missing
@@ -103,7 +109,7 @@ for subject in subjects:
     '''get result matrix'''
     # res = dict(fixstart=[],choicetime=[],fixend=[],forcedFixtime=[],numFixPerBubble=[],badLoc=[],badLocExceptFirst=[],badSaccade=[],fixX=[],fixY=[],goodFix=[],goodFixExceptFirst=[])
     #res,start_x,start_y,end_x,end_y = resmat.get_res(data,et_data,sample_data)
-    res = resmat.get_res(data,et_data,sample_data,ISGIST=ISFIXDURGIST)
+    res = resmat.get_res(data,et_data,sample_data,ISGIST=ISFIXDURGIST,ISEXPERIMENT2=ISEXPERIMENT2)
     
     #stuff for quantification
     
@@ -123,6 +129,8 @@ for key in all_res:
 if ISFIXDURGIST:
     pass
     pickle.dump(all_res,open("all_res_gist.p","w")) #XXX
+elif ISEXPERIMENT2:
+    pickle.dump(all_res,open("all_res_exp2.p","w")) #XXX
 else:
     pass
     pickle.dump(all_res,open("all_res.p","w")) #XXX
