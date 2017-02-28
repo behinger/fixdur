@@ -17,8 +17,8 @@ NUM_OF_TRIALS = 96
 TRIAL_TIME = 6000   #how long sould the bubbles in theory be displayed per trial for randomization
 
 START_TRIAL = 0    #which trial to begin with   
-fullscreen = False
-EYETRACKING = False
+fullscreen = True
+EYETRACKING = True
 
 
 if EYETRACKING == False:
@@ -91,11 +91,11 @@ print rand_filename
 if EYETRACKING:
     tracker = fixdur_tracker.Tracker(surf,rand_filename+'.EDF')
 
-
-#start slide show
-tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/intro*.png')))
 if EYETRACKING:
     tracker.setup()
+#start slide show
+tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/intro*.png')))
+
 
 # create fixation cross
 fix_cross = visual.SimpleImageStim(surf,image=path_to_fixdur_code+'images/fixationcross.png')
@@ -134,12 +134,16 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
         bubble_image = all_images[0]
         #    remaining_points = list(sample_points)
         
+
+        #get the trial corresponding to the image
+        current_trial = trial_mat[np.where(trial_mat[:,4] == str(float(img_num+1)))]
+        prev_trial = trial_mat[np.where(trial_mat[:,4] == str(float(img_num)))]
+
+        if current_trial[0][3] == '0' and prev_trial[0][3]=='1':
+            all_images = list(all_images_copy)
         #remove chosen image from all images
         all_images.pop(0)
         
-        #get the trial corresponding to the image
-        current_trial = trial_mat[np.where(trial_mat[:,4] == str(float(img_num+1)))]
-           
         # breaks (wait for next trial)
         # 5 breaks in 96 trials; every 16 trials (32 is used for instructions, see below)
         breaks = [16,48,64,80]
