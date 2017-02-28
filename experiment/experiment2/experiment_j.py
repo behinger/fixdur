@@ -124,7 +124,9 @@ trial_list = []
 for img_num in range(NUM_OF_TRIALS-START_TRIAL):
     
     try:
-    
+        
+        BREAK_TIME = False        
+        
         #remove all trials that should be skipped
         if START_TRIAL !=0 and img_num == 0:
             for tr in range(0,START_TRIAL):
@@ -152,6 +154,7 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
         if trial_num in breaks:
             text = visual.TextStim(surf, text="It's time for a break!") # show break text
             text.draw(surf)
+            BREAK_TIME = True
             
         # Break with instructions in between the first and the second block
         elif trial_num == 33:
@@ -164,6 +167,8 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
             # training trials for second block            
             trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim,EYETRACKING,control=0)
             tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start2.png')))
+            
+            BREAK_TIME = True            
             
             # show circle
             circ = visual.Circle(surf, units='pix', radius=10)
@@ -179,6 +184,8 @@ for img_num in range(NUM_OF_TRIALS-START_TRIAL):
             surf.close()
             sys.exit() # leave experiment if ESC is pressed
         
+        if EYETRACKING and BREAK_TIME: #re-calibration after breaks
+            tracker.setup()
 
         # show fixation cross
         fix_cross.draw(surf)
