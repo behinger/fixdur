@@ -200,6 +200,7 @@ def training(surf,tracker,memory_image,fix_cross,stimuli,gausStim,EYETRACKING,co
             # if num_of_bubbles == 0 apply whole image condition
             if num_of_bubbles == 0:
                 mask_im = tools_ex.whole_image(chosen_location)
+                used_locations = []
                 whole_image = True
             
             # choose bubble locations according to num of bubbles
