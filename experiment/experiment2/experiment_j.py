@@ -116,389 +116,389 @@ fix_cross.draw(surf)
 surf.flip()
 
 
-trial_num = 1
+trial_num = START_TRIAL+1
 trial_list = []
 
-
+try:
 # run the main loop (one iteration corresponds to one trial)
-for img_num in range(NUM_OF_TRIALS-START_TRIAL):
+    for img_num in range(NUM_OF_TRIALS-START_TRIAL):
+        
+            
+            BREAK_TIME = False        
+            
+            #remove all trials that should be skipped
+            if START_TRIAL !=0 and img_num == 0:
+                for tr in range(0,START_TRIAL):
+                    all_images.pop(0)
+        
+            # start with first image
+            bubble_image = all_images[0]
+            #    remaining_points = list(sample_points)
+            
     
-    try:
-        
-        BREAK_TIME = False        
-        
-        #remove all trials that should be skipped
-        if START_TRIAL !=0 and img_num == 0:
-            for tr in range(0,START_TRIAL):
-                all_images.pop(0)
+            #get the trial corresponding to the image
+            current_trial = trial_mat[np.where(trial_mat[:,4] == str(float(img_num+1)))]
+            prev_trial = trial_mat[np.where(trial_mat[:,4] == str(float(img_num)))]
     
-        # start with first image
-        bubble_image = all_images[0]
-        #    remaining_points = list(sample_points)
-        
-
-        #get the trial corresponding to the image
-        current_trial = trial_mat[np.where(trial_mat[:,4] == str(float(img_num+1)))]
-        prev_trial = trial_mat[np.where(trial_mat[:,4] == str(float(img_num)))]
-
-        if current_trial[0][3] == '0' and prev_trial[0][3]=='1':
-            all_images = list(all_images_copy)
-        #remove chosen image from all images
-        all_images.pop(0)
-        
-        # breaks (wait for next trial)
-        # 5 breaks in 96 trials; every 16 trials (32 is used for instructions, see below)
-        breaks = [16,48,64,80]
-        breaks = [ x + START_TRIAL +1 for x in breaks] # +1 because we start counting trial_num at 1
-
-        if trial_num in breaks:
-            text = visual.TextStim(surf, text="It's time for a break!") # show break text
-            text.draw(surf)
-            BREAK_TIME = True
+            if current_trial[0][3] == '0' and prev_trial[0][3]=='1':
+                all_images = list(all_images_copy)
+            #remove chosen image from all images
+            all_images.pop(0)
             
-        # Break with instructions in between the first and the second block
-        elif trial_num == 33:
-            
-            # instructions for second block
-            tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/finish_block1.png')))
-            tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/memory1.png')))
-            tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/training_block2.png')))
-            
-            # training trials for second block            
-            trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim,EYETRACKING,control=0)
-            tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start2.png')))
-            
-            BREAK_TIME = True            
-            
-            # show circle
-            circ = visual.Circle(surf, units='pix', radius=10)
-            circ.draw(surf)
-        else:
-            circ = visual.Circle(surf, units='pix', radius=10)
-            circ.draw(surf)
- 
-        surf.flip()
-        key = event.waitKeys() # start trial by pressing any key
-        print 'key',key
-        if ('escape' in key):
-            surf.close()
-            sys.exit() # leave experiment if ESC is pressed
-        
-        if EYETRACKING and BREAK_TIME: #re-calibration after breaks
-            tracker.setup()
-
-        # show fixation cross
-        fix_cross.draw(surf)
-        surf.flip()  
-        
-        #drift correction (before each trial)
-        if EYETRACKING == True:
-            tracker.drift()
-            
-        #keep displaying fixation cross so it is still present after new calibration
-        fix_cross.draw(surf)
-        surf.flip()
-            
-        #start trial (eye-tracker)
-        if EYETRACKING == True:
-            tracker.start_trial()
-
-        #normal_dist with mean 300 and spread 700
-        delay_time = np.random.uniform(300,700)
-        core.wait(int(delay_time/1000))
+            # breaks (wait for next trial)
+            # 5 breaks in 96 trials; every 16 trials (32 is used for instructions, see below)
+            breaks = [16,48,64,80]
+            breaks = [ x + START_TRIAL +1 for x in breaks] # +1 because we start counting trial_num at 1
+    
+            if trial_num in breaks:
+                text = visual.TextStim(surf, text="It's time for a break!") # show break text
+                text.draw(surf)
+                BREAK_TIME = True
                 
-        # start trial (send information to ET)
-        if EYETRACKING == True:            
-           tracker.trial(trial_num)
-           tracker.trialmetadata('BUBBLE_IMAGE',bubble_image)
-        
-        # initialize counter for subtrials
-        subtrial_num = 1
-        subtrial_list = []
-        
-        # create white stimulus for control condition
-        white_image = Image.new('L',image.size,150)
-        stimWhite = visual.ImageStim(surf, image=white_image, units='pix')
-        
-        # load stimulus for current image
-        stim = stimList_preload[bubble_image]
-        
-        # Sample bubble locations for current image from Poisson distribution
-        width, height = stim.size
-        sample_points = tools_ex.poisson_sampling(width,height)        
-        
-        # Create boolean variables for memory task and whole image condition
-        memory = True     
-        whole_image = False
-        start = core.getTime()
-        
-        # copy in which already used locations can be deleted
-        remaining_points = list(sample_points)
-        
-        # loop for the subtrials within each trial
-        for subtrial in current_trial:
+            # Break with instructions in between the first and the second block
+            elif trial_num == 33:
+                
+                # instructions for second block
+                tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/finish_block1.png')))
+                tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/memory1.png')))
+                tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/training_block2.png')))
+                
+                # training trials for second block            
+                trial.training(surf,tracker,memory_image,fix_cross,stimList_preload,gausStim,EYETRACKING,control=0)
+                tools.slideshow(surf, np.sort(glob.glob(path_to_fixdur_code+'images/instructions/pre_start2.png')))
+                
+                BREAK_TIME = True            
+                
+                # show circle
+                circ = visual.Circle(surf, units='pix', radius=10)
+                circ.draw(surf)
+            else:
+                circ = visual.Circle(surf, units='pix', radius=10)
+                circ.draw(surf)
+     
+            surf.flip()
+            key = event.waitKeys() # start trial by pressing any key
+            print 'key',key
+            if ('escape' in key):
+                surf.close()
+                sys.exit() # leave experiment if ESC is pressed
             
-            # create list for locations used in subtrial
-            used_locations = []
-        
-            # check if control condition should be applied (1) or not (0)
-            control = int(float(subtrial[3]))
+            if EYETRACKING and BREAK_TIME: #re-calibration after breaks
+                tracker.setup()
+    
+            # show fixation cross
+            fix_cross.draw(surf)
+            surf.flip()  
             
-            #choose starting bubble for first trial randomly
-            if subtrial_num == 1:
-                chosen_location = [random.choice(sample_points)]
-                first_bubble = chosen_location[0]
+            #drift correction (before each trial)
+            if EYETRACKING == True:
+                tracker.drift()
                 
-                # if control condition is applied disable memory task
-                if control == 1:
-                    memory = False
-
-            # delete previous location for next subtrial
-            if chosen_location[0] in remaining_points:
-                remaining_points.remove(chosen_location[0])
+            #keep displaying fixation cross so it is still present after new calibration
+            fix_cross.draw(surf)
+            surf.flip()
+                
+            #start trial (eye-tracker)
+            if EYETRACKING == True:
+                tracker.start_trial()
+    
+            #normal_dist with mean 300 and spread 700
+            delay_time = np.random.uniform(300,700)
+            core.wait(int(delay_time/1000))
+                    
+            # start trial (send information to ET)
+            if EYETRACKING == True:            
+               tracker.trial(trial_num)
+               tracker.trialmetadata('BUBBLE_IMAGE',bubble_image)
             
-            # create mask image for chosen bubble
-            #start = core.getTime()
-            stim.mask = None
-            #tools.debug_time("1.stim.mask=None",start) # used for debugging the timing
-            stim.draw()
-            #tools.debug_time("2.stim.draw()",start)
-            tools_ex.create_mask_fast(chosen_location,surf,gausStim)
-            #tools.debug_time("3.tools_ex.create_mask_fast",start)
+            # initialize counter for subtrials
+            subtrial_num = 1
+            subtrial_list = []
             
+            # create white stimulus for control condition
+            white_image = Image.new('L',image.size,150)
+            stimWhite = visual.ImageStim(surf, image=white_image, units='pix')
             
-            # if control condition is applied
-            if control == 1 and subtrial_num != 1:
-                
-                # flip to foveated "old" bubble
-                surf.flip()
-                
-                foveated_prev_start = core.getTime()
-                if EYETRACKING == True:                
-                    tracker.trialmetadata("foveated_prev_onset", foveated_prev_start)
-                
-                #tools.debug_time("4.[white] foveated displayed",start)
-                start = core.getTime()
-                
-                bubble_display_start = core.getTime()
+            # load stimulus for current image
+            stim = stimList_preload[bubble_image]
             
-                #display time for white bubble (gaussian with mean 400 ms and sd 50 ms)
-                white_disp = np.random.normal(400,50)
+            # Sample bubble locations for current image from Poisson distribution
+            width, height = stim.size
+            sample_points = tools_ex.poisson_sampling(width,height)        
+            
+            # Create boolean variables for memory task and whole image condition
+            memory = True     
+            whole_image = False
+            start = core.getTime()
+            
+            # copy in which already used locations can be deleted
+            remaining_points = list(sample_points)
+            
+            # loop for the subtrials within each trial
+            for subtrial in current_trial:
                 
-                # find a different image
-                new_image = random.choice(all_images_copy)
-                while new_image == bubble_image:
-                    new_image = random.choice(all_images_copy)
-
-                #tools.debug_time("new image selected",start)                
-                #start = core.getTime()                
+                # create list for locations used in subtrial
+                used_locations = []
+            
+                # check if control condition should be applied (1) or not (0)
+                control = int(float(subtrial[3]))
                 
-                # draw white stimulus and its mask
-                stimWhite.draw()
+                #choose starting bubble for first trial randomly
+                if subtrial_num == 1:
+                    chosen_location = [random.choice(sample_points)]
+                    first_bubble = chosen_location[0]
+                    
+                    # if control condition is applied disable memory task
+                    if control == 1:
+                        memory = False
+    
+                # delete previous location for next subtrial
+                if chosen_location[0] in remaining_points:
+                    remaining_points.remove(chosen_location[0])
+                
+                # create mask image for chosen bubble
+                #start = core.getTime()
+                stim.mask = None
+                #tools.debug_time("1.stim.mask=None",start) # used for debugging the timing
+                stim.draw()
+                #tools.debug_time("2.stim.draw()",start)
                 tools_ex.create_mask_fast(chosen_location,surf,gausStim)
+                #tools.debug_time("3.tools_ex.create_mask_fast",start)
+                
+                
+                # if control condition is applied
+                if control == 1 and subtrial_num != 1:
+                    
+                    # flip to foveated "old" bubble
+                    surf.flip()
+                    
+                    foveated_prev_start = core.getTime()
+                    if EYETRACKING == True:                
+                        tracker.trialmetadata("foveated_prev_onset", foveated_prev_start)
+                    
+                    #tools.debug_time("4.[white] foveated displayed",start)
+                    start = core.getTime()
+                    
+                    bubble_display_start = core.getTime()
+                
+                    #display time for white bubble (gaussian with mean 400 ms and sd 50 ms)
+                    white_disp = np.random.normal(400,50)
+                    
+                    # find a different image
+                    new_image = random.choice(all_images_copy)
+                    while new_image == bubble_image:
+                        new_image = random.choice(all_images_copy)
+    
+                    #tools.debug_time("new image selected",start)                
+                    #start = core.getTime()                
+                    
+                    # draw white stimulus and its mask
+                    stimWhite.draw()
+                    tools_ex.create_mask_fast(chosen_location,surf,gausStim)
+                    
+                    ###################
+                    ### Wait 200ms with current foveated
+                    ###################                              
+                    curr_display_time = 0
+                    while curr_display_time < 200/1000.:
+                        core.wait(0.001)                    
+                        curr_display_time = core.getTime() - bubble_display_start
+                    start = start+200/1000.
+                    
+    
+                    surf.flip() #flip to white stimulus
+                    white_display_start = core.getTime()
+                    if EYETRACKING == True:                
+                        tracker.trialmetadata("white_onset", white_display_start)
+                        
+                    #display_start = core.getTime()
+    
+                    tools.debug_time("[white] white displayed",start)
+                    start = core.getTime()
+                    
+                    # load and draw new stimulus
+                    stim = stimList_preload[new_image]
+                    stim.mask = None
+                    stim.draw()
+                    tools_ex.create_mask_fast(chosen_location,surf,gausStim)
+                    
+                    curr_display_time = 0
+                    while curr_display_time < white_disp/1000:
+                        core.wait(0.001)                    
+                        curr_display_time = core.getTime() - white_display_start
+                    start = start + white_disp/1000.
+                    
+                    #tools.debug_time("new image set",start)
+                    
+                    # display white bubble until display time is over
+                    #start = core.getTime()
+    
+                else:
+                    #if the control condition is not applied set both triggers to "None" because they are not applicable
+                    foveated_prev_start = 'None'
+                    white_display_start = 'None'
+                    
+                #################################
+                ### Show A Single Foveated Bubble
+                ###############################
+                tools.debug_time("before flip",start)
+                #print(stim.pos)
+                surf.flip()
+                #tools.debug_time("after flip",start)
+                bubble_display_start = core.getTime()
+                if EYETRACKING == True:                
+                    tracker.trialmetadata("forced_fix_onset", bubble_display_start)
+                tools.debug_time("stimulus drawn, wait forced fix time (white-timing corrected)",start)
+                start = core.getTime()
+    
+                
+                # wait until first bubble is fixated before starting forced_fix_time
+                if subtrial_num == 1:
+                    if EYETRACKING:
+                        tools.sacc_detection(tracker,chosen_location,False,surf,chosen_location[0],remaining_points)            
+                
+                # get number of bubbles for current trial
+                num_of_bubbles = int(float(subtrial[1]))
+                #num_of_bubbles = 1            
+                
+                if num_of_bubbles == 0:
+                    mask_im = tools_ex.whole_image(chosen_location)
+                    whole_image = True
+                    #stim.mask = mask_im
+                
+                # choose bubble locations according to num of bubbles
+                else:
+                    bubble_locations = tools_ex.choose_locations(whole_image,num_of_bubbles, sample_points, remaining_points, chosen_location)          
+                    mask_im = tools_ex.create_mask(bubble_locations)
+                    #mask_im = tools_ex.create_mask(bubble_locations,(2048,2048),MULTIPLE=True)
+                    [used_locations.append(location) for location in bubble_locations]
+                    whole_image = False
+                tools.debug_time("Before Mask Adding",start)    
+                stim.mask = mask_im
+                
+                #tools.debug_time("choose new bubble locations ",start)
+                #start = core.getTime()
+                # prepare stimulus for alternative bubble(s)
+                #stim = visual.ImageStim(surf, image=image, mask=mask_im, units='pix')
+                
+                
+                #tools.debug_time("stim.mask",start)
+                #start = core.getTime()
+                
+                disp_time = float(subtrial[2])
+                #keep displaying choosen bubble until disp_time is over
+                
+                
+                tools.debug_time("Before Stim Draw",start)
+    
+                # show alternative bubble(s)
+                stim.draw()
+    
+                ###################
+                ## Wait FORCED FIXATION TIME
+                ###################
+                bubble_display_time = 0
+                while bubble_display_time < disp_time/1000.:
+                    core.wait(0.001)                    
+                    bubble_display_time = core.getTime() - bubble_display_start
+                    
+                start = start + disp_time/1000.
                 
                 ###################
-                ### Wait 200ms with current foveated
-                ###################                              
-                curr_display_time = 0
-                while curr_display_time < 200/1000.:
-                    core.wait(0.001)                    
-                    curr_display_time = core.getTime() - bubble_display_start
-                start = start+200/1000.
+                ## Show Alternative Bubbles
+                ###################
+    
+                surf.flip()
                 
-
-                surf.flip() #flip to white stimulus
-                white_display_start = core.getTime()
-                if EYETRACKING == True:                
-                    tracker.trialmetadata("white_onset", white_display_start)
+                stimulus_onset = core.getTime()
+                if EYETRACKING == True:
+                    tracker.trialmetadata("stimulus_onset", stimulus_onset)
                     
-                #display_start = core.getTime()
-
-                tools.debug_time("[white] white displayed",start)
+                #tools.debug_time("choose new bubble locations (without FF)",start)
+    
                 start = core.getTime()
-                
-                # load and draw new stimulus
-                stim = stimList_preload[new_image]
-                stim.mask = None
-                stim.draw()
-                tools_ex.create_mask_fast(chosen_location,surf,gausStim)
-                
-                curr_display_time = 0
-                while curr_display_time < white_disp/1000:
-                    core.wait(0.001)                    
-                    curr_display_time = core.getTime() - white_display_start
-                start = start + white_disp/1000.
-                
-                #tools.debug_time("new image set",start)
-                
-                # display white bubble until display time is over
-                #start = core.getTime()
-
-            else:
-                #if the control condition is not applied set both triggers to "None" because they are not applicable
-                foveated_prev_start = 'None'
-                white_display_start = 'None'
-                
-            #################################
-            ### Show A Single Foveated Bubble
-            ###############################
-            tools.debug_time("before flip",start)
-            #print(stim.pos)
-            surf.flip()
-            #tools.debug_time("after flip",start)
-            bubble_display_start = core.getTime()
-            if EYETRACKING == True:                
-                tracker.trialmetadata("forced_fix_onset", bubble_display_start)
-            tools.debug_time("stimulus drawn, wait forced fix time (white-timing corrected)",start)
-            start = core.getTime()
-
-            
-            # wait until first bubble is fixated before starting forced_fix_time
-            if subtrial_num == 1:
+    
                 if EYETRACKING:
-                    tools.sacc_detection(tracker,chosen_location,False,surf,chosen_location[0],remaining_points)            
-            
-            # get number of bubbles for current trial
-            num_of_bubbles = int(float(subtrial[1]))
-            #num_of_bubbles = 1            
-            
-            if num_of_bubbles == 0:
-                mask_im = tools_ex.whole_image(chosen_location)
-                whole_image = True
-                #stim.mask = mask_im
-            
-            # choose bubble locations according to num of bubbles
-            else:
-                bubble_locations = tools_ex.choose_locations(whole_image,num_of_bubbles, sample_points, remaining_points, chosen_location)          
-                mask_im = tools_ex.create_mask(bubble_locations)
-                #mask_im = tools_ex.create_mask(bubble_locations,(2048,2048),MULTIPLE=True)
-                [used_locations.append(location) for location in bubble_locations]
-                whole_image = False
-            tools.debug_time("Before Mask Adding",start)    
-            stim.mask = mask_im
-            
-            #tools.debug_time("choose new bubble locations ",start)
-            #start = core.getTime()
-            # prepare stimulus for alternative bubble(s)
-            #stim = visual.ImageStim(surf, image=image, mask=mask_im, units='pix')
-            
-            
-            #tools.debug_time("stim.mask",start)
-            #start = core.getTime()
-            
-            disp_time = float(subtrial[2])
-            #keep displaying choosen bubble until disp_time is over
-            
-            
-            tools.debug_time("Before Stim Draw",start)
-
-            # show alternative bubble(s)
-            stim.draw()
-
-            ###################
-            ## Wait FORCED FIXATION TIME
-            ###################
-            bubble_display_time = 0
-            while bubble_display_time < disp_time/1000.:
-                core.wait(0.001)                    
-                bubble_display_time = core.getTime() - bubble_display_start
-                
-            start = start + disp_time/1000.
-            
-            ###################
-            ## Show Alternative Bubbles
-            ###################
-
-            surf.flip()
-            
-            stimulus_onset = core.getTime()
-            if EYETRACKING == True:
-                tracker.trialmetadata("stimulus_onset", stimulus_onset)
-                
-            #tools.debug_time("choose new bubble locations (without FF)",start)
-
-            start = core.getTime()
-
-            if EYETRACKING:
-                chosen_location = [tools.sacc_detection(tracker,used_locations,whole_image,surf, chosen_location[0],remaining_points)]
-                #print('saccade detected')
-            else:
-                if num_of_bubbles == 0:
-                    copy_points = list(sample_points)
-                    copy_points.remove(chosen_location[0])
-                    chosen_location = [random.choice(copy_points)]
+                    chosen_location = [tools.sacc_detection(tracker,used_locations,whole_image,surf, chosen_location[0],remaining_points)]
+                    #print('saccade detected')
                 else:
-                    chosen_location = [random.choice(bubble_locations)]
- 
-            
-            
-            saccade_offset = core.getTime()
-            if EYETRACKING == True:
-                tracker.trialmetadata("saccade_offset", saccade_offset)
-                                      
-            tools.debug_time("et saccade detected",start)
-            start = core.getTime()         
-            #for location in used_locations:
-            #    if location in sample_points:                
-            #        sample_points.remove(location)
+                    if num_of_bubbles == 0:
+                        copy_points = list(sample_points)
+                        copy_points.remove(chosen_location[0])
+                        chosen_location = [random.choice(copy_points)]
+                    else:
+                        chosen_location = [random.choice(bubble_locations)]
+     
                 
-            #metainfos for tracker
-            if EYETRACKING == True:
-                tracker.trialmetadata("DISPLAYED_BUBBLES", used_locations)
-                tracker.trialmetadata("CHOSEN_BUBBLE", chosen_location)
-                tracker.trialmetadata('BUBBLE_DISPLAY_TIME', disp_time)
-        
-            key = tools.wait_for_key()
-            if 'escape' in key:
-                surf.close()
-                sys.exit()
-        
-            #metainfos for dictionary
-            #subtrial_dict = {'trial': trial_num, 'img': bubble_image, 'disp_bubbles': used_locations, 'first_bubble':first_bubble, 'chosen_bubble': chosen_location, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start}
-            subtrial_dict = {'trial': trial_num, 'img': bubble_image,'num_bubbles': num_of_bubbles,'whole_image_condition': whole_image, 'control_condition': control, 'disp_bubbles': used_locations, 'first_bubble':first_bubble, 'chosen_bubble': chosen_location, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start,'white_onset': white_display_start, 'foveated_prev_onset': foveated_prev_start}                
-            subtrial_list.append(subtrial_dict)  
-            
-            subtrial_num = subtrial_num + 1
-        
-      
-            tools.debug_time("end of trial - time after wait for fix",start)
                 
-        #memory task
-        #left_bubble, right bubble, correct = tools.memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image.copy(),surf)
-        if memory:
-            memory_res = tools_ex.memory_task(stim,memory_image,surf,stimList_preload,bubble_image)
-        else:
-            memory_res = ['no_memory_task','no_memory_task','no_memory_task']
+                saccade_offset = core.getTime()
+                if EYETRACKING == True:
+                    tracker.trialmetadata("saccade_offset", saccade_offset)
+                                          
+                tools.debug_time("et saccade detected",start)
+                start = core.getTime()         
+                #for location in used_locations:
+                #    if location in sample_points:                
+                #        sample_points.remove(location)
+                    
+                #metainfos for tracker
+                if EYETRACKING == True:
+                    tracker.trialmetadata("DISPLAYED_BUBBLES", used_locations)
+                    tracker.trialmetadata("CHOSEN_BUBBLE", chosen_location)
+                    tracker.trialmetadata('BUBBLE_DISPLAY_TIME', disp_time)
+            
+                key = tools.wait_for_key()
+                if 'escape' in key:
+                    surf.close()
+                    sys.exit()
+            
+                #metainfos for dictionary
+                #subtrial_dict = {'trial': trial_num, 'img': bubble_image, 'disp_bubbles': used_locations, 'first_bubble':first_bubble, 'chosen_bubble': chosen_location, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start}
+                subtrial_dict = {'trial': trial_num, 'img': bubble_image,'num_bubbles': num_of_bubbles,'whole_image_condition': whole_image, 'control_condition': control, 'disp_bubbles': used_locations, 'first_bubble':first_bubble, 'chosen_bubble': chosen_location, 'planned_disp_time': disp_time, 'stim_onset': stimulus_onset, 'saccade_offset': saccade_offset, 'forced_fix_onset': bubble_display_start,'white_onset': white_display_start, 'foveated_prev_onset': foveated_prev_start}                
+                subtrial_list.append(subtrial_dict)  
+                
+                subtrial_num = subtrial_num + 1
+            
+          
+                tools.debug_time("end of trial - time after wait for fix",start)
+                    
+            #memory task
+            #left_bubble, right bubble, correct = tools.memory_task(all_bubbles,loaded_bubbles,bubble_image,memory_image.copy(),surf)
+            if memory:
+                memory_res = tools_ex.memory_task(stim,memory_image,surf,stimList_preload,bubble_image)
+            else:
+                memory_res = ['no_memory_task','no_memory_task','no_memory_task']
+            
+            #add trial meta data    
+            trial_list.append(subtrial_list)
+            #memory_res has order correct, left, right -> wrong in dict, but corrected for in analysis
+            trial_list.append({'subject_number':subject_number,'left_bubble':memory_res[1], 'right_bubble':memory_res[2], 'correct':memory_res[0]})
+            trial_num = trial_num + 1   
+            
+            if EYETRACKING == True:       
+                tracker.end_trial() 
         
-        #add trial meta data    
-        trial_list.append(subtrial_list)
-        #memory_res has order correct, left, right -> wrong in dict, but corrected for in analysis
-        trial_list.append({'subject_number':subject_number,'left_bubble':memory_res[1], 'right_bubble':memory_res[2], 'correct':memory_res[0]})
-        trial_num = trial_num + 1   
-        
-        if EYETRACKING == True:       
-            tracker.end_trial() 
-        
-    except Exception as e:
-        import sys
-        exc_type, exc_obj, exc_tb = sys.exc_info()
+except Exception as e:
+    
+    import sys
+    exc_type, exc_obj, exc_tb = sys.exc_info()
 
-        print e.message,e.args,exc_tb.tb_lineno
-        try:
-            error_file = open(path_to_fixdur_code+'data/'+str(subject)+'/error_'+str(trial_num)+'_'+str(subtrial),'w')
-            error_file.write('ERROR')
-            error_file.close()
-        except:
-            pass
-        pickle.dump(trial_list,subject_file)
-        subject_file.close()
-        if EYETRACKING == True:
-            tracker.finish()
-        os.system('mv '+rand_filename+'.EDF '+path_to_fixdur_code+'data/'+str(subject)+'/')
-        surf.close()
-            #pygame.quit()
-        import traceback
-        traceback.print_exc()
+    print e.message,e.args,exc_tb.tb_lineno
+    try:
+        error_file = open(path_to_fixdur_code+'data/'+str(subject)+'/error_'+str(trial_num)+'_'+str(subtrial),'w')
+        error_file.write('ERROR')
+        error_file.close()
+    except:
+        pass
+    pickle.dump(trial_list,subject_file)
+    subject_file.close()
+    if EYETRACKING == True:
+        tracker.finish()
+    os.system('mv '+rand_filename+'.EDF '+path_to_fixdur_code+'data/'+str(subject)+'/')
+    surf.close()
+        #pygame.quit()
+    import traceback
+    traceback.print_exc()
 
 
 #final screen
