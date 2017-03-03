@@ -147,8 +147,11 @@ try:
             
             # breaks (wait for next trial)
             # 5 breaks in 96 trials; every 16 trials (32 is used for instructions, see below)
-            breaks = [16,48,64,80]
-            breaks = [ x + START_TRIAL +1 for x in breaks] # +1 because we start counting trial_num at 1
+            if EYETRACKING:
+                breaks = [16,48,64,80]
+                breaks = [ x + START_TRIAL +1 for x in breaks] # +1 because we start counting trial_num at 1
+            else:
+                breaks = []
     
             if trial_num in breaks:
                 text = visual.TextStim(surf, text="It's time for a break!") # show break text
@@ -177,11 +180,12 @@ try:
                 circ.draw(surf)
      
             surf.flip()
-            key = event.waitKeys() # start trial by pressing any key
-            print 'key',key
-            if ('escape' in key):
-                surf.close()
-                sys.exit() # leave experiment if ESC is pressed
+            if EYETRACKING:
+                key = event.waitKeys() # start trial by pressing any key
+                print 'key',key
+                if ('escape' in key):
+                    surf.close()
+                    sys.exit() # leave experiment if ESC is pressed
             
             if EYETRACKING and BREAK_TIME: #re-calibration after breaks
                 tracker.setup()
