@@ -306,7 +306,8 @@ def memory_task(stim,memory_image,surf,stimList_preload,bubble_image):
     #surf.blit(memory_image,(320,60))
     surf.flip()
     #pygame.display.update()
-    key = event.waitKeys(keyList=['left', 'right'])    
+    key = event.waitKeys(keyList=['left', 'right'])
+    #key = 'right'    ### Needs to be changed
     #key = wait_for_key(keylist = [K_LEFT,K_RIGHT])
     #if left bubble is correct and left bubble was choosen
     
