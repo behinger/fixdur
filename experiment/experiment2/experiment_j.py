@@ -122,7 +122,7 @@ trial_list = []
 try:
 # run the main loop (one iteration corresponds to one trial)
     for img_num in range(NUM_OF_TRIALS-START_TRIAL):
-    #for img_num in range(64,96):
+    #for img_num in range(65,96):
         
             
             BREAK_TIME = False        
