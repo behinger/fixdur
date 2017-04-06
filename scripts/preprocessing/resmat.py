@@ -9,13 +9,16 @@ Created on Wed Feb 11 11:34:47 2015
 
 import numpy as np
 import collections
+import warnings
 MAT = 154
 PPD = 50
 
 def flatten_list(nested_list):
     return [item for sublist in nested_list for item in sublist]
 
-def get_res(data,et_data,sample_data,ISGIST=False):    
+def get_res(data,et_data,sample_data,ISGIST=False,ISEXPERIMENT2=False):    
+    
+    
     '''get bubble position'''
     chosen_x = []
     chosen_y = []  
@@ -33,19 +36,31 @@ def get_res(data,et_data,sample_data,ISGIST=False):
     memory_left = []
     planned_forced_fix = []
     image = []
+    whitecondition = []
+    if ISEXPERIMENT2:
+        #difference between image and screen
+        shiftBubbleX = (1920 - 1280)/2 
+        shiftBubbleY = (1080-960)/2
+    else:
+        MAT = 154 # the bubble size in pixels
+        shiftBubbleX = MAT/2+(1920 - 1280)/2
+        shiftBubbleY = MAT/2+(1080-960)/2
     for j in range(len(data)):
+       
         # check trial_type
         if (np.mod(j,2) == 1):
-            if (data[j]['trial_type'] == 'seq'):
+            if ISEXPERIMENT2 or (data[j]['trial_type'] == 'seq'):
+                if ISEXPERIMENT2 == ('trial_type' in data[j].keys()):
+                  raise('error, you should have trial_type if it is not experiment2')
                 num_subtrial = (len(data[j-1]))
                 # take corresponding trail (data[0-1,2-3,4-5, etc.])
                 #first bubble for each subtrial
-                chosen_x.append(data[j-1][0]['first_bubble'][0]+77+320)
-                chosen_y.append(data[j-1][0]['first_bubble'][1]+77+60)
+                chosen_x.append(data[j-1][0]['first_bubble'][0]+shiftBubbleX)
+                chosen_y.append(data[j-1][0]['first_bubble'][1]+shiftBubbleY)
                 trial_num.append(j/2)
                 bubble_num.append(-1)
-                disp_x.append(data[j-1][0]['first_bubble'][0]+77+320)
-                disp_y.append(data[j-1][0]['first_bubble'][1]+77+320)
+                disp_x.append(data[j-1][0]['first_bubble'][0]+shiftBubbleX)
+                disp_y.append(data[j-1][0]['first_bubble'][1]+shiftBubbleY) # BUG until 21.02.2017 there was a bug, and shiftBubbleX was addedhere
                 num_bubbles.append(1)
                 #stimulus type
                 if 'image' in data[j-1][0]['img']:
@@ -55,22 +70,52 @@ def get_res(data,et_data,sample_data,ISGIST=False):
                 image.append(data[j-1][0]['img'])
                 #planned_forced_fix.append(data[j-1][0]['planned_disp_time'])
                 #memory task correct?
-                #bug:left_bubble = correct, right_bubble = right_bubble, correct = left_bubble
-                memory_left.append(data[j]['correct'][0])
-                memory_left_xy.append(data[j]['correct'][1])
-                    
-                memory_right.append(data[j]['right_bubble'][0])                                       
-                memory_right_xy.append(data[j]['right_bubble'][1])                    
-                if data[j]['left_bubble']:
-                    memory_correct.append(True)
+                if data[j]['correct']!='no_memory_task':
+                    if not ('trial_type' in data[j].keys()): # Experiment 2, we fixed the switched fields bug from experiment 1/gist!
+                        #warnings.warn('FIXME: this after you fixed memory task (adding the image')
+                        #memory_left.append(np.nan)
+                        #memory_left_xy.append(np.nan)
+                        #memory_right.append(np.nan)
+                        #memory_right_xy.append(np.nan)
+                        # Warning: Experiment 2 has switched labels
+                        memory_left.append(data[j]['left_bubble'][1])
+                        memory_left_xy.append(data[j]['left_bubble'][0])
+                        
+                        memory_right.append(data[j]['right_bubble'][1])                                       
+                        memory_right_xy.append(data[j]['right_bubble'][0])                    
+                        
+                        if data[j]['correct']:
+                            memory_correct.append(True)
+                        else:
+                            memory_correct.append(False)
+                    else: # Gist and Experiment 1
+                        #bug:left_bubble = correct, right_bubble = right_bubble, correct = left_bubble
+                        memory_left.append(data[j]['correct'][0])
+                        memory_left_xy.append(data[j]['correct'][1])
+                        
+                        memory_right.append(data[j]['right_bubble'][0])                                       
+                        memory_right_xy.append(data[j]['right_bubble'][1])                    
+                        if data[j]['left_bubble']:
+                            memory_correct.append(True)
+                        else:
+                            memory_correct.append(False)
                 else:
-                    memory_correct.append(False)
+                    memory_left.append('None')
+                    memory_left_xy.append([np.nan,np.nan])
+                    memory_right.append('None')
+                    memory_right_xy.append([np.nan,np.nan])
+                    memory_correct.append(np.nan)
+                    
                 if ISGIST:
                     if data[j]['gist']=='1.0':
                         gist.append(True)
                     else:
                         gist.append(False)
-                
+                if ISEXPERIMENT2:
+                        if data[j-1][0]['control_condition']==1:
+                             whitecondition.append(True)
+                        else:
+                            whitecondition.append(False)
                 #rest of the bubbles for each subtrial
                 for b in range(len(data[j-1])-1): #no forced_fixation for last subtrial of each trial (-1)
                     trial_num.append(j/2)
@@ -78,13 +123,13 @@ def get_res(data,et_data,sample_data,ISGIST=False):
                     num_bubbles.append(len(data[j-1][b]['disp_bubbles']))
                     #add half of mat size to get center (77)
                     #add difference between image and monitor resolution to chosen_bubble_position (320,60)
-                    chosen_x.append(data[j-1][b]['chosen_bubble'][0][0]+77+320)
-                    chosen_y.append(data[j-1][b]['chosen_bubble'][0][1]+77+60)
+                    chosen_x.append(data[j-1][b]['chosen_bubble'][0][0]+shiftBubbleX)
+                    chosen_y.append(data[j-1][b]['chosen_bubble'][0][1]+shiftBubbleY)
                     tmp_x = []
                     tmp_y = []
                     for c in range(len(data[j-1][b]['disp_bubbles'])):
-                        tmp_x.append(data[j-1][b]['disp_bubbles'][c][0]+77+320)
-                        tmp_y.append(data[j-1][b]['disp_bubbles'][c][1]+77+60)
+                        tmp_x.append(data[j-1][b]['disp_bubbles'][c][0]+shiftBubbleX)
+                        tmp_y.append(data[j-1][b]['disp_bubbles'][c][1]+shiftBubbleY)
                     disp_x.append(tmp_x)
                     disp_y.append(tmp_y)
                     #stimulus type
@@ -96,26 +141,64 @@ def get_res(data,et_data,sample_data,ISGIST=False):
                     #memory task correct?
                     #bug:left_bubble = correct, right_bubble = right_bubble, correct = left_bubble
                     
-                    memory_left.append(data[j]['correct'][0])
-                    memory_left_xy.append(data[j]['correct'][1])
-                    
-                    memory_right.append(data[j]['right_bubble'][0])                                       
-                    memory_right_xy.append(data[j]['right_bubble'][1])                    
-                    
-                    if data[j]['left_bubble']:
-                        memory_correct.append(True)
+                    if data[j]['correct']!='no_memory_task':
+                        if ISEXPERIMENT2: # Experiment 2, we fixed the bug!
+                            memory_left.append(data[j]['left_bubble'][0])
+                            memory_left_xy.append(data[j]['left_bubble'][1][0])
+                        
+                            memory_right.append(data[j]['right_bubble'][0])                                       
+                            memory_right_xy.append(data[j]['right_bubble'][1][0])                    
+                        
+                            if data[j]['correct']:
+                                memory_correct.append(True)
+                            else:
+                                memory_correct.append(False)
+                        else: # Gist and Experiment 1
+                            #bug:left_bubble = correct, right_bubble = right_bubble, correct = left_bubble
+                            memory_left.append(data[j]['correct'][0])
+                            memory_left_xy.append(data[j]['correct'][1])
+                            
+                            memory_right.append(data[j]['right_bubble'][0])                                       
+                            memory_right_xy.append(data[j]['right_bubble'][1])                    
+                            if data[j]['left_bubble']:
+                                memory_correct.append(True)
+                            else:
+                                memory_correct.append(False)
                     else:
-                        memory_correct.append(False)
+                        memory_left.append('None')
+                        memory_left_xy.append([np.nan, np.nan])
+                        memory_right.append('None')
+                        memory_right_xy.append([np.nan,np.nan])
+                        memory_correct.append(np.nan)
                     if ISGIST:
                         if data[j]['gist']=='1.0':
                             gist.append(True)
                         else:
                             gist.append(False)
+                    if ISEXPERIMENT2:
+                        if data[j-1][0]['control_condition']==1:
+                            whitecondition.append(True)
+                        else:
+                            whitecondition.append(False)
                     planned_forced_fix.append(data[j-1][b]['planned_disp_time'])
                 #add dummy value for last subtrial, because there is no last forced_fix_time        
                 planned_forced_fix.append(-999)                     
     #return chosen_x, num_bubbles
     
+    if ISEXPERIMENT2:
+        for i in range(len(disp_y)):
+            if isinstance(disp_y[i],list):
+                for j in range(len(disp_y[i])):
+                    disp_y[i][j] = 1080 - disp_y[i][j]
+            else:
+                disp_y[i] = 1080 - disp_y[i]
+                
+        for i in range(len(chosen_y)):
+            if isinstance(chosen_y[i],list):
+                for j in range(len(chosen_y[i])):
+                    chosen_y[i][j] = 1080 - chosen_y[i][j]
+            else:
+                chosen_y[i] = 1080 - chosen_y[i] 
             
     '''get forced_fix_onset and stim_onset from et_meta_data'''
     forced_onset = [] #onset of forced_fix display
@@ -144,6 +227,7 @@ def get_res(data,et_data,sample_data,ISGIST=False):
     et_fix_end = []
     et_fix_x = []
     et_fix_y = []
+    et_foveated_prev_onset = []
     et_saccade_end_x = []
     et_saccade_end_y = []
     et_saccade_start_x = []
@@ -155,6 +239,9 @@ def get_res(data,et_data,sample_data,ISGIST=False):
             et_fix_end.append([k[0] for k in et_data[j]['fix_end']])
             et_fix_x.append([k[0] for k in et_data[j]['fix_x']])
             et_fix_y.append([k[0] for k in et_data[j]['fix_y']])
+            if ISEXPERIMENT2:
+                et_foveated_prev_onset.append([k[0] for k in et_data[j]['foveated_prev_onset']])
+                
             et_saccade_end_x.append([k[0] for k in et_data[j]['saccade_ex']])
             et_saccade_end_y.append([k[0] for k in et_data[j]['saccade_ey']])
             et_saccade_start_x.append([k[0] for k in et_data[j]['saccade_sx']])
@@ -164,6 +251,7 @@ def get_res(data,et_data,sample_data,ISGIST=False):
     et_fix_end = flatten_list(et_fix_end)
     et_fix_x = flatten_list(et_fix_x)
     et_fix_y = flatten_list(et_fix_y)
+    et_foveated_prev_onset = flatten_list(et_foveated_prev_onset)
     et_saccade_end_x = flatten_list(et_saccade_end_x)
     et_saccade_end_y = flatten_list(et_saccade_end_y)
     et_saccade_start_x = flatten_list(et_saccade_start_x)
@@ -177,16 +265,24 @@ def get_res(data,et_data,sample_data,ISGIST=False):
         #index of closest fixation start to bubble start
         if bubble_num[k] == -1:
             continue
-        indStart = np.argmin(abs(item - np.array(et_fix_start)))
-        #indStart = np.where(et_fix_start<forced_onset[k])[0][-1]
-        res['fixstart'].append(et_fix_start[indStart])
-        tmp = np.array(et_fix_end)
+        
         indEnd = np.where(et_fix_end>forced_offset[k])[0][0]
         res['fixend'].append(et_fix_end[indEnd])
+        
+        if ISEXPERIMENT2 and whitecondition[k]:
+            tmp = abs(et_foveated_prev_onset[k]- np.array(et_fix_start))
+        else:
+            tmp = abs(item - np.array(et_fix_start))
+        tmp = tmp[np.array(et_fix_start)<et_fix_end[indEnd]]
+        indStart = np.argmin(tmp)
+                                 
+        #indStart = np.where(et_fix_start<forced_onset[k])[0][-1]
+        res['fixstart'].append(et_fix_start[indStart])
+
         res['choicetime'].append(et_fix_end[indEnd] - forced_offset[k])
         res['forcedFixtime'].append(forced_offset[k] - et_fix_start[indStart])
-        if (indEnd-indStart+1 == 0):
-            Warning('No Fixation on Bubble for Bubble Number: '+str(k))
+        if (int(indEnd-indStart+1) == 0):
+            raise('No Fixation on Bubble for Bubble Number: '+str(k))
         res['numFixPerBubble'].append(indEnd-indStart+1)
 
         #badloc is true if fixation not within bubble
@@ -198,7 +294,12 @@ def get_res(data,et_data,sample_data,ISGIST=False):
         res['badLocExceptFirst'].append(not np.all(abs(chosen_x[k] - np.array(et_fix_x[indStart+1:indEnd+1]))<77) & np.all(abs(chosen_y[k] - np.array(et_fix_y[indStart+1:indEnd+1]))<77))   
         #true if there are more than one saccade until next Forced_Fix_Onset
         if k+1<len(forced_onset):
-            if et_fix_end[indEnd+1] < forced_onset[k+1]:
+            if ISEXPERIMENT2 and whitecondition[k]:
+                testAgainst = et_foveated_prev_onset[k+1]
+            else:
+                testAgainst = forced_onset[k+1]
+                
+            if et_fix_end[indEnd+1] < testAgainst:
                 res['badSaccade'].append(True)
             else:
                 res['badSaccade'].append(False)
@@ -238,6 +339,9 @@ def get_res(data,et_data,sample_data,ISGIST=False):
         res['memory_right_xy'].append(memory_right_xy[k])
         if ISGIST:
             res['gist'].append(gist[k])
+        if ISEXPERIMENT2:
+            res['whitecondition'].append(whitecondition[k])
+            res['foveated_prev_onset'].append(et_foveated_prev_onset[k])
         res['plannedForcedFix'].append(planned_forced_fix[k])
         res['logFix'].append(np.nan)
         res['image'].append(image[k])
@@ -263,6 +367,7 @@ def get_res(data,et_data,sample_data,ISGIST=False):
     
     #np.arrays
     for listidx in res:
+        #print(listidx)
         res[listidx] = np.array(res[listidx])
         
         
@@ -296,9 +401,13 @@ def get_res(data,et_data,sample_data,ISGIST=False):
     """ check whether bubbleX, bubbleY are contained in dispX, dispY""" # @jwu
 
     for i in range(len(res['bubbleX'])):
-        if not (res['bubbleX'][i] in res['dispX'][i] and res['bubbleY'][i] in res['dispY'][i]):
+        if res['NumOfBubbles'][i] == 0:
+            # Whole Image condition fo experiment 2
+            res['dispX'][i] = [-998.]
+            res['dispY'][i] = [-998.]
+        elif not (res['bubbleX'][i] in res['dispX'][i] and res['bubbleY'][i] in res['dispY'][i]):
             print "Error: chosen bubble is not contained in the list of previously displayed bubbles"
-
+    
         
     return res
     

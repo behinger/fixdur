@@ -11,6 +11,7 @@ import numpy as np
 import cPickle as pickle
 import scipy.io
 import resmat
+reload(resmat)
 #import tools, only needed for plots
 import os
 import collections
@@ -28,7 +29,8 @@ if ISFIXDURGIST:
     path_to_fixdur_files = '/home/student/b/behinger/Documents/fixdur/data_gist/'    
     
 elif ISEXPERIMENT2:
-    path_to_fixdur_files = '/home/student/j/jschepers/thesis/fixdur_git/data/experiment2/'    
+    #path_to_fixdur_files = '/home/student/j/jschepers/thesis/fixdur_git/data/experiment2/'   
+    path_to_fixdur_files = '/net/store/nbp/projects/fixdur/data_exp2/'
 else:
     path_to_fixdur_files = '/net/store/nbp/projects/fixdur/data/'
     if not os.path.isdir(path_to_fixdur_files):
@@ -44,7 +46,8 @@ if ISFIXDURGIST:
     subjects = ['1','2','3','5','6','7','8','10','11','13']
     #subjects = ['1']
 elif ISEXPERIMENT2:
-    subjects = ['0']
+    subjects = ['1','2','3','4','6','7','8','9','11','12','15','16','17','18','20','21','22','23','24','25']
+    #subjects = ['8','9','11','12','15','16','17','18','20','21','22','23','24','25']
 else:
   #subject 0: old updating method, subject 2: didn't look at bubbles, 7 et crashed -> no complete data set, 
 #14 no complete data set #17 et chrashed -> pickle file missing, 19 = trialsnum weird, 24 2 trials missing. 25 1 trial missing
@@ -87,13 +90,24 @@ for subject in subjects:
     sample_data = sample_data['sample_data']
     rand = np.load(path_to_fixdur_files+str(subject)+'/rand_'+str(subject)+'.npy')
     
-    if subject == '17':
+    if (subject == '17') and not ISFIXDURGIST and not ISEXPERIMENT2:
         data2 = pickle.load((open(path_to_fixdur_files+str(subject)+'/'+str(subject)+'88')))
         for elem in data2:
             data.append(elem)
+            
+    if (subject == '6') and ISEXPERIMENT2:
+        data2 = pickle.load((open(path_to_fixdur_files+str(subject)+'/'+str(subject)+'33')))
+        for elem in data2:
+            data.append(elem)
+    if (subject == '20') and ISEXPERIMENT2:
+        data2 = pickle.load((open(path_to_fixdur_files+str(subject)+'/'+str(subject)+'65')))
+        for elem in data2:
+            data.append(elem)
+            
+            
     '''remove bad trials from data'''
     idx = []
-    if not ISFIXDURGIST:
+    if not ISFIXDURGIST and not ISEXPERIMENT2:
         if subject == '3':
             idx = get_data_trial_num([40])
         if subject == '5':
@@ -117,7 +131,7 @@ for subject in subjects:
     for bubble in range(len(res['bubbleNum'])):
         all_res['subject'].append(subject)
         
-    for key in res:    
+    for key in res:  
         for bubble in range(len(res[key])):
             all_res[key].append(res[key][bubble])
         

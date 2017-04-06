@@ -4,5 +4,6 @@ The steps are a bit messy. Basically you need matlab, python and R in order to p
 In order to go from EDF to .p to .RData
 1. *edf_to_mat.m*: Allows to read in the EDF eyetracking files and extracts subjectwise all important information. Saves them in a .mat file
 2. *analysis_main.py*: requires *resmat.py* This function adds all preprocessing things e.g. marks trials with multiple saccades etc.
-3a. *process_data_in_R.py*: This function runs the *fd_loaddata.R* function on the python pickled dataset. It removes trials that are >3*mad per subject and adds a lot of new features e.g. bubbleangles etc. in the end you get a python pandas data frame
-3b. *fd_loaddata.R*: Run this to get the data_frame in R directly.
+3. (optional) export data to .rData using *python_to_r.py*
+4a. *process_data_in_R.py*: This function runs the *fd_loaddata.R* function on the python pickled dataset. It removes trials that are >3*mad per subject and adds a lot of new features e.g. bubbleangles etc. in the end you get a python pandas data frame
+4b. *fd_loaddata.R*: Run this to get the data_frame in R directly.
