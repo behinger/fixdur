@@ -142,12 +142,12 @@ for key in all_res:
     
 if ISFIXDURGIST:
     pass
-    pickle.dump(all_res,open("all_res_gist.p","w")) #XXX
+    pickle.dump(all_res,open("all_res_gist.p","wb")) #XXX
 elif ISEXPERIMENT2:
-    pickle.dump(all_res,open("all_res_exp2.p","w")) #XXX
+    pickle.dump(all_res,open("all_res_exp2.p","wb")) #XXX
 else:
     pass
-    pickle.dump(all_res,open("all_res.p","w")) #XXX
+    pickle.dump(all_res,open("all_res.p","wb")) #XXX
 
 #%% quantification of different "cleaning methods"
 '''
