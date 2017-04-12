@@ -280,7 +280,12 @@ def get_res(data,et_data,sample_data,ISGIST=False,ISEXPERIMENT2=False):
         res['fixstart'].append(et_fix_start[indStart])
 
         res['choicetime'].append(et_fix_end[indEnd] - forced_offset[k])
-        res['forcedFixtime'].append(forced_offset[k] - et_fix_start[indStart])
+        
+        if ISEXPERIMENT2 and whitecondition[k]:
+            res['forcedFixtime'].append(forced_offset[k] - item)
+        else:
+            res['forcedFixtime'].append(forced_offset[k] - et_fix_start[indStart])
+            
         if (int(indEnd-indStart+1) == 0):
             raise('No Fixation on Bubble for Bubble Number: '+str(k))
         res['numFixPerBubble'].append(indEnd-indStart+1)
